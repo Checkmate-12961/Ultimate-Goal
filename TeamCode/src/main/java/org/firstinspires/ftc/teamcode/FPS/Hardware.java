@@ -45,7 +45,6 @@ public class Hardware {
 
 
     // SENSORS:
-    public TouchSensor blockToggle;
     public BNO055IMU revIMU;
     /**
      * Please list what each sensor is for:
@@ -105,13 +104,13 @@ public class Hardware {
     public void drivePowerCalculate(double xVectorLeft, double yVectorLeft, double xVectorRight, double yVectorRight){
         robotSpeed = Math.sqrt(Math.pow(xVectorLeft, 2) + Math.pow(xVectorLeft, 2));
         theta = Math.atan2(-xVectorLeft, yVectorLeft);
-        forwardSpeed = -(yVectorLeft + yVectorRight)/2;
-        finaltheta = -theta + (Math.PI/4);
-        if (forwardSpeed < 0 ) {
-            directionSpeed = xVectorRight * .5;
+        if (yVectorRight == 0) {
+            forwardSpeed = -yVectorLeft;
         } else {
-            directionSpeed = -xVectorRight * .5;
+            forwardSpeed = -yVectorRight;
         }
+        finaltheta = -theta + (Math.PI/4);
+        directionSpeed = -xVectorRight;
 
         leftfront = (robotSpeed * Math.sin(finaltheta) - directionSpeed) + forwardSpeed;
         leftback = (robotSpeed * Math.cos(finaltheta) - directionSpeed) + forwardSpeed;

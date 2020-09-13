@@ -48,7 +48,7 @@ public class BaseOP extends LinearOpMode {
     private Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
-    double gearSpeed = .5;
+    double gearSpeed = .3;
     double lB, lF, rB, rF;
 
     public void runDrivetrain() { // Custom Method
