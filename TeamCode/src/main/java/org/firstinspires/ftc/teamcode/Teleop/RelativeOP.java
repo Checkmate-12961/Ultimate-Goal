@@ -56,11 +56,14 @@ public class RelativeOP extends LinearOpMode {
     public double y=0;
     public double r=0;
     public double theta=0;
-
+    
+    // Rectangular coordinates to polar
     public void rectToPolar(double xIn, double yIn) {
         r     = Math.sqrt(xIn * xIn + yIn * yIn);
         theta = Math.atan2(yIn, xIn);
     }
+    
+    // Polar coordinates to rectangular
     public void polarToRect(double rIn, double thetaIn){
         x = Math.cos( thetaIn ) * rIn;
         y = Math.sin( thetaIn ) * rIn;
@@ -69,20 +72,35 @@ public class RelativeOP extends LinearOpMode {
         /*if (gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_right){
             robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
         }*/
+        
+        /* We store the angle from the IMU's gyro both to prevent wonkiness if the angle changes partway through,
+         * and also to make it easy to change which axis we read from, based on where the control hub / phone is
+         * mounted. 
+        */
         double angle = robot.revIMU.getAngularOrientation().firstAngle;
-        double finaltheta;
-        rectToPolar(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        if (angle < 0){
-            finaltheta = theta + angle + 360;
+        
+        // This if statement is used to translate the janky way the IMU outputs angles into radians
+        if (angle<0){
+            double radAngle = Math.toRadians(angle + 360);
         } else {
-            finaltheta = theta + angle;
+            double radAngle = Math.toRadians(angle);
         }
-        while (finaltheta >= 360) {
-            finaltheta -= 360;
+        
+        // Add the angle to the joystick input after converting to polar
+        rectToPolar(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double finaltheta = theta + radAngle;
+        
+        // Sanity check
+        while (finaltheta >= 2.0 * Math.PI) {
+            finaltheta -= 2.0 * Math.PI;
+        } while (finaltheta < 0){
+            finaltheta += 2.0 * Math.PI;
         }
-        polarToRect(Range.clip(r, 0, 1 ), finaltheta);
+        
+        // Convert it back to rectangular and calculate the drive power for each motor
+        polarToRect(r, finaltheta);
         robot.drivePowerCalculate(Range.clip(x, 0, 1), Range.clip(y, 0, 1), gamepad1.right_stick_x, gamepad1.right_stick_y);
-
+        
         gearSpeed = Range.clip(gearSpeed, .2, .9);
         lF = gearSpeed * robot.leftfront;
         lB = gearSpeed * robot.leftback;
