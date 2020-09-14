@@ -41,23 +41,26 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
  *
  */
 
-@TeleOp(name="Single controller", group="TeleOP")
+@TeleOp(name="Dual controller", group="TeleOP")
 public class BaseOP extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
-    double gearSpeed = .9;
     double lB, lF, rB, rF;
-
+    public static double manageSpeed(double RT, double LT) {
+        // Here we use the values from the left and right triggers to change the robot's speed
+        double speed = .5;
+        speed += .4 * RT;
+        speed -= .3 * LT;
+        return speed;
+    }
     public void runDrivetrain() { // Custom Method
-        /*if (gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_right){
-            robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
-        }*/
+
         robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
 
-        gearSpeed = Range.clip(gearSpeed, .2, .9);
+        double gearSpeed = Range.clip(manageSpeed(gamepad1.right_trigger, gamepad1.left_trigger), .2, .9);
         lF = gearSpeed * robot.leftfront;
         lB = gearSpeed * robot.leftback;
         rF = gearSpeed * robot.rightfront;

@@ -37,25 +37,18 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.FPS.Hardware;
 
 
-/*
- *
- */
 
-@TeleOp(name="Single controller relative", group="TeleOP")
+@TeleOp(name="Dual controller relative", group="TeleOP")
 public class RelativeOP extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
-    double gearSpeed = .9;
     double lB, lF, rB, rF;
 
     // Declare vars for polar / rect stuff
-    public double x=0;
-    public double y=0;
-    public double r=0;
-    public double theta=0;
+    public double x, y, r, theta;
     
     // Rectangular coordinates to polar
     public void rectToPolar(double xIn, double yIn) {
@@ -68,40 +61,41 @@ public class RelativeOP extends LinearOpMode {
         x = Math.cos( thetaIn ) * rIn;
         y = Math.sin( thetaIn ) * rIn;
     }
-    public void runDrivetrain() { // Custom Method
-        /*if (gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_right){
-            robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
-        }*/
-        
+
+    // Custom Method
+    public void runDrivetrain() {
+
+
         /* We store the angle from the IMU's gyro both to prevent wonkiness if the angle changes partway through,
          * and also to make it easy to change which axis we read from, based on where the control hub / phone is
-         * mounted. 
-        */
+         * mounted.
+         */
         double angle = robot.revIMU.getAngularOrientation().firstAngle;
-        
+        double radAngle;
+
         // This if statement is used to translate the janky way the IMU outputs angles into radians
         if (angle<0){
-            double radAngle = Math.toRadians(angle + 360);
+            radAngle = Math.toRadians(angle + 360);
         } else {
-            double radAngle = Math.toRadians(angle);
+            radAngle = Math.toRadians(angle);
         }
         
         // Add the angle to the joystick input after converting to polar
         rectToPolar(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double finaltheta = theta + radAngle;
-        
+        double finalTheta = theta + radAngle;
+
         // Sanity check
-        while (finaltheta >= 2.0 * Math.PI) {
-            finaltheta -= 2.0 * Math.PI;
-        } while (finaltheta < 0){
-            finaltheta += 2.0 * Math.PI;
+        while (finalTheta >= 2.0 * Math.PI) {
+            finalTheta -= 2.0 * Math.PI;
+        } while (finalTheta < 0){
+            finalTheta += 2.0 * Math.PI;
         }
         
         // Convert it back to rectangular and calculate the drive power for each motor
-        polarToRect(r, finaltheta);
-        robot.drivePowerCalculate(Range.clip(x, 0, 1), Range.clip(y, 0, 1), gamepad1.right_stick_x, gamepad1.right_stick_y);
-        
-        gearSpeed = Range.clip(gearSpeed, .2, .9);
+        polarToRect(r, finalTheta);
+        robot.drivePowerCalculate(x, y, gamepad1.right_stick_x, gamepad1.right_stick_y);
+
+        double gearSpeed = Range.clip(BaseOP.manageSpeed(gamepad1.right_trigger, gamepad1.left_trigger), .2, .9);
         lF = gearSpeed * robot.leftfront;
         lB = gearSpeed * robot.leftback;
         rF = gearSpeed * robot.rightfront;
@@ -115,10 +109,10 @@ public class RelativeOP extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-//        robot.resetEncoders();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
