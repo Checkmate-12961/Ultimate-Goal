@@ -41,8 +41,8 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
  *
  */
 
-@TeleOp(name="Single controller", group="TeleOP")
-public class BaseOP extends LinearOpMode {
+@TeleOp(name="Single controller relative", group="TeleOP")
+public class RelativeOP extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Hardware robot = new Hardware(); // Custom Class
@@ -51,11 +51,37 @@ public class BaseOP extends LinearOpMode {
     double gearSpeed = .9;
     double lB, lF, rB, rF;
 
+    // Declare vars for polar / rect stuff
+    public double x=0;
+    public double y=0;
+    public double r=0;
+    public double theta=0;
+
+    public void rectToPolar(double xIn, double yIn) {
+        r     = Math.sqrt(xIn * xIn + yIn * yIn);
+        theta = Math.atan2(yIn, xIn);
+    }
+    public void polarToRect(double rIn, double thetaIn){
+        x = Math.cos( thetaIn ) * rIn;
+        y = Math.sin( thetaIn ) * rIn;
+    }
     public void runDrivetrain() { // Custom Method
         /*if (gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_right){
             robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
         }*/
-        robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
+        double angle = robot.revIMU.getAngularOrientation().firstAngle;
+        double finaltheta;
+        rectToPolar(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        if (angle < 0){
+            finaltheta = theta + angle + 360;
+        } else {
+            finaltheta = theta + angle;
+        }
+        while (finaltheta >= 360) {
+            finaltheta -= 360;
+        }
+        polarToRect(Range.clip(r, 0, 1 ), finaltheta);
+        robot.drivePowerCalculate(Range.clip(x, 0, 1), Range.clip(y, 0, 1), gamepad1.right_stick_x, gamepad1.right_stick_y);
 
         gearSpeed = Range.clip(gearSpeed, .2, .9);
         lF = gearSpeed * robot.leftfront;
