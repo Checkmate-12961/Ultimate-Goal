@@ -95,7 +95,7 @@ public class RelativeOP extends LinearOpMode {
         polarToRect(r, finalTheta);
         robot.drivePowerCalculate(x, y, gamepad1.right_stick_x, gamepad1.right_stick_y);
 
-        double gearSpeed = Range.clip(BaseOP.manageSpeed(gamepad1.right_trigger, gamepad1.left_trigger), .2, .9);
+        double gearSpeed = BaseOP.manageSpeed(.5, gamepad1.right_trigger, gamepad1.left_trigger);
         lF = gearSpeed * robot.leftfront;
         lB = gearSpeed * robot.leftback;
         rF = gearSpeed * robot.rightfront;

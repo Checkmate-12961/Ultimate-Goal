@@ -49,18 +49,23 @@ public class BaseOP extends LinearOpMode {
 
     // Declare OpMode members.
     double lB, lF, rB, rF;
-    public static double manageSpeed(double RT, double LT) {
+    public static double manageSpeed(double base, double RT, double LT) {
         // Here we use the values from the left and right triggers to change the robot's speed
-        double speed = .5;
-        speed += .4 * RT;
-        speed -= .3 * LT;
+        double speed = base;
+        // (.0 - speed) and (speed - .2) are there to allow for scaling with the base value.
+        // As base shrinks, the impact of RT will increase, and the impact of LT will decrease.
+        // The same works in reverse as base grows.
+        speed += (.9 - speed) * RT;
+        speed -= (speed - .2) * LT;
         return speed;
     }
     public void runDrivetrain() { // Custom Method
 
         robot.drivePowerCalculate(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
 
-        double gearSpeed = Range.clip(manageSpeed(gamepad1.right_trigger, gamepad1.left_trigger), .2, .9);
+        // Here we calculate gearSpeed based off of the values of gamepad1's left_trigger and right_trigger (which are analog)
+        double gearSpeed = manageSpeed(.5, gamepad1.right_trigger, gamepad1.left_trigger);
+        // We then apply that speed to each motor
         lF = gearSpeed * robot.leftfront;
         lB = gearSpeed * robot.leftback;
         rF = gearSpeed * robot.rightfront;
@@ -74,10 +79,10 @@ public class BaseOP extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-//        robot.resetEncoders();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
