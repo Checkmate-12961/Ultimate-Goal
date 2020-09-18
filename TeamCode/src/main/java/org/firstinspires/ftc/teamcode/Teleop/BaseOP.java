@@ -38,7 +38,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.FPS.Hardware;
 
 @TeleOp(name="Tele Base", group="TeleOP")
-@Disabled
 public class BaseOP extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
