@@ -8,4 +8,5 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:5.5'
     implementation (name:'WirelessP2p-release', ext:'aar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
 }

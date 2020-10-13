@@ -34,6 +34,7 @@ public class TestOP_MAIN extends LinearOpMode {
             } else if (gamepad1.dpad_left){
                 dpadX = -1;
             }
+
             // Show the elapsed game time and gamepad inputs.
             telemetry.addData("Buttons", "a: "+gamepad1.a+", b: "+gamepad1.b+", x: "+gamepad1.x+", y: "+gamepad1.y);
             telemetry.addData("Dpad", "UP: "+dpadY+", RT: "+dpadX);

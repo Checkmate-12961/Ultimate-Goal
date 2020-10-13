@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.FPS.Hardware;
 
+@Disabled
 @TeleOp(name="Tele Base", group="TeleOP")
 public class BaseOP extends LinearOpMode {
 
