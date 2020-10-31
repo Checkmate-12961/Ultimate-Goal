@@ -38,8 +38,10 @@ public class TestOP_MAIN extends LinearOpMode {
             // Show the elapsed game time and gamepad inputs.
             telemetry.addData("Buttons", "a: "+gamepad1.a+", b: "+gamepad1.b+", x: "+gamepad1.x+", y: "+gamepad1.y);
             telemetry.addData("Dpad", "UP: "+dpadY+", RT: "+dpadX);
-            telemetry.addData("LStick","X: "+gamepad1.left_stick_x+", Y: "+gamepad1.left_stick_y);
-            telemetry.addData("RStick","X: "+gamepad1.right_stick_x+", Y: "+gamepad1.right_stick_y);
+            telemetry.addData("LStick X",gamepad1.left_stick_x);
+            telemetry.addData("LSitick Y", gamepad1.left_stick_y);
+            telemetry.addData("RStick X",gamepad1.right_stick_x);
+            telemetry.addData("RStick Y",gamepad1.right_stick_y);
             telemetry.update();
         }
     }
