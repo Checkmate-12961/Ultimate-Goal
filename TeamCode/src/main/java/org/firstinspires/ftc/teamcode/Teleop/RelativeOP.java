@@ -121,6 +121,8 @@ public class RelativeOP extends LinearOpMode {
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
 
             // Show the elapsed game time and gyroscope data.
+            telemetry.addData("X1",robot.leftFront.getCurrentPosition());
+            telemetry.addData("X2",robot.rightFront.getCurrentPosition());
             telemetry.addData("Status", "Run time: " + runtime.toString());
             telemetry.addData("Angle","First: " + robot.revIMU.getAngularOrientation().firstAngle);
             telemetry.addData("Angle","Second: " + robot.revIMU.getAngularOrientation().secondAngle);
