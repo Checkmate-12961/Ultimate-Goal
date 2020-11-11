@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
 @TeleOp(name = "Test gamepad", group="TestOP")
 public class TestOP_MAIN extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private Hardware robot = new Hardware();
+    private final ElapsedTime runtime = new ElapsedTime();
+    private final Hardware robot = new Hardware();
 
     @Override
     public void runOpMode() {
@@ -39,7 +39,7 @@ public class TestOP_MAIN extends LinearOpMode {
             telemetry.addData("Buttons", "a: "+gamepad1.a+", b: "+gamepad1.b+", x: "+gamepad1.x+", y: "+gamepad1.y);
             telemetry.addData("Dpad", "UP: "+dpadY+", RT: "+dpadX);
             telemetry.addData("LStick X",gamepad1.left_stick_x);
-            telemetry.addData("LSitick Y", gamepad1.left_stick_y);
+            telemetry.addData("LStick Y", gamepad1.left_stick_y);
             telemetry.addData("RStick X",gamepad1.right_stick_x);
             telemetry.addData("RStick Y",gamepad1.right_stick_y);
             telemetry.update();
