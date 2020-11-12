@@ -39,8 +39,8 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
 @TeleOp(name="Tele Base", group="TeleOP")
 public class BaseOP extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private Hardware robot = new Hardware(); // Custom Class
+    private final ElapsedTime runtime = new ElapsedTime();
+    private final Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
     double lB, lF, rB, rF;

@@ -35,6 +35,10 @@ public class Hardware {
     public DcMotor leftBack;
     public DcMotor rightFront;
     public DcMotor rightBack;
+    public DcMotor bottomRoller;
+    public DcMotor topRoller;
+    // TODO: get this motor hooked up
+    // public DcMotor intakeRoller;
     /**
      * Please list what each servo does:
      * exampleservo: the example servo is used as an example, and is located on the rear of the robot
@@ -60,8 +64,6 @@ public class Hardware {
     public Measurement sensorSuite;
     public HardwareMap hardwareMap; // Especially don't delete this one
 
-    //INTAKE LEFT AND WINCH LEFT ARE X1 AND Y RESPECTIVELY
-
     public void map(HardwareMap map){
         hardwareMap = map; // this sets the hardwareMap variable in this class to the hardwareMap variable from inside the opmode
 
@@ -70,6 +72,11 @@ public class Hardware {
         leftBack = hardwareMap.get(DcMotor.class, "LB");
         rightFront = hardwareMap.get(DcMotor.class, "RF");
         rightBack = hardwareMap.get(DcMotor.class, "RB");
+        // Loader motors
+        bottomRoller = hardwareMap.get(DcMotor.class, "BottomRoller");
+        topRoller = hardwareMap.get(DcMotor.class, "TopRoller");
+        // TODO: get this motor hooked up
+        //  bottomRoller = hardwareMap.get(DcMotor.class, "IntakeRoller");
 
         /* Sensors: */
         revIMU = hardwareMap.get(BNO055IMU.class, "imu");
@@ -84,14 +91,14 @@ public class Hardware {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-/*
-+        // Reset encoders...
+
+        // Reset encoders...
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-*/
-        // configure encoders
+
+        // Disable encoders
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -115,6 +122,13 @@ public class Hardware {
         leftback = (robotSpeed * Math.cos(finaltheta) - directionSpeed) + forwardSpeed;
         rightfront = (robotSpeed * Math.cos(finaltheta) + directionSpeed) + forwardSpeed;
         rightback = (robotSpeed * Math.sin(finaltheta)+ directionSpeed) + forwardSpeed;
+    }
+
+    public void runLoader( double tr, double br /*, double ir */){
+        topRoller.setPower(tr);
+        bottomRoller.setPower(br);
+        // TODO: get this motor hooked up
+        //  intakeRoller.setPower(ir);
     }
 
     public void setPower( double lf, double lb, double rf, double rb){

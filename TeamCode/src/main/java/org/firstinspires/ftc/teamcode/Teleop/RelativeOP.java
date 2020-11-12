@@ -41,11 +41,12 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
 @TeleOp(name="Tele Relative", group="TeleOP")
 public class RelativeOP extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private Hardware robot = new Hardware(); // Custom Class
+    private final ElapsedTime runtime = new ElapsedTime();
+    private final Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
     double lB, lF, rB, rF;
+    public int intakePower;
 
     // Declare vars for polar / rect stuff
     public double x, y, r, theta;
@@ -70,7 +71,7 @@ public class RelativeOP extends LinearOpMode {
          * and also to make it easy to change which axis we read from, based on where the control hub / phone is
          * mounted.
          */
-        double angle = robot.revIMU.getAngularOrientation().firstAngle;
+        double angle = robot.revIMU.getAngularOrientation().secondAngle;
         double radAngle;
 
         // This if statement is used to translate the janky way the IMU outputs angles into radians
@@ -100,6 +101,13 @@ public class RelativeOP extends LinearOpMode {
         lB = gearSpeed * robot.leftback;
         rF = gearSpeed * robot.rightfront;
         rB = gearSpeed * robot.rightback;
+
+        intakePower = 0;
+        if (gamepad1.a){
+            intakePower += 1;
+        } if (gamepad1.b){
+            intakePower -= 1;
+        }
     }
 
 
@@ -110,6 +118,8 @@ public class RelativeOP extends LinearOpMode {
 
         robot.map(hardwareMap);
 
+        telemetry.addData("Status", "Ready");
+        telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -120,9 +130,9 @@ public class RelativeOP extends LinearOpMode {
 
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
 
+            robot.runLoader(intakePower,intakePower);
+
             // Show the elapsed game time and gyroscope data.
-            telemetry.addData("X1",robot.leftFront.getCurrentPosition());
-            telemetry.addData("X2",robot.rightFront.getCurrentPosition());
             telemetry.addData("Status", "Run time: " + runtime.toString());
             telemetry.addData("Angle","First: " + robot.revIMU.getAngularOrientation().firstAngle);
             telemetry.addData("Angle","Second: " + robot.revIMU.getAngularOrientation().secondAngle);
