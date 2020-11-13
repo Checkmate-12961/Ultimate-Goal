@@ -46,7 +46,7 @@ public class RelativeOP extends LinearOpMode {
 
     // Declare OpMode members.
     double lB, lF, rB, rF;
-    public int intakePower;
+    public int transferPower, intakePower;
 
     // Declare vars for polar / rect stuff
     public double x, y, r, theta;
@@ -71,7 +71,7 @@ public class RelativeOP extends LinearOpMode {
          * and also to make it easy to change which axis we read from, based on where the control hub / phone is
          * mounted.
          */
-        double angle = robot.revIMU.getAngularOrientation().secondAngle;
+        double angle = robot.revIMU.getAngularOrientation().firstAngle;
         double radAngle;
 
         // This if statement is used to translate the janky way the IMU outputs angles into radians
@@ -102,12 +102,7 @@ public class RelativeOP extends LinearOpMode {
         rF = gearSpeed * robot.rightfront;
         rB = gearSpeed * robot.rightback;
 
-        intakePower = 0;
-        if (gamepad1.a){
-            intakePower += 1;
-        } if (gamepad1.b){
-            intakePower -= 1;
-        }
+
     }
 
 
@@ -130,7 +125,8 @@ public class RelativeOP extends LinearOpMode {
 
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
 
-            robot.runLoader(intakePower,intakePower);
+            intakePower = 0;transferPower = 0;if (gamepad1.a){intakePower += 1;} if (gamepad1.b){intakePower -= 1;}if (gamepad1.y){transferPower += 1;} if (gamepad1.x){transferPower -= 1;}
+            robot.runLoader( intakePower * .5 , intakePower * .5 ,transferPower * -0.3 );
 
             // Show the elapsed game time and gyroscope data.
             telemetry.addData("Status", "Run time: " + runtime.toString());

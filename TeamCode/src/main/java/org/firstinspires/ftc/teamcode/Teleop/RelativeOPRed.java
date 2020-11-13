@@ -10,11 +10,12 @@ import org.firstinspires.ftc.teamcode.FPS.Hardware;
 @TeleOp(name="Tele Relative (R)", group="TeleOP")
 public class RelativeOPRed extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private Hardware robot = new Hardware(); // Custom Class
+    private final ElapsedTime runtime = new ElapsedTime();
+    private final Hardware robot = new Hardware(); // Custom Class
 
     // Declare OpMode members.
     double lB, lF, rB, rF;
+    public int transferPower,intakePower;
 
     public double angleOffset = -Math.PI / 2.0;
 
@@ -90,6 +91,9 @@ public class RelativeOPRed extends LinearOpMode {
             runDrivetrain();
 
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
+
+            intakePower = 0;transferPower = 0;if (gamepad1.a){intakePower += 1;} if (gamepad1.b){intakePower -= 1;}if (gamepad1.y){transferPower += 1;} if (gamepad1.x){transferPower -= 1;}
+            robot.runLoader( intakePower * .5 , intakePower * .5 ,transferPower * -0.3 );
 
             // Show the elapsed game time and gyroscope data.
             telemetry.addData("Status", "Run time: " + runtime.toString());

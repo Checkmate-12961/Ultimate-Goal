@@ -37,8 +37,7 @@ public class Hardware {
     public DcMotor rightBack;
     public DcMotor bottomRoller;
     public DcMotor topRoller;
-    // TODO: get this motor hooked up
-    // public DcMotor intakeRoller;
+    public DcMotor intakeRoller;
     /**
      * Please list what each servo does:
      * exampleservo: the example servo is used as an example, and is located on the rear of the robot
@@ -75,8 +74,7 @@ public class Hardware {
         // Loader motors
         bottomRoller = hardwareMap.get(DcMotor.class, "BottomRoller");
         topRoller = hardwareMap.get(DcMotor.class, "TopRoller");
-        // TODO: get this motor hooked up
-        //  bottomRoller = hardwareMap.get(DcMotor.class, "IntakeRoller");
+        intakeRoller = hardwareMap.get(DcMotor.class, "IntakeRoller");
 
         /* Sensors: */
         revIMU = hardwareMap.get(BNO055IMU.class, "imu");
@@ -124,11 +122,10 @@ public class Hardware {
         rightback = (robotSpeed * Math.sin(finaltheta)+ directionSpeed) + forwardSpeed;
     }
 
-    public void runLoader( double tr, double br /*, double ir */){
+    public void runLoader( double tr, double br, double ir ){
         topRoller.setPower(tr);
         bottomRoller.setPower(br);
-        // TODO: get this motor hooked up
-        //  intakeRoller.setPower(ir);
+        intakeRoller.setPower(ir);
     }
 
     public void setPower( double lf, double lb, double rf, double rb){

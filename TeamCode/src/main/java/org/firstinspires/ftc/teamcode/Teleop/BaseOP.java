@@ -44,6 +44,7 @@ public class BaseOP extends LinearOpMode {
 
     // Declare OpMode members.
     double lB, lF, rB, rF;
+    public int transferPower, intakePower;
     public static double manageSpeed(double base, double RT, double LT) {
         // Here we use the values from the left and right triggers to change the robot's speed
         double speed = base;
@@ -84,6 +85,9 @@ public class BaseOP extends LinearOpMode {
             runDrivetrain();
 
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
+
+            intakePower = 0;transferPower = 0;if (gamepad1.a){intakePower += 1;} if (gamepad1.b){intakePower -= 1;}if (gamepad1.y){transferPower += 1;} if (gamepad1.x){transferPower -= 1;}
+            robot.runLoader( intakePower * .5 , intakePower * .5 ,transferPower * -0.3 );
 
             // Show the elapsed game time and gyroscope data.
             telemetry.addData("Status", "Run time: " + runtime.toString());
