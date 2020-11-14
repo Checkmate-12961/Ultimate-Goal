@@ -84,7 +84,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private LinkedList<Pose2d> poseHistory;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transferTop, transferBottom;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
@@ -123,6 +123,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "LB");
         rightRear = hardwareMap.get(DcMotorEx.class, "RB");
         rightFront = hardwareMap.get(DcMotorEx.class, "RF");
+
+        // Intake motors:
+        intake = hardwareMap.get(DcMotorEx.class, "IntakeRoller");
+        transferTop = hardwareMap.get(DcMotorEx.class, "TopRoller");
+        transferBottom = hardwareMap.get(DcMotorEx.class, "BottomRoller");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -370,6 +375,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+    }
+
+    public void setIntakePowers(double ir, double tb, double tt){
+        intake.setPower(ir);
+        transferBottom.setPower(tb);
+        transferTop.setPower(tt);
     }
 
     @Override

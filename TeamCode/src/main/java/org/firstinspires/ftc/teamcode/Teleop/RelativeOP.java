@@ -125,8 +125,8 @@ public class RelativeOP extends LinearOpMode {
 
             robot.setPower(Range.clip(lF, -1, 1), Range.clip(lB, -1, 1), Range.clip(rF, -1, 1), Range.clip(rB, -1, 1));
 
-            intakePower = 0;transferPower = 0;if (gamepad1.a){intakePower += 1;} if (gamepad1.b){intakePower -= 1;}if (gamepad1.y){transferPower += 1;} if (gamepad1.x){transferPower -= 1;}
-            robot.runLoader( intakePower * .5 , intakePower * .5 ,transferPower * -0.3 );
+            intakePower = 0;transferPower = 0;if (gamepad2.a){transferPower += 1;} if (gamepad2.b){transferPower -= 1;}if (gamepad2.y){intakePower += 1;} if (gamepad2.x){intakePower -= 1;}
+            robot.runLoader( transferPower * .5 , transferPower * .5 ,intakePower * -0.5 );
 
             // Show the elapsed game time and gyroscope data.
             telemetry.addData("Status", "Run time: " + runtime.toString());
