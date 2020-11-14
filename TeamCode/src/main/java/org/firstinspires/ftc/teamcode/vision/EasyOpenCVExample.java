@@ -55,15 +55,13 @@ public class EasyOpenCVExample extends LinearOpMode
         pipeline = new SkystoneDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-
+        //listens for when the camera is opened
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             public void onOpened()
             {
-                webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT );
+               //if the camera is open start steaming
+                webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
             }
         });
 
@@ -92,18 +90,16 @@ public class EasyOpenCVExample extends LinearOpMode
             NONE
         }
 
-        /*
-         * Some color constants
-         */
+
+        //Some color constants
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        //The core values which define the location and size of the sample regions
 
-        static final int REGION_WIDTH = 35
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(220,152);
+
+        static final int REGION_WIDTH = 70
 
 
 

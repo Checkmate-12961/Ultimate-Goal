@@ -19,13 +19,15 @@ public class autoTest extends LinearOpMode {
         Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
+        // traj0 and traj1 navigate the robot from the starting position to the goal
         Trajectory traj0 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-30,-24),0)
                 .splineTo(new Vector2d(45,-36), Math.toRadians(180))
                 .build();
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineToSplineHeading(new Pose2d(60, -36, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(60, -37, Math.toRadians(180)))
                 .build();
+        //traj2 navigates the robot to the middle line
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .splineTo(new Vector2d(10,-20),Math.toRadians(180))
                 .build();
@@ -34,11 +36,14 @@ public class autoTest extends LinearOpMode {
 
         if(isStopRequested()) return;
 
+        //Executes traj0 and traj1, positioning the bot before the goal
         drive.followTrajectory(traj0);
         drive.followTrajectory(traj1);
+        //dumps rings into low goal
         drive.setIntakePowers(0, .5, .5);
-        sleep(10000);
+        sleep(6000);
         drive.setIntakePowers(0,0,0);
+        //executes traj2, positioning the bot atop the middle line.
         drive.followTrajectory(traj2);
     }
 }
