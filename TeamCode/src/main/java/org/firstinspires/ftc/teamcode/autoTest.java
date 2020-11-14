@@ -25,7 +25,7 @@ public class autoTest extends LinearOpMode {
                 .splineTo(new Vector2d(45,-36), Math.toRadians(180))
                 .build();
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineToSplineHeading(new Pose2d(60, -37, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(64, -38, Math.toRadians(180)))
                 .build();
         //traj2 navigates the robot to the middle line
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
