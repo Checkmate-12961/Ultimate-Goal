@@ -25,15 +25,15 @@ public class autoTest extends LinearOpMode {
                 .splineTo(new Vector2d(45,-36), Math.toRadians(180))
                 .build();
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
                 .build();
         //traj2 pushes the robot slightly forward so the rings will be closer to the goal
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .lineToSplineHeading(new Pose2d(64, -38 , Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(68, -40 , Math.toRadians(174)))
                 .build();
         //traj3 navigates the robot to the middle line
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineTo(new Vector2d(10,-20),Math.toRadians(180))
+                .splineTo(new Vector2d(10,-20),Math.toRadians(174))
                 .build();
 
         waitForStart();
