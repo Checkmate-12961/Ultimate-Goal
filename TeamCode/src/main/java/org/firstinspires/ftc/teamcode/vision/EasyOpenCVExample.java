@@ -42,7 +42,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class EasyOpenCVExample extends LinearOpMode
 {
     OpenCvWebcam webCam;
-    SkystoneDeterminationPipeline pipeline;
+    RingDeterminationPipeline pipeline;
 
 
     @Override
@@ -51,7 +51,7 @@ public class EasyOpenCVExample extends LinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -77,10 +77,10 @@ public class EasyOpenCVExample extends LinearOpMode
         }
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
+    public static class RingDeterminationPipeline extends OpenCvPipeline
     {
         /*
-         * An enum to define the skystone position
+         * An enum to define the Ring position
          */
         public enum RingPosition
         {
