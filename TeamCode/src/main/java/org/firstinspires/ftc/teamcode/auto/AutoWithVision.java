@@ -20,12 +20,16 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -39,7 +43,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp
-public class EasyOpenCVExample extends LinearOpMode
+public class AutoWithVision extends LinearOpMode
 {
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
@@ -48,7 +52,30 @@ public class EasyOpenCVExample extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        // RR stuff
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(0));
+        drive.setPoseEstimate(startPose);
 
+        // TODO: add in multiple paths for each of the different camera outputs
+        // traj0 and traj1 navigate the robot from the starting position to the goal
+        Trajectory traj0 = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-30,-24),0)
+                .splineTo(new Vector2d(45,-36), Math.toRadians(180))
+                .build();
+        Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
+                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
+                .build();
+        //traj2 pushes the robot slightly forward so the rings will be closer to the goal
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .lineToSplineHeading(new Pose2d(68, -40 , Math.toRadians(174)))
+                .build();
+        //traj3 navigates the robot to the middle line
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .splineTo(new Vector2d(10,-20),Math.toRadians(174))
+                .build();
+
+        // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
         pipeline = new RingDeterminationPipeline();
@@ -59,22 +86,21 @@ public class EasyOpenCVExample extends LinearOpMode
         {
             public void onOpened()
             {
-               //if the camera is open start steaming
+                //if the camera is open start steaming
                 webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
             }
         });
 
+        int RingPosGuess = pipeline.getAnalysis();
+        telemetry.addData("RingPosGuess",RingPosGuess);
         waitForStart();
 
-        while (opModeIsActive())
-        {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
-        }
+        if(isStopRequested()) return;
+        /*
+         *
+         *  Do all of the fancy splining stuff here
+         *
+         */
     }
 
     public static class RingDeterminationPipeline extends OpenCvPipeline
@@ -169,7 +195,6 @@ public class EasyOpenCVExample extends LinearOpMode
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-
             return input;
         }
 
