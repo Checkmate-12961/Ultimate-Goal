@@ -21,13 +21,14 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -70,25 +71,26 @@ public class SampleMecanumDrive extends MecanumDrive {
         FOLLOW_TRAJECTORY
     }
 
-    private FtcDashboard dashboard;
-    private NanoClock clock;
+    private final FtcDashboard dashboard;
+    private final NanoClock clock;
 
     private Mode mode;
 
-    private PIDFController turnController;
+    private final PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
 
-    private DriveConstraints constraints;
-    private TrajectoryFollower follower;
+    private final DriveConstraints constraints;
+    private final TrajectoryFollower follower;
 
-    private LinkedList<Pose2d> poseHistory;
+    private final LinkedList<Pose2d> poseHistory;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transferTop, transferBottom;
-    private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    private final DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transferTop, transferBottom;
+    private final Servo wobbleGrab, wobbleArm;
+    private final CRServo wobbleLift;
+    private final List<DcMotorEx> motors;
 
-    private VoltageSensor batteryVoltageSensor;
+    private final VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
 
@@ -128,6 +130,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class, "IntakeRoller");
         transferTop = hardwareMap.get(DcMotorEx.class, "TopRoller");
         transferBottom = hardwareMap.get(DcMotorEx.class, "BottomRoller");
+
+        // Wobble grabber motors
+        wobbleGrab = hardwareMap.get(Servo.class, "WobbleGrab");
+        wobbleArm = hardwareMap.get(Servo.class, "WobbleArm");
+        wobbleLift = hardwareMap.get(CRServo.class, "WobbleLift");
+
+        wobbleGrab.scaleRange(130,270);
+        wobbleArm.scaleRange(135,225);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -381,6 +391,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         intake.setPower(ir);
         transferBottom.setPower(tb);
         transferTop.setPower(tt);
+    }
+    public void setWobblePosPow(double grab, double arm, double lift){
+        wobbleGrab.setPosition(grab);
+        wobbleArm.setPosition(arm);
+        wobbleLift.setPower(lift);
     }
 
     @Override

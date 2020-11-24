@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2020 OpenFTC Team
  *
@@ -56,6 +55,8 @@ public class AutoWithVision extends LinearOpMode
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
+
+        drive.setWobblePosPow(0,0,0);
 
         // TODO: add in multiple paths for each of the different camera outputs
         // traj0 and traj1 navigate the robot from the starting position to the goal

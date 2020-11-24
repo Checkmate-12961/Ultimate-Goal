@@ -64,6 +64,8 @@ public class EasyOpenCVExample extends LinearOpMode
             }
         });
 
+
+
         waitForStart();
 
         while (opModeIsActive())
