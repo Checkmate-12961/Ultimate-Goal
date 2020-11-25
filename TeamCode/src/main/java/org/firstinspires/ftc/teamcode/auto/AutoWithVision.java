@@ -54,10 +54,13 @@ public class AutoWithVision extends LinearOpMode
     {
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
 
         // TODO: add in multiple paths for each of the different camera outputs
+        int ringpos = pipeline.getAnalysis();
+        telemetry.addData("RingPosGuess",ringpos);
+        waitForStart();
         // traj0 and traj1 navigate the robot from the starting position to the goal
         Trajectory traj0 = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-30,-24),0)
@@ -73,6 +76,32 @@ public class AutoWithVision extends LinearOpMode
         //traj3 navigates the robot to the middle line
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .splineTo(new Vector2d(10,-20),Math.toRadians(174))
+                .build();
+        Trajectory misscircle = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-36, -60), Math.toRadians(180))
+                .build();
+
+        Trajectory droptraj;
+        if(ringpos <= 135){
+            droptraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-12,-60), Math.toRadians(0))
+                    .build();
+        }
+        else if(ringpos <=150){
+            droptraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(36,-36), Math.toRadians(180))
+                    .build();
+        }
+        else{
+            droptraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(60,-60), Math.toRadians(0))
+                    .build();
+        }
+        Trajectory togoal = drive.trajectoryBuilder(droptraj.end())
+                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
+                .build();
+        Trajectory toline = drive.trajectoryBuilder(togoal.end())
+                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
                 .build();
 
         // Camera stuff
@@ -91,16 +120,13 @@ public class AutoWithVision extends LinearOpMode
             }
         });
 
-        int RingPosGuess = pipeline.getAnalysis();
-        telemetry.addData("RingPosGuess",RingPosGuess);
-        waitForStart();
+
 
         if(isStopRequested()) return;
-        /*
-         *
-         *  Do all of the fancy splining stuff here
-         *
-         */
+        drive.followTrajectory(misscircle);
+        drive.followTrajectory(droptraj);
+        drive.followTrajectory(togoal);
+
     }
 
     public static class RingDeterminationPipeline extends OpenCvPipeline
@@ -146,7 +172,7 @@ public class AutoWithVision extends LinearOpMode
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingPosition position = RingPosition.FOUR;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
