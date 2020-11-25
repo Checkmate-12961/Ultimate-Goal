@@ -21,13 +21,19 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -41,70 +47,37 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp
-public class AutoWithVision extends LinearOpMode
-{
+@Autonomous
+public class AutoWithVision extends LinearOpMode {
+    private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
 
+    Trajectory missCircle, dropTraj, toGoal, toLine;
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode()
     {
+        telemetry.setAutoClear(false);
+        Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
+        telemetry.update();
+
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-70.5, -20.25, Math.toRadians(180));
+        Pose2d startPose = PoseStorage.currentPose;
         drive.setPoseEstimate(startPose);
 
+        Telemetry.Item xItem = telemetry.addData("x",drive.getPoseEstimate().getX());
+        Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
+        Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
+
+        initItem.setValue("Resetting servos");
+        telemetry.update();
         drive.setWobblePosPow(0,0,0);
 
-        // TODO: add in multiple paths for each of the different camera outputs
-        int ringpos = pipeline.getAnalysis();
-        telemetry.addData("RingPosGuess",ringpos);
-        waitForStart();
-        // traj0 and traj1 navigate the robot from the starting position to the goal
-        Trajectory traj0 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-30,-24),0)
-                .splineTo(new Vector2d(45,-36), Math.toRadians(180))
-                .build();
-        Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
-                .build();
-        //traj2 pushes the robot slightly forward so the rings will be closer to the goal
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .lineToSplineHeading(new Pose2d(68, -40 , Math.toRadians(174)))
-                .build();
-        //traj3 navigates the robot to the middle line
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineTo(new Vector2d(10,-20),Math.toRadians(174))
-                .build();
-        Trajectory misscircle = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-36, -60), Math.toRadians(180))
-                .build();
-
-        Trajectory droptraj;
-        if(ringpos <= 135){
-            droptraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(-12,-60), Math.toRadians(0))
-                    .build();
-        }
-        else if(ringpos <=150){
-            droptraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(36,-36), Math.toRadians(180))
-                    .build();
-        }
-        else{
-            droptraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(60,-60), Math.toRadians(0))
-                    .build();
-        }
-        Trajectory togoal = drive.trajectoryBuilder(droptraj.end())
-                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
-                .build();
-        Trajectory toline = drive.trajectoryBuilder(togoal.end())
-                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
-                .build();
-
+        initItem.setValue("Starting camera feed");
+        telemetry.update();
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
@@ -121,13 +94,98 @@ public class AutoWithVision extends LinearOpMode
             }
         });
 
+        initItem.setValue("Checking ring position");
+        telemetry.update();
 
+        // DONE: add in multiple paths for each of the different camera outputs
+        int ringPos = pipeline.getAnalysis();
+        initItem.setValue("Building trajectories");
+        telemetry.addData("RingPosGuess",ringPos);
+
+        int onTrajBuild = 0;
+        Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
+        telemetry.update();
+
+
+
+        missCircle = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-36, -60), Math.toRadians(180))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        TrajectoryBuilder tempDropTraj;
+
+        if(ringPos <= 135){
+            tempDropTraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-12,-60), Math.toRadians(0));
+        }
+        else if(ringPos <=150){
+            tempDropTraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(36,-36), Math.toRadians(180));
+        }
+        else{
+            tempDropTraj = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(60,-60), Math.toRadians(0));
+        }
+
+        dropTraj = tempDropTraj
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        toGoal = drive.trajectoryBuilder(dropTraj.end())
+                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        toLine = drive.trajectoryBuilder(toGoal.end())
+                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
+                .build();
+
+        nextTelemetry(onTrajBuild,trajBuildItem);
+
+        // add more trajectories here if needed
+
+        telemetry.removeItem(trajBuildItem);
+        initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
+        telemetry.update();
+
+        waitForStart();
 
         if(isStopRequested()) return;
-        drive.followTrajectory(misscircle);
-        drive.followTrajectory(droptraj);
-        drive.followTrajectory(togoal);
+        telemetry.removeItem(initItem);
+        double initTime = runtime.milliseconds();
 
+        drive.followTrajectoryAsync(missCircle);
+
+        Telemetry.Item runtimeItem = telemetry.addData(
+                "Runtime",
+                String.format(
+                        "%fms",
+                        runtime.milliseconds()-initTime
+                ));
+        telemetry.update();
+
+        while (opModeIsActive() && !isStopRequested()) {
+            drive.update();
+            runtimeItem.setValue(
+                    String.format(
+                            "%fms",
+                            runtime.milliseconds()-initTime
+                    ));
+            Pose2d tempPose = drive.getPoseEstimate();
+            xItem.setValue(tempPose.getX());
+            yItem.setValue(tempPose.getY());
+            headingItem.setValue(tempPose.getHeading());
+            telemetry.update();
+        }
+
+        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
     public static class RingDeterminationPipeline extends OpenCvPipeline
@@ -229,5 +287,11 @@ public class AutoWithVision extends LinearOpMode
         {
             return avg1;
         }
+    }
+    private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){
+        onVal++;
+        telemetryItem.setValue(onVal);
+        telemetry.update();
+        return onVal;
     }
 }
