@@ -31,6 +31,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -136,8 +137,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         wobbleArm = hardwareMap.get(Servo.class, "WobbleArm");
         wobbleLift = hardwareMap.get(CRServo.class, "WobbleLift");
 
-        wobbleGrab.scaleRange(130,270);
-        wobbleArm.scaleRange(135,225);
+        wobbleGrab.scaleRange(.5,.8333);
+        wobbleArm.scaleRange(.5,.8333);
+        setWobblePosPow(0,0,0);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -392,12 +394,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         transferBottom.setPower(tb);
         transferTop.setPower(tt);
     }
-    public void setWobblePosPow(double grab, double arm, double lift){
-        wobbleGrab.setPosition(grab);
-        wobbleArm.setPosition(arm);
+    public void setWobblePosPow(int grab, int arm, double lift){
+        if (grab != 0) {
+            wobbleGrab.setPosition(Range.clip(grab, 0,1));
+        }
+        if (arm != 0) {
+            wobbleArm.setPosition(Range.clip(arm, 0,1));
+        }
         wobbleLift.setPower(lift);
     }
-
     @Override
     public double getRawExternalHeading() {
         return 0;
