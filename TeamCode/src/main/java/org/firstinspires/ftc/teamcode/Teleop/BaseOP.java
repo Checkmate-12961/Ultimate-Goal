@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         // Initialize SampleMecanumDrive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -33,7 +33,7 @@ public class BaseOP extends LinearOpMode {
 
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
-            controlRobo(drive, 0,false);
+            controlRobo(drive, 0,false, runtime);
         }
         PoseStorage.currentPose = drive.getPoseEstimate();
     }

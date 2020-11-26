@@ -35,7 +35,7 @@ public class RelativeOP extends BaseOP {
 
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
-            controlRoboRelative(drive, 0);
+            controlRoboRelative(drive, 0,runtime);
         }
         PoseStorage.currentPose = drive.getPoseEstimate();
     }

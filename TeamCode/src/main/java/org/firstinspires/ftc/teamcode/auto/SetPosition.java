@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 public class SetPosition extends LinearOpMode {
     Pose2d pose;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         waitForStart();
         telemetry.addData("Start","a: BL, b: BR, x: RL, y: RR");
         telemetry.update();
