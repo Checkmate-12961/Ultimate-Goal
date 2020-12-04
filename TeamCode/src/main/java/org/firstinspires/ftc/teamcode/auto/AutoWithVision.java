@@ -104,7 +104,7 @@ public class AutoWithVision extends LinearOpMode {
 
 
         missCircle = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-36, -60), Math.toRadians(180))
+                .splineTo(new Vector2d(-45, -36), Math.toRadians(180))
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
                 .build();
 
