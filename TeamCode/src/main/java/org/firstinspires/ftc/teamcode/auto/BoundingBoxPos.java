@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class BoundingBoxPos {
     // Simple class to allow changing the camera bounding box from the dash
-    public static int TopLeftX = 220;
-    public static int TopLeftY = 152;
-    public static int Width = 70;
-    public static int Height = 25;
+    public static int TopLeftX = 280;
+    public static int TopLeftY = 130;
+    public static int Width = 35;
+    public static int Height = 45;
 }
