@@ -104,7 +104,7 @@ public class LinePark extends LinearOpMode {
 
         //toLine moves the robot straight forward to the line
         toLine = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(12, 12), Math.toRadians(180))
+                .splineTo(new Vector2d(12, -20.25), Math.toRadians(0))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
@@ -124,6 +124,7 @@ public class LinePark extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
+        drive.followTrajectoryAsync(toLine);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",

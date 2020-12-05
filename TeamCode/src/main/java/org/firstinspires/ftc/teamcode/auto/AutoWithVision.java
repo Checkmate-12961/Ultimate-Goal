@@ -52,7 +52,7 @@ public class AutoWithVision extends LinearOpMode {
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
 
-    Trajectory clearence, dropTraj, toGoal, toLine;
+    Trajectory clearance, flip, dropTraj, toGoal, toLine;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -102,43 +102,52 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.update();
 
 
-        //missCircle is there so that the robot won't spline into the circle stack when it's depositing the wobble goal
-        clearence = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-45, -36), Math.toRadians(180))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
+        //clearance moves the robot forward almost to the center line, so that it will miss the circle stack and be able to turn without hitting walls.
+        clearance = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(0, -20), Math.toRadians(0))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(flip))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
-        TrajectoryBuilder tempDropTraj;
 
-        if(ringPos <= 135){
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(-12,-60), Math.toRadians(0));
-        }
-        else if(ringPos <=150){
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(36,-36), Math.toRadians(180));
-        }
-        else{
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(60,-60), Math.toRadians(0));
-        }
-
-        dropTraj = tempDropTraj
+        //flip flips the robot 180 degrees, lest it hit the wall when it moves to the goal
+        flip = drive.trajectoryBuilder(clearance.end())
+                .splineTo(new Vector2d(0,-20), Math.toRadians((180)))
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
-        toGoal = drive.trajectoryBuilder(dropTraj.end())
-                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
+        //toGoal moves the robot before the goal, so that it may deposit circles into it.
+        toGoal = drive.trajectoryBuilder(flip.end())
+                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(180)))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        TrajectoryBuilder tempDropTraj = drive.trajectoryBuilder(toGoal.end());
+
+        //if/elif/else construction chooses one option for dropTraj depending on the circle stack height.
+        //dropTraj positions the bot to drop a wobble goal into the drop-zone
+        if(ringPos <= 135){
+            tempDropTraj = tempDropTraj.splineTo(new Vector2d(12,-36), Math.toRadians(0));
+        }
+        else if(ringPos <=150){
+            tempDropTraj = tempDropTraj.splineTo(new Vector2d(36,-12), Math.toRadians(0));
+        }
+        else{
+            tempDropTraj = tempDropTraj.splineTo(new Vector2d(60,-36), Math.toRadians(0));
+        }
+
+        dropTraj = tempDropTraj
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
-        toLine = drive.trajectoryBuilder(toGoal.end())
+        toLine = drive.trajectoryBuilder(dropTraj.end())
                 .splineTo(new Vector2d(36, -50), Math.toRadians(180))
                 .build();
 
@@ -156,7 +165,7 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(clearence);
+        drive.followTrajectoryAsync(clearance);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",

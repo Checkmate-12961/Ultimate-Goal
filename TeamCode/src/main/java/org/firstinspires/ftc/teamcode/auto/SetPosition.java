@@ -25,13 +25,13 @@ public class SetPosition extends LinearOpMode {
             y = gamepad1.y;
         }
         if (a){
-            pose = new Pose2d(-70.5, 44.25 , Math.toRadians(180));
+            pose = new Pose2d(-70.5, 44.25 , Math.toRadians(0));
         } else if (b){
-            pose = new Pose2d(-70.5, 20.25 , Math.toRadians(180) );
+            pose = new Pose2d(-70.5, 20.25 , Math.toRadians(0) );
         } else if (x){
-            pose = new Pose2d(-70.5, -20.25 , Math.toRadians(180));
+            pose = new Pose2d(-70.5, -20.25 , Math.toRadians(0));
         } else {
-            pose = new Pose2d(-70.5, -44.25 , Math.toRadians(180) );
+            pose = new Pose2d(-70.5, -44.25 , Math.toRadians(0) );
         }
         PoseStorage.currentPose = pose;
     }
