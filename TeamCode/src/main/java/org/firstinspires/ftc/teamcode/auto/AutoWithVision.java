@@ -56,7 +56,7 @@ public class AutoWithVision extends LinearOpMode {
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void runOpMode()
+    public void runOpMode() throws InterruptedException
     {
         telemetry.setAutoClear(false);
         Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
@@ -182,7 +182,6 @@ public class AutoWithVision extends LinearOpMode {
 
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
-
     public static class RingDeterminationPipeline extends OpenCvPipeline
     {
         /*
@@ -202,10 +201,10 @@ public class AutoWithVision extends LinearOpMode {
 
         //The core values which define the location and size of the sample regions
 
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(220,152);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(BoundingBoxPos.TopLeftX, BoundingBoxPos.TopLeftY);
 
-        static final int REGION_WIDTH = 70;
-        static final int REGION_HEIGHT = 25;
+        static final int REGION_WIDTH = BoundingBoxPos.Width;
+        static final int REGION_HEIGHT = BoundingBoxPos.Height;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;

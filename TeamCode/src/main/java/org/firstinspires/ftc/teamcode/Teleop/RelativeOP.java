@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class RelativeOP extends BaseOP {
     private final ElapsedTime runtime = new ElapsedTime();
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 

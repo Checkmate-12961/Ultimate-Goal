@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -47,12 +48,15 @@ public class BaseOP extends LinearOpMode {
             offset = 0;
         }
 
+        double xin = gamepad1.left_stick_x * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
+        double yin = gamepad1.left_stick_y * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
+
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
         Vector2d input = new Vector2d(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x
-        ).rotated(offset);
+                -yin,
+                -xin
+        ).rotated(offset);  
 
         // Pass in the rotated input + right stick value for rotation
         // Rotation is not part of the rotated input thus must be passed in separately
@@ -60,7 +64,7 @@ public class BaseOP extends LinearOpMode {
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        -gamepad1.right_stick_x
+                        -gamepad1.right_stick_x * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1)
                 )
         );
 
@@ -111,7 +115,7 @@ public class BaseOP extends LinearOpMode {
         telemetry.addData("x", poseEstimate.getX());
         telemetry.addData("y", poseEstimate.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
-        telemetry.addData("runtime",String.format("%fms",runtime.milliseconds()));
+        telemetry.addData("runtime",String.format("%fs",runtime.seconds()));
         telemetry.update();
     }
     public void controlRobo(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
