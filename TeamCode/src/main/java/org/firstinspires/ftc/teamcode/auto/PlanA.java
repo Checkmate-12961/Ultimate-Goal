@@ -24,9 +24,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,12 +45,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-public class AutoWithVision extends LinearOpMode {
+public class PlanA extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
 
-    Trajectory clearance, flip, dropTraj, toGoal, toLine;
+    Trajectory clearance,flip,toGoal,toLine;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -104,7 +102,7 @@ public class AutoWithVision extends LinearOpMode {
 
         //clearance moves the robot forward almost to the center line, so that it will miss the circle stack and be able to turn without hitting walls.
         clearance = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(0, -20), Math.toRadians(0))
+                .lineToSplineHeading(new Pose2d(0, -20, Math.toRadians(0)))
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(flip))
                 .build();
 
@@ -113,7 +111,7 @@ public class AutoWithVision extends LinearOpMode {
 
         //flip flips the robot 180 degrees, lest it hit the wall when it moves to the goal
         flip = drive.trajectoryBuilder(clearance.end())
-                .splineTo(new Vector2d(30,-20), Math.toRadians((180)))
+                .lineToSplineHeading(new Pose2d(30,-20, Math.toRadians((180))))
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
                 .build();
 
@@ -121,34 +119,19 @@ public class AutoWithVision extends LinearOpMode {
 
         //toGoal moves the robot before the goal, so that it may deposit circles into it.
         toGoal = drive.trajectoryBuilder(flip.end())
-                .splineTo(new Vector2d(64, -36), Math.toRadians(180))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        TrajectoryBuilder tempDropTraj = drive.trajectoryBuilder(toGoal.end());
-
-        //if/elif/else construction chooses one option for dropTraj depending on the circle stack height.
-        //dropTraj positions the bot to drop a wobble goal into the drop-zone
-        if(ringPos <= 135){
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(12,-36), Math.toRadians(0));
-        }
-        else if(ringPos <=150){
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(36,-12), Math.toRadians(0));
-        }
-        else{
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(60,-36), Math.toRadians(0));
-        }
-
-        dropTraj = tempDropTraj
+                .lineToSplineHeading(new Pose2d(84, -36, Math.toRadians(180)))
+                .addDisplacementMarker(() -> {
+                    drive.setIntakePowers(0,-1,-1);
+                    sleep(5000);
+                    drive.setIntakePowers(0,0,0);
+                })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
-        toLine = drive.trajectoryBuilder(dropTraj.end())
-                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
+        toLine = drive.trajectoryBuilder(toGoal.end())
+                .lineToSplineHeading(new Pose2d(24, -50, Math.toRadians(180)))
                 .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);

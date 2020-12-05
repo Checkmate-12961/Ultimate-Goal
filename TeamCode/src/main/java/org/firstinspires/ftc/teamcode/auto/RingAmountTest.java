@@ -23,7 +23,6 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -46,8 +45,7 @@ public class RingAmountTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
-
-    Trajectory missCircle, dropTraj, toGoal, toLine;
+    private static RingDeterminationPipeline.RingPosition position = RingDeterminationPipeline.RingPosition.FOUR;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -75,17 +73,10 @@ public class RingAmountTest extends LinearOpMode {
         telemetry.update();
 
         int ringPos = pipeline.getAnalysis();
-        telemetry.addData("RingPosGuess",ringPos);
+        Telemetry.Item ringPosItem = telemetry.addData("RingPosGuess",ringPos);
+        Telemetry.Item ringAmountItem = telemetry.addData("RingAmountGuess",position);
 
-        if(ringPos <= 135){
 
-        }
-        else if(ringPos <=150){
-
-        }
-        else{
-
-        }
 
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
@@ -102,7 +93,6 @@ public class RingAmountTest extends LinearOpMode {
                         "%fms",
                         runtime.milliseconds()-initTime
                 ));
-        telemetry.update();
 
         while (opModeIsActive() && !isStopRequested()) {
             runtimeItem.setValue(
@@ -110,8 +100,10 @@ public class RingAmountTest extends LinearOpMode {
                             "%fms",
                             runtime.milliseconds()-initTime
                     ));
-
+            ringPos = pipeline.getAnalysis();
+            ringPosItem.setValue(ringPos);
             telemetry.update();
+
         }
     }
     public static class RingDeterminationPipeline extends OpenCvPipeline
@@ -138,8 +130,8 @@ public class RingAmountTest extends LinearOpMode {
         int REGION_WIDTH = BoundingBoxPos.Width;
         int REGION_HEIGHT = BoundingBoxPos.Height;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = BoundingBoxPos.FourRingThresh;
+        final int ONE_RING_THRESHOLD = BoundingBoxPos.OneRingThresh;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -157,7 +149,6 @@ public class RingAmountTest extends LinearOpMode {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -213,11 +204,5 @@ public class RingAmountTest extends LinearOpMode {
         {
             return avg1;
         }
-    }
-    private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){
-        onVal++;
-        telemetryItem.setValue(onVal);
-        telemetry.update();
-        return onVal;
     }
 }
