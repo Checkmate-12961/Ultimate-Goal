@@ -47,12 +47,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-public class AutoWithVision extends LinearOpMode {
+public class LinePark extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
 
-    Trajectory clearence, dropTraj, toGoal, toLine;
+    Trajectory toLine;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -102,45 +102,13 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.update();
 
 
-        //missCircle is there so that the robot won't spline into the circle stack when it's depositing the wobble goal
-        clearence = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-45, -36), Math.toRadians(180))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
+        //toLine moves the robot straight forward to the line
+        toLine = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(12, 12), Math.toRadians(180))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
-        TrajectoryBuilder tempDropTraj;
-
-        if(ringPos <= 135){
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(-12,-60), Math.toRadians(0));
-        }
-        else if(ringPos <=150){
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(36,-36), Math.toRadians(180));
-        }
-        else{
-            tempDropTraj = drive.trajectoryBuilder(startPose)
-                    .splineTo(new Vector2d(60,-60), Math.toRadians(0));
-        }
-
-        dropTraj = tempDropTraj
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        toGoal = drive.trajectoryBuilder(dropTraj.end())
-                .lineToSplineHeading(new Pose2d(64, -36, Math.toRadians(176)))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        toLine = drive.trajectoryBuilder(toGoal.end())
-                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
-                .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);
 
@@ -156,7 +124,6 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(clearence);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
