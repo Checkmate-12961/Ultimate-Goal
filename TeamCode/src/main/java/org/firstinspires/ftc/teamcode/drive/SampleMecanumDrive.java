@@ -137,7 +137,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         wobbleArm = hardwareMap.get(Servo.class, "WobbleArm");
         wobbleLift = hardwareMap.get(CRServo.class, "WobbleLift");
 
-        wobbleGrab.scaleRange(.5,.8333);
+        wobbleGrab.scaleRange( .3333 , 1 );
         wobbleArm.scaleRange(.5,.8333);
         setWobblePosPow(0,0,0);
 

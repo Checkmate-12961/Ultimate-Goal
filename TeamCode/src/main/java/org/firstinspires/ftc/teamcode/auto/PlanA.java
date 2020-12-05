@@ -60,6 +60,8 @@ public class PlanA extends LinearOpMode {
         Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
         telemetry.update();
 
+        PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0));
+
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = PoseStorage.currentPose;
@@ -112,6 +114,14 @@ public class PlanA extends LinearOpMode {
         //flip flips the robot 180 degrees, lest it hit the wall when it moves to the goal
         flip = drive.trajectoryBuilder(clearance.end())
                 .lineToSplineHeading(new Pose2d(30,-20, Math.toRadians((180))))
+                .addDisplacementMarker(() -> {
+                    drive.setWobblePosPow(0, 1, 0);
+                    sleep(1000);
+                    drive.setWobblePosPow(1,0,0);
+                    sleep(1000);
+                    drive.setWobblePosPow(0,-1,0);
+                    sleep(1000);
+                })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
                 .build();
 
@@ -119,7 +129,7 @@ public class PlanA extends LinearOpMode {
 
         //toGoal moves the robot before the goal, so that it may deposit circles into it.
         toGoal = drive.trajectoryBuilder(flip.end())
-                .lineToSplineHeading(new Pose2d(84, -36, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(90, -40, Math.toRadians(180)))
                 .addDisplacementMarker(() -> {
                     drive.setIntakePowers(0,-1,-1);
                     sleep(3000);
@@ -148,8 +158,6 @@ public class PlanA extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(clearance);
-
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
                 String.format(
@@ -157,6 +165,15 @@ public class PlanA extends LinearOpMode {
                         runtime.milliseconds()-initTime
                 ));
         telemetry.update();
+
+        drive.setWobblePosPow(0, 1, 0);
+        sleep(1000);
+        drive.setWobblePosPow(-1,0,0);
+        sleep(1000);
+        drive.setWobblePosPow(0,-1,0);
+        sleep(1000);
+
+        drive.followTrajectoryAsync(clearance);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();

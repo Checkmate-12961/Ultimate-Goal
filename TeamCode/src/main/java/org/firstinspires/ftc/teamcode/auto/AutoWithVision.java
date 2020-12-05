@@ -175,6 +175,12 @@ public class AutoWithVision extends LinearOpMode {
                 ));
         telemetry.update();
 
+        drive.setWobblePosPow(0, 1, 0);
+        sleep(1000);
+        drive.setWobblePosPow(-1,0,0);
+        sleep(1000);
+        drive.setWobblePosPow(0,-1,0);
+
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             runtimeItem.setValue(
