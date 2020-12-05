@@ -69,13 +69,13 @@ public class BaseOP extends LinearOpMode {
         );
 
         // Control the intake motors
-        int intakePower = 0;
-        int transferPower = 0;
+        double intakePower = 0;
+        double transferPower = 0;
         if (gamepad2.a) {
-            transferPower += 1;
+            transferPower += .5 + .5 * gamepad2.left_trigger;
         }
         if (gamepad2.b) {
-            transferPower -= 1;
+            transferPower -= .5 + .5 * gamepad2.left_trigger;
         }
         if (gamepad2.y) {
             intakePower += 1;
@@ -83,7 +83,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.x) {
             intakePower -= 1;
         }
-        robot.setIntakePowers(intakePower * -0.5, transferPower * .5, transferPower * .5);
+        robot.setIntakePowers(intakePower * -0.5, transferPower, transferPower);
 
         // Control the wobble bits
         int grab = 0;

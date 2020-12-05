@@ -122,7 +122,7 @@ public class PlanA extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(84, -36, Math.toRadians(180)))
                 .addDisplacementMarker(() -> {
                     drive.setIntakePowers(0,-1,-1);
-                    sleep(5000);
+                    sleep(3000);
                     drive.setIntakePowers(0,0,0);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
