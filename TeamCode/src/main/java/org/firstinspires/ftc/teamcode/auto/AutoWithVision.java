@@ -53,7 +53,6 @@ public class AutoWithVision extends LinearOpMode {
     RingDeterminationPipeline pipeline;
 
     Trajectory clearance, flip, dropTraj, toGoal, toLine;
-
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException
