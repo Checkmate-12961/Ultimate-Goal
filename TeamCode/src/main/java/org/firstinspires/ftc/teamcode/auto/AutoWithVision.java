@@ -164,7 +164,7 @@ public class AutoWithVision extends LinearOpMode {
             telemetry.update();
             toGoalBuilder = drive.trajectoryBuilder(toBox.end())
                     .splineTo(new Vector2d(36,-36),0) // back up
-                    .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(180))); // spin around
+                    .lineToSplineHeading(new Pose2d(48, -36, Math.toRadians(180))); // spin around
         }
 
         // Go to the goal and dump the rings
