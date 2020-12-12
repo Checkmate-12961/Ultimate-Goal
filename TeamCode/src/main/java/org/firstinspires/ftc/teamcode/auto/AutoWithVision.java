@@ -52,7 +52,9 @@ public class AutoWithVision extends LinearOpMode {
     OpenCvWebcam webCam;
     RingDeterminationPipeline pipeline;
 
-    Trajectory clearance, flip, dropTraj, toGoal, toLine;
+    Trajectory toBox, toGoal, toLine;
+    TrajectoryBuilder toBoxBuilder, toGoalBuilder;
+    RingDeterminationPipeline.RingPosition tempPos;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -61,6 +63,8 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.setAutoClear(false);
         Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
         telemetry.update();
+
+        PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0));
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -92,63 +96,73 @@ public class AutoWithVision extends LinearOpMode {
         initItem.setValue("Checking ring position");
         telemetry.update();
 
-        // DONE: add in multiple paths for each of the different camera outputs
-        int ringPos = pipeline.getAnalysis();
         initItem.setValue("Building trajectories");
-        telemetry.addData("RingPosGuess",ringPos);
+        telemetry.addData("RingPosGuess",pipeline.position);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
+        tempPos = pipeline.position;
 
-        //clearance moves the robot forward almost to the center line, so that it will miss the circle stack and be able to turn without hitting walls.
-        clearance = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(0, -20), Math.toRadians(0))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(flip))
-                .build();
+        // TODO: Fill in these trajectories
 
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+        // First trajectory to path the bot to the correct drop zone
+        toBoxBuilder = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-12,-12),0); // Avoids the ring
+        toGoalBuilder = drive.trajectoryBuilder(toBox.end());
 
+        if (tempPos == RingDeterminationPipeline.RingPosition.NONE){
+            // If there are no rings on the field
+            toBox = toBoxBuilder
+                    .splineTo(new Vector2d(12,-42), 0) // go to the box
+                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
+                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal)) // run the next part
+                    .build();
 
-        //flip flips the robot 180 degrees, lest it hit the wall when it moves to the goal
-        flip = drive.trajectoryBuilder(clearance.end())
-                .splineTo(new Vector2d(30,-20), Math.toRadians((180)))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        //toGoal moves the robot before the goal, so that it may deposit circles into it.
-        toGoal = drive.trajectoryBuilder(flip.end())
-                .splineTo(new Vector2d(64, -36), Math.toRadians(180))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(dropTraj))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        TrajectoryBuilder tempDropTraj = drive.trajectoryBuilder(toGoal.end());
-
-        //if/elif/else construction chooses one option for dropTraj depending on the circle stack height.
-        //dropTraj positions the bot to drop a wobble goal into the drop-zone
-        if(ringPos <= 135){
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(12,-36), Math.toRadians(0));
-        }
-        else if(ringPos <=150){
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(36,-12), Math.toRadians(0));
-        }
-        else{
-            tempDropTraj = tempDropTraj.splineTo(new Vector2d(60,-36), Math.toRadians(0));
+            // the next part
+            toGoalBuilder = toGoalBuilder
+                    .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(180))); // spin around
         }
 
-        dropTraj = tempDropTraj
+        else if (tempPos == RingDeterminationPipeline.RingPosition.ONE){
+            // Otherwise, if there is one ring
+            toBox = toBoxBuilder
+                    .splineTo(new Vector2d(36,-18), 0) // go to the box
+                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
+                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal)) // run the next part
+                    .build();
+
+            // the next part
+            toGoalBuilder = toGoalBuilder
+                    .lineToSplineHeading(new Pose2d(48, -24, Math.toRadians(180))); // spin around
+        }
+
+        else {
+            // Otherwise (there are four rings)
+            toBox = toBoxBuilder
+                    .splineTo(new Vector2d(60,-42), 0) // go to the box
+                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
+                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal)) // run the next part
+                    .build();
+
+            // the next part
+            toGoalBuilder = toGoalBuilder
+                    .splineTo(new Vector2d(36,-36),0) // back up
+                    .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(180))); // spin around
+        }
+
+        // Go to the goal and dump the rings
+        toGoal = toGoalBuilder
+                .splineTo(new Vector2d(64,-36),Math.toRadians(180)) // go to the goal
+                .addDisplacementMarker(() -> dumpRings(drive)) // dump the rings
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
                 .build();
 
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-
-        toLine = drive.trajectoryBuilder(dropTraj.end())
-                .splineTo(new Vector2d(36, -50), Math.toRadians(180))
+        // Go to the line
+        toLine = drive.trajectoryBuilder(toGoal.end())
+                .splineTo(new Vector2d(60,-12),Math.toRadians(180)) // avoid box B
+                .lineToSplineHeading(new Pose2d(0,-12,0)) // move to the line and turn around
                 .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);
@@ -165,8 +179,6 @@ public class AutoWithVision extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(clearance);
-
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
                 String.format(
@@ -180,6 +192,9 @@ public class AutoWithVision extends LinearOpMode {
         drive.setWobblePosPow(-1,0,0);
         sleep(1000);
         drive.setWobblePosPow(0,-1,0);
+        sleep(1000);
+
+        drive.followTrajectoryAsync(toBox);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -221,8 +236,8 @@ public class AutoWithVision extends LinearOpMode {
         int REGION_WIDTH = BoundingBoxPos.Width;
         int REGION_HEIGHT = BoundingBoxPos.Height;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = BoundingBoxPos.FourRingThresh;
+        final int ONE_RING_THRESHOLD = BoundingBoxPos.OneRingThresh;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -297,10 +312,23 @@ public class AutoWithVision extends LinearOpMode {
             return avg1;
         }
     }
-    private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){
+    private int nextTelemetry(int onVal,Telemetry.Item item){
         onVal++;
-        telemetryItem.setValue(onVal);
+        item.setValue(onVal);
         telemetry.update();
         return onVal;
+    }
+    private void dropGoal(SampleMecanumDrive dt){
+        dt.setWobblePosPow(0, 1, 0);
+        sleep(500);
+        dt.setWobblePosPow(-1,0,0);
+        sleep(500);
+        dt.setWobblePosPow(0,-1,0);
+        sleep(500);
+    }
+    private void dumpRings(SampleMecanumDrive dt){
+        dt.setIntakePowers(0, -1, -1);
+        sleep(2000);
+        dt.setIntakePowers(0,0,0);
     }
 }
