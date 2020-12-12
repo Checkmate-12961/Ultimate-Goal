@@ -104,7 +104,6 @@ public class AutoWithVision extends LinearOpMode {
 
         tempPos = pipeline.position;
 
-        // TODO: Fill in these trajectories
 
         trajBuildItem.setValue("toBoxBuilder");
         telemetry.update();
