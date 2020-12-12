@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * <p>
  * See lines 42-57.
  */
+
+@Disabled
 @TeleOp(group = "TeleOP")
 public class RelativeOP extends BaseOP {
     private final ElapsedTime runtime = new ElapsedTime();
