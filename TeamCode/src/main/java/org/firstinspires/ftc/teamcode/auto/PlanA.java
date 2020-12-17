@@ -32,13 +32,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
 public class PlanA extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
 
     Trajectory clearance,flip,toGoal,toLine;
 
@@ -50,7 +47,7 @@ public class PlanA extends LinearOpMode {
         Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
         telemetry.update();
 
-        PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0));
+        PoseStorage.currentPose = new Pose2d(-62, -21 , Math.toRadians(0));
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -64,15 +61,6 @@ public class PlanA extends LinearOpMode {
         initItem.setValue("Resetting servos");
         telemetry.update();
         drive.setWobblePosPow(0,0,0);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
-        });
-
-        initItem.setValue("Checking ring position");
-        telemetry.update();
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
@@ -106,7 +94,7 @@ public class PlanA extends LinearOpMode {
 
         //toGoal moves the robot before the goal, so that it may deposit circles into it.
         toGoal = drive.trajectoryBuilder(flip.end())
-                .lineToSplineHeading(new Pose2d(90, -40, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(63, -36, Math.toRadians(180)))
                 .addDisplacementMarker(() -> {
                     drive.setIntakePowers(0,-1,-1);
                     sleep(3000);
@@ -118,7 +106,7 @@ public class PlanA extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         toLine = drive.trajectoryBuilder(toGoal.end())
-                .lineToSplineHeading(new Pose2d(24, -50, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(12, -40, Math.toRadians(180)))
                 .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);

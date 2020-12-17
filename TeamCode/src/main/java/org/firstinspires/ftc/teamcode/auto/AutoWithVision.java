@@ -111,14 +111,14 @@ public class AutoWithVision extends LinearOpMode {
         toBoxBuilder = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-12,-12),0); // Avoids the ring
 
-        if (tempPos == RingDeterminationPipeline.RingPosition.NONE){
+        if (/*tempPos == RingDeterminationPipeline.RingPosition.NONE*/ true){
             // If there are no rings on the field
             trajBuildItem.setValue("toBox A");
             telemetry.update();
             toBox = toBoxBuilder
                     .splineTo(new Vector2d(12,-42), 0) // go to the box
                     .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
-                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
+                    //.addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
                     .build(); // run the next part
 
 
