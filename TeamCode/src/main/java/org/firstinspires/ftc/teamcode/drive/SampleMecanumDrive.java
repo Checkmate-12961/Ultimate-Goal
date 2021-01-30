@@ -362,7 +362,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
+            double denominator = VX_WEIGHT * Math.abs(drivePower.getX())
                     + VY_WEIGHT * Math.abs(drivePower.getY())
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
@@ -370,7 +370,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                     VX_WEIGHT * drivePower.getX(),
                     VY_WEIGHT * drivePower.getY(),
                     OMEGA_WEIGHT * drivePower.getHeading()
-            ).div(denom);
+            ).div(denominator);
         }
 
         setDrivePower(vel);
@@ -415,7 +415,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: Mess with these numbers until they work properly
         //  these are the positions that the pivot arm will travel to
         if (arm == 1) {
-            wobblePivot.setTargetPosition(80);
+            wobblePivot.setTargetPosition(2);
         } else {
             wobblePivot.setTargetPosition(0);
         }
