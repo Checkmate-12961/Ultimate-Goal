@@ -146,7 +146,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
         wobbleGrab.scaleRange( .3333 , 1 );
-        shooterTrigger.scaleRange(0,1);
+        shooterTrigger.scaleRange(0,.18);
 
         setWobblePosPow(0,0);
 

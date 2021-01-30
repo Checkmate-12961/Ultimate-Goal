@@ -105,12 +105,12 @@ public class BaseOP extends LinearOpMode {
 
         // rev flywheel
         if (gamepad2.left_trigger > .9){
-            robot.revFlywheel(1);
+            robot.revFlywheel(-1);
         } else if (gamepad2.left_bumper) {
             robot.revFlywheel(0);
         }
 
-        // gun
+        // gun hehe nice
         // TODO: adjust the trigger sensitivity by changing the decimal number
         if (gamepad2.right_trigger > .9){
             robot.pressTrigger(true);
