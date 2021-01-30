@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @TeleOp(group = "TeleOP")
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
+    private Trajectory shootPos;
+    private Pose2d startPose;
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
@@ -25,9 +28,21 @@ public class BaseOP extends LinearOpMode {
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
+        // TODO: REMOVE THIS AND WRITE A PROPER ZERO FUNCTION!!!
+        PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0) );
+        // DON'T BE LAZY, RILEY!!!
+
+
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        startPose = PoseStorage.currentPose;
+        drive.setPoseEstimate(startPose);
+
+        shootPos = drive.trajectoryBuilder(startPose)
+                // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
+                .lineToSplineHeading(new Pose2d(-0.25, -37.5, Math.toRadians(0)))
+                .build();
 
         waitForStart();
 
@@ -41,11 +56,8 @@ public class BaseOP extends LinearOpMode {
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
         double offset;
-        if (relative) {
-            offset = -rotationalOffset - poseEstimate.getHeading();
-        } else {
-            offset = 0;
-        }
+        if (relative) offset = -rotationalOffset - poseEstimate.getHeading();
+        else offset = 0;
 
         double xin = gamepad1.left_stick_x * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
         double yin = gamepad1.left_stick_y * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
@@ -70,53 +82,35 @@ public class BaseOP extends LinearOpMode {
         // Control the intake motors
         double intakePower = 0;
         double transferPower = 0;
-        if (gamepad2.a) {
-            transferPower += 1;
-        }
-        if (gamepad2.b) {
-            transferPower -= 1;
-        }
-        if (gamepad2.y) {
-            intakePower += 1;
-        }
-        if (gamepad2.x) {
-            intakePower -= 1;
-        }
+        if (gamepad2.a) transferPower += 1;
+        if (gamepad2.b) transferPower -= 1;
+        if (gamepad2.y) intakePower += 1;
+        if (gamepad2.x) intakePower -= 1;
         robot.setIntakePowers(intakePower * -0.5, transferPower);
 
         // Control the wobble bits
         int grab = 0;
-        if (gamepad2.right_bumper) {
-            grab += 1;
-        }
-        if (gamepad2.left_bumper) {
-            grab -= 1;
-        }
+        if (gamepad2.right_bumper) grab += 1;
+        if (gamepad2.left_bumper) grab -= 1;
 
         int arm = 0;
-        if (gamepad2.dpad_down) {
-            arm += 1;
-        }
-        if (gamepad2.dpad_up) {
-            arm -= 1;
-        }
+        if (gamepad2.dpad_down) arm += 1;
+        if (gamepad2.dpad_up) arm -= 1;
 
         robot.setWobblePosPow(grab, arm);
 
         // rev flywheel
-        if (gamepad2.left_trigger > .9){
-            robot.revFlywheel(-1);
-        } else if (gamepad2.left_bumper) {
-            robot.revFlywheel(0);
-        }
+        if (gamepad2.left_trigger > .9) robot.revFlywheel(-1);
+        else if (gamepad2.left_bumper) robot.revFlywheel(0);
+
 
         // gun hehe nice
-        // TODO: adjust the trigger sensitivity by changing the decimal number
-        if (gamepad2.right_trigger > .9){
-            robot.pressTrigger(true);
-        } else {
-            robot.pressTrigger(false);
-        }
+        // _TODO: adjust the trigger sensitivity by changing the decimal number
+        if (gamepad2.right_trigger > .9) robot.pressTrigger(true);
+        else robot.pressTrigger(false);
+
+        // Auto target thingy
+        if (gamepad1.dpad_right) robot.followTrajectory(shootPos);
 
         // Update everything. Odometry. Etc.
         robot.update();
