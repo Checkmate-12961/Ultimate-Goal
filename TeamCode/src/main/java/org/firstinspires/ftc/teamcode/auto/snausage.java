@@ -15,11 +15,11 @@ public class snausage extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         waitForStart();
 
-        drive.setWobblePosPow(0, 1, 0);
+        drive.setWobblePosPow(0, 1);
         sleep(1000);
-        drive.setWobblePosPow(-1,0,0);
+        drive.setWobblePosPow(-1,0);
         sleep(1000);
-        drive.setWobblePosPow(0,-1,0);
+        drive.setWobblePosPow(0,-1);
 
         if(isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {

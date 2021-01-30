@@ -26,7 +26,6 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -73,7 +72,7 @@ public class LinePark extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0,0);
+        drive.setWobblePosPow(0,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();

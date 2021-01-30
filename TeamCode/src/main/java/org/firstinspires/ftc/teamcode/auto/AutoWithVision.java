@@ -77,7 +77,7 @@ public class AutoWithVision extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0,0);
+        drive.setWobblePosPow(0,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();
@@ -203,11 +203,11 @@ public class AutoWithVision extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.setWobblePosPow(0, 1, 0);
+        drive.setWobblePosPow(0, 1);
         sleep(1000);
-        drive.setWobblePosPow(-1,0,0);
+        drive.setWobblePosPow(-1,0);
         sleep(1000);
-        drive.setWobblePosPow(0,-1,0);
+        drive.setWobblePosPow(0,-1);
         sleep(1000);
 
         drive.followTrajectoryAsync(toBox);
@@ -329,16 +329,16 @@ public class AutoWithVision extends LinearOpMode {
         }
     }
     private void dropGoal(SampleMecanumDrive dt){
-        dt.setWobblePosPow(0, 1, 0);
+        dt.setWobblePosPow(0, 1);
         sleep(500);
-        dt.setWobblePosPow(-1,0,0);
+        dt.setWobblePosPow(-1,0);
         sleep(500);
-        dt.setWobblePosPow(0,-1,0);
+        dt.setWobblePosPow(0,-1);
         sleep(500);
     }
     private void dumpRings(SampleMecanumDrive dt){
-        dt.setIntakePowers(0, -1, -1);
+        dt.setIntakePowers(0, -1);
         sleep(2000);
-        dt.setIntakePowers(0,0,0);
+        dt.setIntakePowers(0,0);
     }
 }

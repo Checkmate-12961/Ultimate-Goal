@@ -71,10 +71,10 @@ public class BaseOP extends LinearOpMode {
         double intakePower = 0;
         double transferPower = 0;
         if (gamepad2.a) {
-            transferPower += .5 + .5 * gamepad2.left_trigger;
+            transferPower += 1;
         }
         if (gamepad2.b) {
-            transferPower -= .5 + .5 * gamepad2.left_trigger;
+            transferPower -= 1;
         }
         if (gamepad2.y) {
             intakePower += 1;
@@ -82,7 +82,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.x) {
             intakePower -= 1;
         }
-        robot.setIntakePowers(intakePower * -0.5, transferPower, transferPower);
+        robot.setIntakePowers(intakePower * -0.5, transferPower);
 
         // Control the wobble bits
         int grab = 0;
@@ -101,7 +101,22 @@ public class BaseOP extends LinearOpMode {
             arm -= 1;
         }
 
-        robot.setWobblePosPow(grab, arm, gamepad2.left_stick_y);
+        robot.setWobblePosPow(grab, arm);
+
+        // rev flywheel
+        if (gamepad2.left_trigger > .9){
+            robot.revFlywheel(1);
+        } else if (gamepad2.left_bumper) {
+            robot.revFlywheel(0);
+        }
+
+        // gun
+        // TODO: adjust the trigger sensitivity by changing the decimal number
+        if (gamepad2.right_trigger > .9){
+            robot.pressTrigger(true);
+        } else {
+            robot.pressTrigger(false);
+        }
 
         // Update everything. Odometry. Etc.
         robot.update();

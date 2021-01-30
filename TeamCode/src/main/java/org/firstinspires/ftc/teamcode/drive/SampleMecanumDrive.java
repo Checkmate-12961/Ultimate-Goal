@@ -22,7 +22,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -49,6 +48,15 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+
+// _TODO: add the following:
+// DONE:
+//  motor 0 expansion hub: Flywheel
+//  motor 1 expansion hub : Transfer
+//  motor 3 expansion hub: WobblePivot
+//  servo 1 control hub : ShooterTrigger
+//  servo 2 control hub : gone
+//  servo 3 control hub : no change
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -86,9 +94,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final LinkedList<Pose2d> poseHistory;
 
-    private final DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transferTop, transferBottom;
-    private final Servo wobbleGrab, wobbleArm;
-    private final CRServo wobbleLift;
+    private final DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transfer, wobblePivot, flywheel;
+    private final Servo wobbleGrab, shooterTrigger;
     private final List<DcMotorEx> motors;
 
     private final VoltageSensor batteryVoltageSensor;
@@ -127,19 +134,21 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "RB");
         rightFront = hardwareMap.get(DcMotorEx.class, "RF");
 
-        // Intake motors:
+        // Shooting mechanism motors:
         intake = hardwareMap.get(DcMotorEx.class, "IntakeRoller");
-        transferTop = hardwareMap.get(DcMotorEx.class, "TopRoller");
-        transferBottom = hardwareMap.get(DcMotorEx.class, "BottomRoller");
+        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+        flywheel = hardwareMap.get(DcMotorEx.class, "Flywheel");
 
         // Wobble grabber motors
         wobbleGrab = hardwareMap.get(Servo.class, "WobbleGrab");
-        wobbleArm = hardwareMap.get(Servo.class, "WobbleArm");
-        wobbleLift = hardwareMap.get(CRServo.class, "WobbleLift");
+        shooterTrigger = hardwareMap.get(Servo.class, "ShooterTrigger");
+        wobblePivot = hardwareMap.get(DcMotorEx.class, "WobblePivot");
 
+        // TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
         wobbleGrab.scaleRange( .3333 , 1 );
-        wobbleArm.scaleRange(.5,.8333);
-        setWobblePosPow(0,0,0);
+        shooterTrigger.scaleRange(0,1);
+
+        setWobblePosPow(0,0);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -154,6 +163,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -162,6 +172,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // TODO: reverse the flywheel by uncommenting this line if needed
+        //  flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // use setLocalizer() to change the localization method
 
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
@@ -389,22 +403,37 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront.setPower(v3);
     }
 
-    public void setIntakePowers(double ir, double tb, double tt){
+    public void setIntakePowers(double ir, double t){
         intake.setPower(ir);
-        transferBottom.setPower(tb);
-        transferTop.setPower(tt);
+        transfer.setPower(t);
     }
-    public void setWobblePosPow(int grab, int arm, double lift){
+    public void setWobblePosPow(int grab, int arm){
         if (grab != 0) {
             wobbleGrab.setPosition(Range.clip(grab, 0,1));
         }
-        if (arm != 0) {
-            wobbleArm.setPosition(Range.clip(arm, 0,1));
+
+        // TODO: Mess with these numbers until they work properly
+        //  these are the positions that the pivot arm will travel to
+        if (arm == 1) {
+            wobblePivot.setTargetPosition(80);
+        } else {
+            wobblePivot.setTargetPosition(0);
         }
-        wobbleLift.setPower(lift);
+    }
+    public void revFlywheel(double power){
+        flywheel.setPower(power);
+    }
+    public void pressTrigger(boolean enabled){
+        if (enabled){
+            shooterTrigger.setPosition(1);
+        } else {
+            shooterTrigger.setPosition(-1);
+        }
     }
     @Override
     public double getRawExternalHeading() {
         return 0;
     }
 }
+
+// 180, -400

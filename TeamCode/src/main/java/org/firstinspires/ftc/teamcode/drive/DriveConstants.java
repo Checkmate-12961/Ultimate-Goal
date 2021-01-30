@@ -87,8 +87,9 @@ public class DriveConstants {
      * Maximum Angular Velocity is calculated as: maximum velocity / (trackWidth / 2) * (180 / Math.PI)
 
      */
+    // TODO: retune the robo
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            40, 40, 0.0,
+            40, 30, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 
