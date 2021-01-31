@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private Trajectory shootPos;
-    private Pose2d startPose;
+
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
@@ -36,13 +36,7 @@ public class BaseOP extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        startPose = PoseStorage.currentPose;
-        drive.setPoseEstimate(startPose);
-
-        shootPos = drive.trajectoryBuilder(startPose)
-                // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
-                .lineToSplineHeading(new Pose2d(-0.25, -37.5, Math.toRadians(0)))
-                .build();
+        drive.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
 
@@ -110,7 +104,13 @@ public class BaseOP extends LinearOpMode {
         else robot.pressTrigger(false);
 
         // Auto target thingy
-        if (gamepad1.dpad_right) robot.followTrajectory(shootPos);
+        if (gamepad1.dpad_right) {
+            shootPos = robot.trajectoryBuilder(PoseStorage.currentPose)
+                    // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
+                    .splineTo(new Vector2d(-0.25, -37.5), Math.toRadians(0))
+                    .build();
+            robot.followTrajectory(shootPos);
+        }
 
         // Update everything. Odometry. Etc.
         robot.update();
