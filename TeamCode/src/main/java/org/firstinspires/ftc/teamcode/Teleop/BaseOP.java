@@ -107,7 +107,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad1.dpad_right) {
             shootPos = robot.trajectoryBuilder(PoseStorage.currentPose)
                     // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
-                    .splineTo(new Vector2d(-0.25, -37.5), Math.toRadians(0))
+                    .splineTo(new Vector2d(-1, -37.5), Math.toRadians(0))
                     .build();
             robot.followTrajectory(shootPos);
         }
