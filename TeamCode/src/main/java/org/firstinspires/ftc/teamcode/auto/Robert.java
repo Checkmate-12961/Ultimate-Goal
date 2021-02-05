@@ -27,7 +27,7 @@ public class Robert extends LinearOpMode {
     OpenCvWebcam webCam;
     AutoWithVision.RingDeterminationPipeline pipeline;
 
-    Trajectory clearance, flip, toGoal, toLine;
+    Trajectory clearance,flip,toGoal,toLine;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -87,11 +87,11 @@ public class Robert extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.setWobblePosPow(0, 1, 0);
+        drive.setWobblePosPow(0, 1);
         sleep(1000);
-        drive.setWobblePosPow(-1, 0, 0);
+        drive.setWobblePosPow(-1,0);
         sleep(1000);
-        drive.setWobblePosPow(0, -1, 0);
+        drive.setWobblePosPow(0,-1);
         sleep(1000);
 
         drive.followTrajectoryAsync(clearance);

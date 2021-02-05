@@ -60,7 +60,7 @@ public class PlanA extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0,0);
+        drive.setWobblePosPow(0,0);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
@@ -80,11 +80,11 @@ public class PlanA extends LinearOpMode {
         flip = drive.trajectoryBuilder(clearance.end())
                 .lineToSplineHeading(new Pose2d(30,-20, Math.toRadians((180))))
                 .addDisplacementMarker(() -> {
-                    drive.setWobblePosPow(0, 1, 0);
+                    drive.setWobblePosPow(0, 1);
                     sleep(1000);
-                    drive.setWobblePosPow(1,0,0);
+                    drive.setWobblePosPow(1,0);
                     sleep(1000);
-                    drive.setWobblePosPow(0,-1,0);
+                    drive.setWobblePosPow(0,-1);
                     sleep(1000);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
@@ -96,9 +96,9 @@ public class PlanA extends LinearOpMode {
         toGoal = drive.trajectoryBuilder(flip.end())
                 .lineToSplineHeading(new Pose2d(63, -36, Math.toRadians(180)))
                 .addDisplacementMarker(() -> {
-                    drive.setIntakePowers(0,-1,-1);
+                    drive.setIntakePowers(0,-1);
                     sleep(3000);
-                    drive.setIntakePowers(0,0,0);
+                    drive.setIntakePowers(0,0);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
                 .build();
@@ -131,11 +131,11 @@ public class PlanA extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.setWobblePosPow(0, 1, 0);
+        drive.setWobblePosPow(0, 1);
         sleep(1000);
-        drive.setWobblePosPow(-1,0,0);
+        drive.setWobblePosPow(-1,0);
         sleep(1000);
-        drive.setWobblePosPow(0,-1,0);
+        drive.setWobblePosPow(0,-1);
         sleep(1000);
 
         drive.followTrajectoryAsync(clearance);
