@@ -4,12 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class LauncherMath {
-    public static double ringVelo = 0; // TODO: Find the velocity of rings exiting the launcher
-
-    public double calcAngle(double dist, double height, double velocity){
-        return 0;
-    }
-    public double calcAngle(double dist, double height){
-        return calcAngle(dist, height, ringVelo);
-    }
+    public static double toX = -5;
+    public static double toY = -32;
+    public static double angle = -12;
+    public static double power = 1;
 }

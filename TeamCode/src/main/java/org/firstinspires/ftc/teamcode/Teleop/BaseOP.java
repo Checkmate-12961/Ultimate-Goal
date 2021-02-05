@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.drive.LauncherMath;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "TeleOP")
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private Trajectory shootPos;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -94,20 +94,20 @@ public class BaseOP extends LinearOpMode {
         robot.setWobblePosPow(grab, arm);
 
         // rev flywheel
-        if (gamepad2.left_trigger > .9) robot.revFlywheel(-1);
+        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.power);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
 
         // gun hehe nice
         // _TODO: adjust the trigger sensitivity by changing the decimal number
-        if (gamepad2.right_trigger > .9) robot.pressTrigger(true);
-        else robot.pressTrigger(false);
+        robot.pressTrigger(gamepad2.right_trigger > .9);
 
         // Auto target thingy
         if (gamepad1.dpad_right) {
-            shootPos = robot.trajectoryBuilder(PoseStorage.currentPose)
+            // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
+            Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
                     // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
-                    .splineTo(new Vector2d(-1, -37.5), Math.toRadians(0))
+                    .splineTo(new Vector2d(LauncherMath.toX, LauncherMath.toY), Math.toRadians(LauncherMath.angle))
                     .build();
             robot.followTrajectory(shootPos);
         }
