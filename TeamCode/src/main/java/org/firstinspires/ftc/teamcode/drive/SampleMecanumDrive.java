@@ -145,8 +145,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         wobblePivot = hardwareMap.get(DcMotorEx.class, "WobblePivot");
 
         // TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
-        wobbleGrab.scaleRange( .3333 , 1 );
+        wobbleGrab.scaleRange( .2 , .5);
         shooterTrigger.scaleRange(0,.18);
+
+        // Tell WobblePivot it has an encoder
+        wobblePivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setWobblePosPow(0,0);
 
@@ -409,16 +413,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
     public void setWobblePosPow(int grab, int arm){
         if (grab != 0) {
-            wobbleGrab.setPosition(Range.clip(grab, 0,1));
+            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1));
         }
 
         // TODO: Mess with these numbers until they work properly
         //  these are the positions that the pivot arm will travel to
-        if (arm == 1) {
-            wobblePivot.setTargetPosition(2);
-        } else {
-            wobblePivot.setTargetPosition(0);
-        }
+        wobblePivot.setPower(.2 * arm);
     }
     public void revFlywheel(double power){
         flywheel.setPower(power);

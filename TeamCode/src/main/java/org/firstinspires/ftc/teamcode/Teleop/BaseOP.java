@@ -80,7 +80,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.b) transferPower -= 1;
         if (gamepad2.y) intakePower += 1;
         if (gamepad2.x) intakePower -= 1;
-        robot.setIntakePowers(intakePower * -0.5, transferPower);
+        robot.setIntakePowers(-intakePower, transferPower);
 
         // Control the wobble bits
         int grab = 0;
@@ -88,8 +88,8 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.left_bumper) grab -= 1;
 
         int arm = 0;
-        if (gamepad2.dpad_down) arm += 1;
-        if (gamepad2.dpad_up) arm -= 1;
+        if (gamepad2.dpad_up) arm   += 1;
+        if (gamepad2.dpad_down) arm -= 1;
 
         robot.setWobblePosPow(grab, arm);
 
@@ -104,9 +104,7 @@ public class BaseOP extends LinearOpMode {
 
         // Auto target thingy
         if (gamepad1.dpad_right) {
-            // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
             Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
-                    // TODO: edit the angle in the Math.toRadians(x) snippet to make it work
                     .splineTo(new Vector2d(LauncherMath.toX, LauncherMath.toY), Math.toRadians(LauncherMath.angle))
                     .build();
             robot.followTrajectory(shootPos);
