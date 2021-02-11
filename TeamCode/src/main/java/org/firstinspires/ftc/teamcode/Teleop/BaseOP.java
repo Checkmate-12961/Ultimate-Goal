@@ -107,6 +107,7 @@ public class BaseOP extends LinearOpMode {
 
 
         if (gamepad1.dpad_right) {
+            robot.setPoseEstimate(new Pose2d(-73, -63, Math.toRadians(0)));
             robot.revFlywheel(-LauncherMath.powershotpower);
             Trajectory rightShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
                     .lineToSplineHeading(new Pose2d(-14, -9.7, Math.toRadians(LauncherMath.angle+10)))
