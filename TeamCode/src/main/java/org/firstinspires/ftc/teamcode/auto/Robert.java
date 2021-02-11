@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.opmode.Vision;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -28,7 +29,6 @@ public class Robert extends LinearOpMode {
     AutoWithVision.RingDeterminationPipeline pipeline;
 
     Trajectory clearance,flip,toGoal,toLine;
-
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {

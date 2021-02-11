@@ -102,12 +102,33 @@ public class BaseOP extends LinearOpMode {
         // _TODO: adjust the trigger sensitivity by changing the decimal number
         robot.pressTrigger(gamepad2.right_trigger > .9);
 
-        // Auto target thingy
+        // Positions robot to shoot into high goal.
         if (gamepad1.dpad_right) {
-            Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
-                    .splineTo(new Vector2d(LauncherMath.toX, LauncherMath.toY), Math.toRadians(LauncherMath.angle))
+            Trajectory rightShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
                     .build();
-            robot.followTrajectory(shootPos);
+            robot.followTrajectoryAsync(rightShot);
+        }
+
+        if (gamepad1.dpad_down) {
+            Trajectory midShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
+                    .build();
+            robot.followTrajectoryAsync(midShot);
+        }
+
+        if (gamepad1.dpad_left) {
+            Trajectory leftShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
+                    .build();
+            robot.followTrajectoryAsync(leftShot);
+        }
+
+        if (gamepad1.dpad_up) {
+            Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(LauncherMath.toX, LauncherMath.toY, Math.toRadians(LauncherMath.angle)))
+                    .build();
+            robot.followTrajectoryAsync(shootPos);
         }
 
         // Update everything. Odometry. Etc.
