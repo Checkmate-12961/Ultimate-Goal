@@ -98,37 +98,52 @@ public class BaseOP extends LinearOpMode {
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
 
-        // gun hehe nice
+        // Shoots circle at target.
         // _TODO: adjust the trigger sensitivity by changing the decimal number
         robot.pressTrigger(gamepad2.right_trigger > .9);
 
         // Positions robot to shoot into high goal.
+
+
+
         if (gamepad1.dpad_right) {
+            robot.revFlywheel(-LauncherMath.powershotpower);
             Trajectory rightShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
-                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
+                    .lineToSplineHeading(new Pose2d(-14, -9.7, Math.toRadians(LauncherMath.angle+10)))
                     .build();
-            robot.followTrajectoryAsync(rightShot);
-        }
-
-        if (gamepad1.dpad_down) {
+            sleep(2000);
+            robot.followTrajectory(rightShot);
+            sleep(LauncherMath.shootcooldown);
+            robot.pressTrigger(true);
+            sleep(LauncherMath.shootLength);
+            robot.pressTrigger(false);
             Trajectory midShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
-                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
+                    .lineToSplineHeading(new Pose2d(10, -18, Math.toRadians(LauncherMath.angle-10)))
                     .build();
-            robot.followTrajectoryAsync(midShot);
+            robot.followTrajectory(midShot);
+            sleep(LauncherMath.shootcooldown);
+            robot.pressTrigger(true);
+            sleep(LauncherMath.shootLength);
+            robot.pressTrigger(false);
+            sleep(LauncherMath.shootcooldown);
+            Trajectory leftShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+                    .lineToSplineHeading(new Pose2d(8, -12, Math.toRadians(LauncherMath.angle)))
+                    .build();
+            robot.followTrajectory(leftShot);
+            sleep(LauncherMath.shootcooldown);
+            robot.pressTrigger(true);
+            sleep(LauncherMath.shootLength);
+            robot.pressTrigger(false);
+            sleep(LauncherMath.shootcooldown);
+            robot.revFlywheel(0);
         }
 
-        if (gamepad1.dpad_left) {
-            Trajectory leftShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
-                    .lineToSplineHeading(new Pose2d(4, 4, Math.toRadians(LauncherMath.angle)))
-                    .build();
-            robot.followTrajectoryAsync(leftShot);
-        }
 
         if (gamepad1.dpad_up) {
             Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
                     .lineToSplineHeading(new Pose2d(LauncherMath.toX, LauncherMath.toY, Math.toRadians(LauncherMath.angle)))
                     .build();
-            robot.followTrajectoryAsync(shootPos);
+            robot.followTrajectory(shootPos);
         }
 
         // Update everything. Odometry. Etc.
