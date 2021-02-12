@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class LauncherMath {
     public static double toX = -7;
     public static double toY = -31;
-    public static double angle = -22;
+    public static double angle = -30;
     public static double power = 1;
     public static double powershotpower = .72;
     public static long shootLength = 500;
