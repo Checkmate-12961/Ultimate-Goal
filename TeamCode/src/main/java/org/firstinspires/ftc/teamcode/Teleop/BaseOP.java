@@ -110,7 +110,7 @@ public class BaseOP extends LinearOpMode {
             robot.setPoseEstimate(new Pose2d(-73, -63, Math.toRadians(0)));
             robot.revFlywheel(-LauncherMath.powershotpower);
             Trajectory rightShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
-                    .lineToSplineHeading(new Pose2d(-14, -9.7, Math.toRadians(LauncherMath.angle+10)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.rightX, LauncherMath.rightY, Math.toRadians(LauncherMath.angle+10)))
                     .build();
             sleep(2000);
             robot.followTrajectory(rightShot);

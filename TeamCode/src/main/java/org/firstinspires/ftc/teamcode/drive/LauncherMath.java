@@ -11,4 +11,6 @@ public class LauncherMath {
     public static double powershotpower = .72;
     public static long shootLength = 500;
     public static long shootcooldown = 100;
+    public static double rightX = -14;
+    public static double rightY = 15;
 }
