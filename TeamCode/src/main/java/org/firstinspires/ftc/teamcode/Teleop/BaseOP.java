@@ -109,7 +109,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad1.dpad_right) {
             robot.setPoseEstimate(new Pose2d(-73, -63, Math.toRadians(0)));
             robot.revFlywheel(-LauncherMath.powershotpower);
-            Trajectory rightShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-73, -63, Math.toRadians(0)))
                     .lineToSplineHeading(new Pose2d(LauncherMath.rightX, LauncherMath.rightY, Math.toRadians(LauncherMath.angle+10)))
                     .build();
             sleep(2000);
@@ -118,7 +118,7 @@ public class BaseOP extends LinearOpMode {
             robot.pressTrigger(true);
             sleep(LauncherMath.shootLength);
             robot.pressTrigger(false);
-            Trajectory midShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+            Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
                     .lineToSplineHeading(new Pose2d(10, -18, Math.toRadians(LauncherMath.angle-10)))
                     .build();
             robot.followTrajectory(midShot);
@@ -127,7 +127,7 @@ public class BaseOP extends LinearOpMode {
             sleep(LauncherMath.shootLength);
             robot.pressTrigger(false);
             sleep(LauncherMath.shootcooldown);
-            Trajectory leftShot = robot.trajectoryBuilder((robot.getPoseEstimate()))
+            Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
                     .lineToSplineHeading(new Pose2d(8, -12, Math.toRadians(LauncherMath.angle)))
                     .build();
             robot.followTrajectory(leftShot);
