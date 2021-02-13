@@ -94,7 +94,7 @@ public class BaseOP extends LinearOpMode {
         robot.setWobblePosPow(grab, arm);
 
         // rev flywheel
-        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.power);
+        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.highGoalPower);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
 
@@ -104,36 +104,38 @@ public class BaseOP extends LinearOpMode {
 
         // Positions robot to shoot into the Goals
         if (gamepad1.dpad_right) {
-            robot.setPoseEstimate(new Pose2d(-73, -63, Math.toRadians(0)));
+            robot.setPoseEstimate(new Pose2d(-61, -61, Math.toRadians(0)));
             robot.revFlywheel(-LauncherMath.powerShotPower);
 
-            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-73, -63, Math.toRadians(LauncherMath.angle)))
-                    .splineTo(new Vector2d(LauncherMath.rightX, LauncherMath.rightY), Math.toRadians(LauncherMath.angle+15))
+            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-61, -61, 0))
+                    //.lineToSplineHeading(new Pose2d(-55,-55,0))
+                    //.splineTo(new Vector2d(LauncherMath.rightX-10, LauncherMath.rightY-10), 0)
+                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX,LauncherMath.powerShotY,Math.toRadians(LauncherMath.powerShotAngle)))
                     .build();
             Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherMath.rightX, LauncherMath.rightY+8, Math.toRadians(LauncherMath.angle)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist, Math.toRadians(LauncherMath.powerShotAngle)))
                     .build();
             Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherMath.rightX, LauncherMath.rightY+15, Math.toRadians(LauncherMath.angle)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist *2, Math.toRadians(LauncherMath.powerShotAngle)))
                     .build();
 
             robot.followTrajectory(rightShot);
             sleep(2000);
             robot.pressTrigger(true);
-            sleep(LauncherMath.shootLength);
+            sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
 
             robot.followTrajectory(midShot);
             sleep(LauncherMath.shootCoolDown);
             robot.pressTrigger(true);
-            sleep(LauncherMath.shootLength);
+            sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
             sleep(LauncherMath.shootCoolDown);
 
             robot.followTrajectory(leftShot);
             sleep(LauncherMath.shootCoolDown);
             robot.pressTrigger(true);
-            sleep(LauncherMath.shootLength);
+            sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
             sleep(LauncherMath.shootCoolDown);
 
@@ -143,7 +145,7 @@ public class BaseOP extends LinearOpMode {
 
         if (gamepad1.dpad_up) {
             Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(LauncherMath.toX, LauncherMath.toY, Math.toRadians(LauncherMath.angle)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.highGoalX, LauncherMath.highGoalY, Math.toRadians(LauncherMath.highGoalAngle)))
                     .build();
             robot.followTrajectory(shootPos);
         }
