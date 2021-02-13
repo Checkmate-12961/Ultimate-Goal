@@ -113,14 +113,14 @@ public class BaseOP extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX,LauncherMath.powerShotY,Math.toRadians(LauncherMath.powerShotAngle)))
                     .build();
             Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist, Math.toRadians(LauncherMath.powerShotAngle)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist, Math.toRadians(LauncherMath.powerShotAngle+LauncherMath.rotFix)))
                     .build();
             Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist *2, Math.toRadians(LauncherMath.powerShotAngle)))
+                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist *2, Math.toRadians(LauncherMath.powerShotAngle+LauncherMath.rotFix*2)))
                     .build();
 
             robot.followTrajectory(rightShot);
-            sleep(2000);
+            sleep(1000);
             robot.pressTrigger(true);
             sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);

@@ -14,10 +14,11 @@ public class LauncherMath {
 
     // power shot
     public static double powerShotAngle = 0; // angle the robo turns
-    public static double powerShotPower = .75;
-    public static int shootCoolDown = 100;
+    public static double powerShotPower = 0.7;
+    public static int shootCoolDown = 1000;
     // coords
-    public static double powerShotX = -14;
-    public static double powerShotY = -10;
-    public static double pegDist = 9.5; // distance between each shot
+    public static double rotFix = 2.2;
+    public static double powerShotX = -12;
+    public static double powerShotY = -9.3;
+    public static double pegDist = 6.7; // distance between each shot
 }
