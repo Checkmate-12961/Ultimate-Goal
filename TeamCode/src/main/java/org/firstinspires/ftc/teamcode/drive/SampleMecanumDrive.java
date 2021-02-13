@@ -63,6 +63,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
+    private double WP_TICKS_PER_REV = 753.2;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
@@ -149,7 +151,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         shooterTrigger.scaleRange(0,.18);
 
         // Tell WobblePivot it has an encoder
-        wobblePivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wobblePivot.setTargetPosition((int) (Math.PI/(2/WP_TICKS_PER_REV)));
+        wobblePivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setWobblePosPow(0,0);
@@ -413,7 +416,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
     public void setWobblePosPow(int grab, int arm){
         if (grab != 0) {
-            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1));
+            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1)); // should be PI / (2 / TPR)
         }
 
         // TODO: Mess with these numbers until they work properly
