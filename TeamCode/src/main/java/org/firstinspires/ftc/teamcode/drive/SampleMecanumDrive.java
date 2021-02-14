@@ -63,7 +63,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    private double WP_TICKS_PER_REV = 753.2;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
@@ -146,12 +145,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         shooterTrigger = hardwareMap.get(Servo.class, "ShooterTrigger");
         wobblePivot = hardwareMap.get(DcMotorEx.class, "WobblePivot");
 
-        // TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
+        // _TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
         wobbleGrab.scaleRange( .2 , .5);
         shooterTrigger.scaleRange(0,.18);
 
         // Tell WobblePivot it has an encoder
-        wobblePivot.setTargetPosition((int) (Math.PI/(2/WP_TICKS_PER_REV)));
+        final double WP_TICKS_PER_REV = 753.2;
+        wobblePivot.setTargetPosition((int) (Math.PI/(2/ WP_TICKS_PER_REV)));
         wobblePivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -180,7 +180,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // TODO: reverse the flywheel by uncommenting this line if needed
+        // _TODO: reverse the flywheel by uncommenting this line if needed
         //  flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // use setLocalizer() to change the localization method
