@@ -94,7 +94,7 @@ public class BaseOP extends LinearOpMode {
         robot.setWobblePosPow(grab, arm);
 
         // rev flywheel
-        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.highGoalPower);
+        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.highGoalVelo);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
 
@@ -105,12 +105,12 @@ public class BaseOP extends LinearOpMode {
         // Positions robot to shoot into the Goals
         if (gamepad1.dpad_right) {
             robot.setPoseEstimate(new Pose2d(-61, -61, Math.toRadians(0)));
-            robot.revFlywheel(-LauncherMath.powerShotPowerRight);
+            robot.revFlywheel(-LauncherMath.powerShotVeloRight);
 
             Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-61, -61, 0))
                     //.lineToSplineHeading(new Pose2d(-55,-55,0))
                     //.splineTo(new Vector2d(LauncherMath.rightX-10, LauncherMath.rightY-10), 0)
-                    .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX,LauncherMath.powerShotY,Math.toRadians(LauncherMath.powerShotAngle)))
+                    .lineToSplineHeading(LauncherMath.getPowerPose(Math.toRadians(LauncherMath.powerShotAngle)))
                     .build();
             Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
                     .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist, Math.toRadians(LauncherMath.powerShotAngle+LauncherMath.rotFix)))
@@ -124,7 +124,7 @@ public class BaseOP extends LinearOpMode {
             robot.pressTrigger(true);
             sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
-            robot.revFlywheel(-LauncherMath.powerShotPowerCenter);
+            robot.revFlywheel(-LauncherMath.powerShotVeloCenter);
 
             robot.followTrajectory(midShot);
             sleep(LauncherMath.shootCoolDown);
@@ -132,7 +132,7 @@ public class BaseOP extends LinearOpMode {
             sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
 
-            robot.revFlywheel(-LauncherMath.powerShotPowerLeft);
+            robot.revFlywheel(-LauncherMath.powerShotVeloLeft);
             robot.followTrajectory(leftShot);
             sleep(LauncherMath.shootCoolDown);
             robot.pressTrigger(true);
@@ -161,6 +161,7 @@ public class BaseOP extends LinearOpMode {
         telemetry.addData("x", poseEstimate.getX());
         telemetry.addData("y", poseEstimate.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.addData("runtime",String.format("%fs",runtime.seconds()));
         telemetry.update();
     }
@@ -171,6 +172,7 @@ public class BaseOP extends LinearOpMode {
         telemetry.addData("x", poseEstimate.getX());
         telemetry.addData("y", poseEstimate.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.update();
     }
 }

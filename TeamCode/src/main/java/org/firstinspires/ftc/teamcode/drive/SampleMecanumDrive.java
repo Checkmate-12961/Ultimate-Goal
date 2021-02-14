@@ -150,9 +150,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         shooterTrigger.scaleRange(0,.18);
 
         // Tell WobblePivot it has an encoder
-        final double WP_TICKS_PER_REV = 753.2;
-        wobblePivot.setTargetPosition((int) (Math.PI/(2/ WP_TICKS_PER_REV)));
-        wobblePivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobblePivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setWobblePosPow(0,0);
@@ -171,6 +169,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -423,8 +422,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         //  these are the positions that the pivot arm will travel to
         wobblePivot.setPower(.2 * arm);
     }
-    public void revFlywheel(double power){
-        flywheel.setPower(power);
+    public void revFlywheel(double rpm){
+        flywheel.setVelocity(rpm*0.4667);
+    }
+    public double getFlywheelPos(){
+        return flywheel.getCurrentPosition()/28.0;
+    }
+    public double getFlywheelVelo(){
+        return flywheel.getVelocity()/28.0;
     }
     public void pressTrigger(boolean enabled){
         if (enabled){
