@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -34,6 +35,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
+@Disabled
 public class RingAmountTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;

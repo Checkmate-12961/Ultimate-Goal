@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2020 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.auto;
 
 import android.annotation.SuppressLint;
@@ -27,12 +6,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.LauncherMath;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -40,13 +19,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-@Disabled
-public class LinePark extends LinearOpMode {
+public class ShootAndPark extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
 
-    Trajectory toLine;
+    Trajectory toLine, rightShot, leftShot, midShot;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -58,6 +36,7 @@ public class LinePark extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        PoseStorage.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
         Pose2d startPose = PoseStorage.currentPose;
         drive.setPoseEstimate(startPose);
 
@@ -86,7 +65,7 @@ public class LinePark extends LinearOpMode {
         initItem.setValue("Checking ring position");
         telemetry.update();
 
-        // DONE: add in multiple paths for each of the different camera outputs
+        // _TODO: add in multiple paths for each of the different camera outputs
         int ringPos = pipeline.getAnalysis();
         initItem.setValue("Building trajectories");
         telemetry.addData("RingPosGuess",ringPos);
@@ -95,18 +74,50 @@ public class LinePark extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
-
-        //toLine moves the robot straight forward to the line
-        toLine = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(12, -20.25), Math.toRadians(0))
+        rightShot = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(LauncherMath.AgetPowerPose(Math.toRadians(LauncherMath.ApowerShotAngle)))
+                .addDisplacementMarker(() -> {
+                    sleep(LauncherMath.shootCoolDown*2);
+                    drive.pressTrigger(true);
+                    sleep(LauncherMath.triggerActuationTime);
+                    drive.pressTrigger(false);
+                    drive.revFlywheel(-LauncherMath.ApowerShotVeloCenter);
+                })
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+        midShot = drive.trajectoryBuilder(rightShot.end())
+                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix)))
+                .addDisplacementMarker(() -> {
+                    sleep(LauncherMath.shootCoolDown);
+                    drive.pressTrigger(true);
+                    sleep(LauncherMath.triggerActuationTime);
+                    drive.pressTrigger(false);
+                    drive.revFlywheel(-LauncherMath.ApowerShotVeloLeft);
+                })
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
+                .build();
 
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+        leftShot = drive.trajectoryBuilder(midShot.end())
+                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .addDisplacementMarker(() -> {
+                    sleep(LauncherMath.shootCoolDown);
+                    drive.pressTrigger(true);
+                    sleep(LauncherMath.triggerActuationTime);
+                    drive.pressTrigger(false);
+                    drive.revFlywheel(0);
+                })
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
+                .build();
 
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+        //toLine moves the robot straight forward to the line
+        toLine = drive.trajectoryBuilder(leftShot.end())
+                .splineTo(new Vector2d(12, LauncherMath.ApowerShotY + 2*LauncherMath.ApegDist), Math.toRadians(0))
+                .build();
         nextTelemetry(onTrajBuild,trajBuildItem);
-
-        // add more trajectories here if needed
 
         telemetry.removeItem(trajBuildItem);
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
@@ -118,7 +129,7 @@ public class LinePark extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(toLine);
+        drive.followTrajectoryAsync(rightShot);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
@@ -127,6 +138,8 @@ public class LinePark extends LinearOpMode {
                         runtime.milliseconds()-initTime
                 ));
         telemetry.update();
+
+        drive.revFlywheel(-LauncherMath.ApowerShotVeloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -141,11 +154,10 @@ public class LinePark extends LinearOpMode {
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();
         }
-
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
-    private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){
+    private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
         onVal++;
         telemetryItem.setValue(onVal);
         telemetry.update();
