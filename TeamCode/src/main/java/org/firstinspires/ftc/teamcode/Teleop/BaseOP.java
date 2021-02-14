@@ -84,14 +84,14 @@ public class BaseOP extends LinearOpMode {
 
         // Control the wobble bits
         int grab = 0;
-        if (gamepad2.right_bumper) grab += 1;
-        if (gamepad2.left_bumper) grab -= 1;
-
-        int arm = 0;
-        if (gamepad2.dpad_up) arm   += 1;
-        if (gamepad2.dpad_down) arm -= 1;
-
-        robot.setWobblePosPow(grab, arm);
+        if (gamepad2.dpad_right) grab += 1;
+        if (gamepad2.dpad_left) grab -= 1;
+        /*
+        double arm = 0;
+        if (gamepad2.dpad_up) arm   += 0.5;
+        if (gamepad2.dpad_down) arm -= 0.5;
+        */
+        robot.setWobblePosPow(grab, gamepad2.right_stick_y);
 
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherMath.highGoalVelo);
