@@ -9,15 +9,15 @@ public class LauncherMath {
     public static int triggerActuationTime = 500;
 
     // high goal
-    public static double highGoalX = -7;
+    public static double highGoalX = -10;
     public static double highGoalY = -31;
     public static double highGoalVelo = 5200; // 1; // roughly at a little over 12 volts
     public static double highGoalAngle = -15;
 
     // power shot
     public static double powerShotAngle = 0; // angle the robot turns
-    public static double powerShotVeloRight = 4060; // 0.72; //
-    public static double powerShotVeloCenter = 4250; // 0.75; //
+    public static double powerShotVeloRight = 3900; // 0.72; //
+    public static double powerShotVeloCenter = 4200; // 0.75; //
     public static double powerShotVeloLeft = 4060; // 0.72; //
     public static int shootCoolDown = 1000;
     // coordinates

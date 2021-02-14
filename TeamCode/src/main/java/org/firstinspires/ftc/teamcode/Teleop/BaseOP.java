@@ -102,7 +102,7 @@ public class BaseOP extends LinearOpMode {
         // _TODO: adjust the trigger sensitivity by changing the decimal number
         robot.pressTrigger(gamepad2.right_trigger > .9);
 
-        // Positions robot to shoot into the Goals
+        // Positions robot to shoot into the power shots
         if (gamepad1.dpad_right) {
             robot.setPoseEstimate(new Pose2d(-61, -61, Math.toRadians(0)));
             robot.revFlywheel(-LauncherMath.powerShotVeloRight);
