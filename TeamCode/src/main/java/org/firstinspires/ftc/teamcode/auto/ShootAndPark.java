@@ -65,10 +65,9 @@ public class ShootAndPark extends LinearOpMode {
         initItem.setValue("Checking ring position");
         telemetry.update();
 
-        // _TODO: add in multiple paths for each of the different camera outputs
-        int ringPos = pipeline.getAnalysis();
         initItem.setValue("Building trajectories");
-        telemetry.addData("RingPosGuess",ringPos);
+
+        drive.dashboard.startCameraStream(webCam, 10);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
@@ -120,6 +119,8 @@ public class ShootAndPark extends LinearOpMode {
         nextTelemetry(onTrajBuild,trajBuildItem);
 
         telemetry.removeItem(trajBuildItem);
+        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", pipeline.getPosition());
+        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
@@ -151,6 +152,10 @@ public class ShootAndPark extends LinearOpMode {
             Pose2d tempPose = drive.getPoseEstimate();
             xItem.setValue(tempPose.getX());
             yItem.setValue(tempPose.getY());
+
+            ringPosEst.setValue(pipeline.getPosition());
+            ringAnal.setValue(pipeline.getAnalysis());
+
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();
         }

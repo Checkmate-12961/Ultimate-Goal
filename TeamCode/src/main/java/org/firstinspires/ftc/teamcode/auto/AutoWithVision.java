@@ -24,9 +24,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -44,9 +41,6 @@ public class AutoWithVision extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
-
-    Trajectory toBox, toGoal, toLine;
-    TrajectoryBuilder toBoxBuilder, toGoalBuilder;
     Vision.RingDeterminationPipeline.RingPosition tempPos;
 
     @SuppressLint("DefaultLocale")
@@ -85,99 +79,13 @@ public class AutoWithVision extends LinearOpMode {
             webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
         });
 
+        drive.dashboard.startCameraStream(webCam,10);
+
         initItem.setValue("Checking ring position");
         telemetry.update();
-        telemetry.addData("RingPosGuess",pipeline.getPosition());
-
-        initItem.setValue("Building trajectories");
-
-        Telemetry.Item trajBuildItem = telemetry.addData("Working on", "");
-        telemetry.update();
-
+        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", pipeline.getPosition());
+        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
         tempPos = pipeline.getPosition();
-
-
-        trajBuildItem.setValue("toBoxBuilder");
-        telemetry.update();
-        // First trajectory to path the bot to the correct drop zone
-        toBoxBuilder = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(-12,-12),0); // Avoids the ring
-
-        if (/*tempPos == RingDeterminationPipeline.RingPosition.NONE*/ true){
-            // If there are no rings on the field
-            trajBuildItem.setValue("toBox A");
-            telemetry.update();
-            toBox = toBoxBuilder
-                    .splineTo(new Vector2d(12,-42), 0) // go to the box
-                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
-                    //.addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
-                    .build(); // run the next part
-
-
-            // the next part
-            trajBuildItem.setValue("toGoalBuilder A");
-            telemetry.update();
-            toGoalBuilder = drive.trajectoryBuilder(toBox.end())
-                    .lineToSplineHeading(new Pose2d(36, -36, Math.toRadians(180))); // spin around
-        }
-
-        else if (tempPos == Vision.RingDeterminationPipeline.RingPosition.ONE){
-            // Otherwise, if there is one ring
-            trajBuildItem.setValue("toBox B");
-            telemetry.update();
-            toBox = toBoxBuilder
-                    .splineTo(new Vector2d(36,-18), 0) // go to the box
-                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
-                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
-                    .build(); // run the next part;
-
-
-            // the next part
-            trajBuildItem.setValue("toGoalBuilder B");
-            telemetry.update();
-            toGoalBuilder = drive.trajectoryBuilder(toBox.end())
-                    .lineToSplineHeading(new Pose2d(48, -24, Math.toRadians(180))); // spin around
-        }
-
-        else {
-            // Otherwise (there are four rings)
-            trajBuildItem.setValue("toBox C");
-            telemetry.update();
-            toBox = toBoxBuilder
-                    .splineTo(new Vector2d(60,-42), 0) // go to the box
-                    .addDisplacementMarker(() -> dropGoal(drive)) // drop the wobble
-                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(toGoal))
-                    .build(); // run the next part
-
-
-            // the next part
-            trajBuildItem.setValue("toGoalBuilder C");
-            telemetry.update();
-            toGoalBuilder = drive.trajectoryBuilder(toBox.end())
-                    .splineTo(new Vector2d(36,-36),0) // back up
-                    .lineToSplineHeading(new Pose2d(48, -36, Math.toRadians(180))); // spin around
-        }
-
-        // Go to the goal and dump the rings
-        trajBuildItem.setValue("toGoal");
-        telemetry.update();
-        toGoal = toGoalBuilder
-                .splineTo(new Vector2d(64,-36),Math.toRadians(180)) // go to the goal
-                .addDisplacementMarker(() -> dumpRings(drive)) // dump the rings
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
-                .build();
-
-
-        // Go to the line
-        trajBuildItem.setValue("toLine");
-        telemetry.update();
-        toLine = drive.trajectoryBuilder(toGoal.end())
-                .splineTo(new Vector2d(60,-12),Math.toRadians(180)) // avoid box B
-                .lineToSplineHeading(new Pose2d(0,-12,0)) // move to the line and turn around
-                .build();
-
-
-        telemetry.removeItem(trajBuildItem);
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
@@ -194,16 +102,6 @@ public class AutoWithVision extends LinearOpMode {
                         runtime.milliseconds()-initTime
                 ));
         telemetry.update();
-
-        drive.setWobblePosPow(0, 1);
-        sleep(1000);
-        drive.setWobblePosPow(-1,0);
-        sleep(1000);
-        drive.setWobblePosPow(0,-1);
-        sleep(1000);
-
-        drive.followTrajectoryAsync(toBox);
-
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             runtimeItem.setValue(
@@ -214,24 +112,14 @@ public class AutoWithVision extends LinearOpMode {
             Pose2d tempPose = drive.getPoseEstimate();
             xItem.setValue(tempPose.getX());
             yItem.setValue(tempPose.getY());
+
+            ringPosEst.setValue(pipeline.getPosition());
+            ringAnal.setValue(pipeline.getAnalysis());
+
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();
         }
 
         PoseStorage.currentPose = drive.getPoseEstimate();
-    }
-
-    private void dropGoal(SampleMecanumDrive dt){
-        dt.setWobblePosPow(0, 1);
-        sleep(500);
-        dt.setWobblePosPow(-1,0);
-        sleep(500);
-        dt.setWobblePosPow(0,-1);
-        sleep(500);
-    }
-    private void dumpRings(SampleMecanumDrive dt){
-        dt.setIntakePowers(0, -1);
-        sleep(2000);
-        dt.setIntakePowers(0,0);
     }
 }
