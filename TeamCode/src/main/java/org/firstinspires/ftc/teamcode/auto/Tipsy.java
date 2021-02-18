@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,13 +18,27 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@Config
 @Autonomous
-public class ShootAndPark extends LinearOpMode {
+public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
+    private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, rightShot, leftShot, midShot;
+    Trajectory toLine, dropA,dropB,dropC,toLineToo;
+
+    public static double dropAX = 16;
+    public static double dropAY = -32;
+    public static double dropAH = Math.PI/2;
+
+    public static double dropBX = 18;
+    public static double dropBY = -18;
+    public static double dropBH = Math.PI*.75;
+
+    public static double dropCX = 46;
+    public static double dropCY = -36;
+    public static double dropCH = Math.PI*.75;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -46,7 +60,7 @@ public class ShootAndPark extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePosPow(-1,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();
@@ -62,9 +76,6 @@ public class ShootAndPark extends LinearOpMode {
             webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
         });
 
-        initItem.setValue("Checking ring position");
-        telemetry.update();
-
         initItem.setValue("Building trajectories");
 
         drive.dashboard.startCameraStream(webCam, 10);
@@ -73,64 +84,62 @@ public class ShootAndPark extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
-        rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherMath.AgetPowerPose(Math.toRadians(LauncherMath.ApowerShotAngle)))
-                .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown*2);
-                    drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
-                    drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloCenter);
-                })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-        midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix)))
-                .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
-                    drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
-                    drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloLeft);
-                })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
-                .build();
-
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-        leftShot = drive.trajectoryBuilder(midShot.end())
+        toLine = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
-                    drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
-                    drive.pressTrigger(false);
-                    drive.revFlywheel(0);
+                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
+                        drive.followTrajectoryAsync(dropA);
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE){
+                        drive.followTrajectoryAsync(dropB);
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR){
+                        drive.followTrajectoryAsync(dropC);
+                    }
                 })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-        //toLine moves the robot straight forward to the line
-        toLine = drive.trajectoryBuilder(leftShot.end())
-                .splineTo(new Vector2d(12, LauncherMath.ApowerShotY + 2*LauncherMath.ApegDist), Math.toRadians(0))
+
+        dropA = drive.trajectoryBuilder(toLine.end())
+                .lineToSplineHeading(new Pose2d(dropAX,dropAY,dropAH))
                 .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        dropB = drive.trajectoryBuilder(toLine.end())
+                .lineToSplineHeading(new Pose2d(dropBX,dropBY,dropBH))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        dropC = drive.trajectoryBuilder(toLine.end())
+                .lineToSplineHeading(new Pose2d(dropCX,dropCY,dropCH))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLineToo))
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        toLineToo = drive.trajectoryBuilder(dropC.end())
+                .lineToSplineHeading(new Pose2d(12, dropC.end().getY(),dropC.end().getHeading()))
+                .build();
+
         nextTelemetry(onTrajBuild,trajBuildItem);
 
         telemetry.removeItem(trajBuildItem);
-        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", pipeline.getPosition());
-        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
-        initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
+        initItem.setValue(String.format("Done. Took %f ms",runtime.milliseconds()));
         telemetry.update();
 
         waitForStart();
+
+        ringPosSaved = pipeline.getPosition();
+        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", ringPosSaved);
+        Telemetry.Item ringAnal = telemetry.addData("RingAnal", pipeline.getAnalysis());
+        telemetry.update();
 
         if(isStopRequested()) return;
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(rightShot);
+        drive.followTrajectoryAsync(toLine);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
@@ -140,7 +149,7 @@ public class ShootAndPark extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.revFlywheel(-LauncherMath.ApowerShotVeloRight);
+        drive.revFlywheel(0);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -153,7 +162,7 @@ public class ShootAndPark extends LinearOpMode {
             xItem.setValue(tempPose.getX());
             yItem.setValue(tempPose.getY());
 
-            ringPosEst.setValue(pipeline.getPosition());
+            ringPosEst.setValue(ringPosSaved);
             ringAnal.setValue(pipeline.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
@@ -168,4 +177,16 @@ public class ShootAndPark extends LinearOpMode {
         telemetry.update();
         return onVal;
     }
+
+    private void depositWobble(SampleMecanumDrive drive){
+        sleep(200);
+        drive.setWobblePosPow(0,.75); // arm is the power
+        sleep(300); // milliseconds is the wait time
+        drive.setWobblePosPow(0,0);
+        sleep(300);
+        drive.setWobblePosPow(1,0);
+        sleep(200);
+
+    }
+
 }

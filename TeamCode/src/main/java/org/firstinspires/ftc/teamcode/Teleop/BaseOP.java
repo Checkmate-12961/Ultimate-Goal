@@ -38,6 +38,8 @@ public class BaseOP extends LinearOpMode {
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseStorage.currentPose);
 
+        drive.setWobblePosPow(-1,0);
+
         waitForStart();
 
         if (isStopRequested()) return;

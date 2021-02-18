@@ -416,7 +416,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
     public void setWobblePosPow(int grab, double arm){
         if (grab != 0) {
-            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1)); // should be PI / (2 / TPR)
+            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1));
         }
 
         // TODO: Mess with these numbers until they work properly
