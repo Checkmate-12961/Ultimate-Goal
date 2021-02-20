@@ -22,10 +22,10 @@ public class LauncherMath {
     public static double powerShotVeloLeft = 4060; // 0.72; //
     public static int shootCoolDown = 1000;
     // coordinates
-    public static double rotFix = 2.5;
-    public static double powerShotX = -12;
-    public static double powerShotY = -9.25;
-    public static double pegDist = 6.65; // distance between each shot
+    public static double rotFix = 2.5 ;
+    public static double powerShotX = -20;
+    public static double powerShotY = 2;
+    public static double pegDist = 6.7; // distance between each shot
 
     // // AUTO
     // power shot

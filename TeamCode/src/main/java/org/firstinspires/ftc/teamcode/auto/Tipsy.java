@@ -186,7 +186,5 @@ public class Tipsy extends LinearOpMode {
         sleep(300);
         drive.setWobblePosPow(1,0);
         sleep(200);
-
     }
-
 }
