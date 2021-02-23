@@ -19,13 +19,13 @@ public class LauncherMath {
     public static double powerShotAngle = 0; // angle the robot turns
     public static double powerShotVeloRight = 3900; // 0.72; //
     public static double powerShotVeloCenter = 4200; // 0.75; //
-    public static double powerShotVeloLeft = 4060; // 0.72; //
+    public static double powerShotVeloLeft = 4100; // 0.72; //
     public static int shootCoolDown = 1000;
     // coordinates
     public static double rotFix = 2.5;
-    public static double powerShotX = -12;
-    public static double powerShotY = -9.25;
-    public static double pegDist = 6.65; // distance between each shot
+    public static double powerShotX = -16;
+    public static double powerShotY = -3;
+    public static double pegDist = 7.3; // distance between each shot
 
     // // AUTO
     // power shot

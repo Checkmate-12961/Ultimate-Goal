@@ -30,7 +30,7 @@ public class BaseOP extends LinearOpMode {
 
 
         // TODO: REMOVE THIS AND WRITE A PROPER ZERO FUNCTION!!!
-        PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0) );
+        // TODO: RiLey what's wrong with this!!! PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0) );
         // DON'T BE LAZY, RILEY!!!
 
 
@@ -55,8 +55,8 @@ public class BaseOP extends LinearOpMode {
         if (relative) offset = -rotationalOffset - poseEstimate.getHeading();
         else offset = 0;
 
-        double xin = gamepad1.left_stick_x * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
-        double yin = gamepad1.left_stick_y * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1);
+        double xin = gamepad1.left_stick_x * Range.scale((gamepad1.right_trigger), -1, 1, 0, 1);
+        double yin = gamepad1.left_stick_y * Range.scale((gamepad1.right_trigger), -1, 1, 0, 1);
 
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
@@ -71,7 +71,7 @@ public class BaseOP extends LinearOpMode {
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        -gamepad1.right_stick_x * Range.scale((gamepad1.right_trigger - gamepad1.left_trigger), -1, 1, 0, 1)
+                        -gamepad1.right_stick_x * Range.scale((gamepad1.right_trigger), -1, 1, 0, 1)
                 )
         );
 
@@ -102,13 +102,16 @@ public class BaseOP extends LinearOpMode {
 
         // Shoots circle at target.
         // _TODO: adjust the trigger sensitivity by changing the decimal number
-        robot.pressTrigger(gamepad2.right_trigger > .9);
+        robot.pressTrigger(gamepad1.left_trigger > .9);
 
         // Positions robot to shoot into the power shots
+        //I'm so sorry for this it's chaos, but it works sort of.
         if (gamepad1.dpad_right) {
+            //Changes robot position estimate to a corner of the field, so roadrunner is more consistent
             robot.setPoseEstimate(new Pose2d(-61, -61, Math.toRadians(0)));
+            //Revs flywheel in advance.
             robot.revFlywheel(-LauncherMath.powerShotVeloRight);
-
+            //One trajectory defined for each of the high goals.
             Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-61, -61, 0))
                     //.lineToSplineHeading(new Pose2d(-55,-55,0))
                     //.splineTo(new Vector2d(LauncherMath.rightX-10, LauncherMath.rightY-10), 0)
@@ -121,10 +124,16 @@ public class BaseOP extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(LauncherMath.powerShotX, LauncherMath.powerShotY +LauncherMath.pegDist *2, Math.toRadians(LauncherMath.powerShotAngle+LauncherMath.rotFix*2)))
                     .build();
 
+            //These three blocks are almost identical.
+            //Move to shooting locations
             robot.followTrajectory(rightShot);
+            //Wait for the flywheel to get to full speed. This line is unique to this block.
             sleep(1000);
+            //Virtually presses trigger
             robot.pressTrigger(true);
+            //Gives the trigger time to finish shooting.
             sleep(LauncherMath.triggerActuationTime);
+            //Retracts trigger
             robot.pressTrigger(false);
             robot.revFlywheel(-LauncherMath.powerShotVeloCenter);
 
@@ -141,6 +150,7 @@ public class BaseOP extends LinearOpMode {
             sleep(LauncherMath.triggerActuationTime);
             robot.pressTrigger(false);
 
+            //Turns the flywheel off
             robot.revFlywheel(0);
         }
 

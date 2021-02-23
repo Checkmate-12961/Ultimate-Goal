@@ -123,7 +123,6 @@ public class Shots extends LinearOpMode {
         Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
-
         waitForStart();
 
         if(isStopRequested()) return;
