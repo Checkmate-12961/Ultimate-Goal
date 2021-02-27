@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,12 +18,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(group = "Alcohol")
-public class Shots extends LinearOpMode {
+public class Tequila extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
+    private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, rightShot, leftShot, midShot;
+    Trajectory toLine, rightShot, midShot, leftShot, toLine3, dropA,dropB,dropC,toLineToo;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -40,6 +40,7 @@ public class Shots extends LinearOpMode {
         Pose2d startPose = PoseStorage.currentPose;
         drive.setPoseEstimate(startPose);
 
+        Telemetry.Item runningItem = telemetry.addData("running","nothing");
         Telemetry.Item xItem = telemetry.addData("x",drive.getPoseEstimate().getX());
         Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
         Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
@@ -73,6 +74,7 @@ public class Shots extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
+
         rightShot = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(LauncherMath.AgetPowerPose(Math.toRadians(LauncherMath.ApowerShotAngle)))
                 .addDisplacementMarker(() -> {
@@ -82,7 +84,11 @@ public class Shots extends LinearOpMode {
                     drive.pressTrigger(false);
                     drive.revFlywheel(-LauncherMath.ApowerShotVeloCenter);
                 })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("midShot");
+                    telemetry.update();
+                    drive.followTrajectoryAsync(midShot);
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
@@ -95,7 +101,11 @@ public class Shots extends LinearOpMode {
                     drive.pressTrigger(false);
                     drive.revFlywheel(-LauncherMath.ApowerShotVeloLeft);
                 })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("leftShot");
+                    telemetry.update();
+                    drive.followTrajectoryAsync(leftShot);
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
@@ -108,14 +118,76 @@ public class Shots extends LinearOpMode {
                     drive.pressTrigger(false);
                     drive.revFlywheel(0);
                 })
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLine))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("toLine");
+                    telemetry.update();
+                    drive.followTrajectoryAsync(toLine);
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         //toLine moves the robot straight forward to the line
+        nextTelemetry(onTrajBuild,trajBuildItem);
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .splineTo(new Vector2d(12, LauncherMath.ApowerShotY + 2*LauncherMath.ApegDist), Math.toRadians(0))
+
+                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .addDisplacementMarker(() -> {
+                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
+                        runningItem.setValue("dropA");
+                        telemetry.update();
+                        drive.followTrajectoryAsync(dropA);
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE){
+                        runningItem.setValue("dropB");
+                        telemetry.update();
+                        drive.followTrajectoryAsync(dropB);
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR){
+                        runningItem.setValue("dropC");
+                        telemetry.update();
+                        drive.followTrajectoryAsync(dropC);
+                    }
+                })
                 .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        dropA = drive.trajectoryBuilder(leftShot.end())
+                .lineToSplineHeading(new Pose2d(AutoConfigs.dropAX,AutoConfigs.dropAY,AutoConfigs.dropAH))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("done");
+                    telemetry.update();
+                })
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        dropB = drive.trajectoryBuilder(leftShot.end())
+                .lineToSplineHeading(new Pose2d(AutoConfigs.dropBX,AutoConfigs.dropBY,AutoConfigs.dropBH))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("done");
+                    telemetry.update();
+                })
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        dropC = drive.trajectoryBuilder(leftShot.end())
+                .lineToSplineHeading(new Pose2d(AutoConfigs.dropCX,AutoConfigs.dropCY,AutoConfigs.dropCH))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("toLineToo");
+                    telemetry.update();
+                    drive.followTrajectoryAsync(toLineToo);
+                })
+                .build();
+
+        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
+
+        toLineToo = drive.trajectoryBuilder(dropC.end())
+                .lineToSplineHeading(new Pose2d(12, dropC.end().getY(),dropC.end().getHeading()))
+                .addDisplacementMarker(() -> {
+                    runningItem.setValue("done");
+                })
+                .build();
+
         nextTelemetry(onTrajBuild,trajBuildItem);
 
         telemetry.removeItem(trajBuildItem);
@@ -126,6 +198,7 @@ public class Shots extends LinearOpMode {
 
         waitForStart();
 
+        ringPosSaved = pipeline.getPosition();
         if(isStopRequested()) return;
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
@@ -138,8 +211,8 @@ public class Shots extends LinearOpMode {
                         "%fms",
                         runtime.milliseconds()-initTime
                 ));
+        runningItem.setValue("rightShot");
         telemetry.update();
-
         drive.revFlywheel(-LauncherMath.ApowerShotVeloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
