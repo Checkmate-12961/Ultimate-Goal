@@ -129,8 +129,7 @@ public class Tequila extends LinearOpMode {
         //toLine moves the robot straight forward to the line
         nextTelemetry(onTrajBuild,trajBuildItem);
         toLine = drive.trajectoryBuilder(leftShot.end())
-
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2+1, 0))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
                         runningItem.setValue("dropA");
