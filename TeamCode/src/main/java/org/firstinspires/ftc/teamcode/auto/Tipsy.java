@@ -101,19 +101,24 @@ public class Tipsy extends LinearOpMode {
 
         dropA = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropAX,dropAY,dropAH))
+                .addDisplacementMarker(() -> depositWobble(drive))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropB = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropBX,dropBY,dropBH))
+                .addDisplacementMarker(() -> depositWobble(drive))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropC = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropCX,dropCY,dropCH))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toLineToo))
+                .addDisplacementMarker(() -> {
+                    depositWobble(drive);
+                    drive.followTrajectoryAsync(toLineToo);
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
@@ -179,8 +184,9 @@ public class Tipsy extends LinearOpMode {
     }
 
     private void depositWobble(SampleMecanumDrive drive){
+        drive.setWobblePosPow(-1,0);
         sleep(200);
-        drive.setWobblePosPow(0,.75); // arm is the power
+        drive.setWobblePosPow(0,-.75); // arm is the power
         sleep(300); // milliseconds is the wait time
         drive.setWobblePosPow(0,0);
         sleep(300);

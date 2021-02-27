@@ -152,6 +152,7 @@ public class Tequila extends LinearOpMode {
         dropA = drive.trajectoryBuilder(leftShot.end())
                 .lineToSplineHeading(new Pose2d(AutoConfigs.dropAX,AutoConfigs.dropAY,AutoConfigs.dropAH))
                 .addDisplacementMarker(() -> {
+                    depositWobble(drive);
                     runningItem.setValue("done");
                     telemetry.update();
                 })
@@ -162,6 +163,7 @@ public class Tequila extends LinearOpMode {
         dropB = drive.trajectoryBuilder(leftShot.end())
                 .lineToSplineHeading(new Pose2d(AutoConfigs.dropBX,AutoConfigs.dropBY,AutoConfigs.dropBH))
                 .addDisplacementMarker(() -> {
+                    depositWobble(drive);
                     runningItem.setValue("done");
                     telemetry.update();
                 })
@@ -172,6 +174,7 @@ public class Tequila extends LinearOpMode {
         dropC = drive.trajectoryBuilder(leftShot.end())
                 .lineToSplineHeading(new Pose2d(AutoConfigs.dropCX,AutoConfigs.dropCY,AutoConfigs.dropCH))
                 .addDisplacementMarker(() -> {
+                    depositWobble(drive);
                     runningItem.setValue("toLineToo");
                     telemetry.update();
                     drive.followTrajectoryAsync(toLineToo);
@@ -239,5 +242,15 @@ public class Tequila extends LinearOpMode {
         telemetryItem.setValue(onVal);
         telemetry.update();
         return onVal;
+    }
+    private void depositWobble(SampleMecanumDrive drive){
+        drive.setWobblePosPow(-1,0);
+        sleep(200);
+        drive.setWobblePosPow(0,-.75); // arm is the power
+        sleep(300); // milliseconds is the wait time
+        drive.setWobblePosPow(0,0);
+        sleep(300);
+        drive.setWobblePosPow(1,0);
+        sleep(200);
     }
 }
