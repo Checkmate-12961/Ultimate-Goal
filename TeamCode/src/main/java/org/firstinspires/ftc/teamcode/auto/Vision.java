@@ -38,13 +38,13 @@ public class Vision {
 
         //The core values which define the location and size of the sample regions
 
-        Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(TopLeftX,TopLeftY);
+        private final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(TopLeftX,TopLeftY);
 
-        int REGION_WIDTH = Width;
-        int REGION_HEIGHT = Height;
+        private final int REGION_WIDTH = Width;
+        private final int REGION_HEIGHT = Height;
 
-        final int FOUR_RING_THRESHOLD = FourRingThresh;
-        final int ONE_RING_THRESHOLD = OneRingThresh;
+        private final int FOUR_RING_THRESHOLD = FourRingThresh;
+        private final int ONE_RING_THRESHOLD = OneRingThresh;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -57,9 +57,9 @@ public class Vision {
          * Working variables
          */
         Mat region1_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
-        int avg1;
+        private final Mat YCrCb = new Mat();
+        private final Mat Cb = new Mat();
+        private int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile RingDeterminationPipeline.RingPosition position = RingDeterminationPipeline.RingPosition.FOUR;

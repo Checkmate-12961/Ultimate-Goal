@@ -95,8 +95,18 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final LinkedList<Pose2d> poseHistory;
 
-    private final DcMotorEx leftFront, leftRear, rightRear, rightFront, intake, transfer, wobblePivot, flywheel;
-    private final Servo wobbleGrab, shooterTrigger;
+    private final DcMotorEx leftFront;
+    private final DcMotorEx leftRear;
+    private final DcMotorEx rightRear;
+    private final DcMotorEx rightFront;
+    private final DcMotorEx intake;
+    private final DcMotorEx transfer;
+    private final DcMotorEx wobblePivot;
+    private final DcMotorEx flywheel;
+
+    private final Servo wobbleGrab;
+    private final Servo shooterTrigger;
+
     private final List<DcMotorEx> motors;
 
     private final VoltageSensor batteryVoltageSensor;
