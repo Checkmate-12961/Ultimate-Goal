@@ -12,10 +12,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class Vision {
-    public static int TopLeftX = 260;
-    public static int TopLeftY = 145;
-    public static int Width = 35;
-    public static int Height = 45;
+    public static int TopLeftX = 210;
+    public static int TopLeftY = 170;
+    public static int Width = 90;
+    public static int Height = 60;
     public static int FourRingThresh = 150;
     public static int OneRingThresh = 135;
 
