@@ -252,5 +252,10 @@ public class Tequila extends LinearOpMode {
         sleep(300);
         drive.setWobblePosPow(1,0);
         sleep(200);
+        drive.setWobblePosPow(1,.75);
+        sleep(300);
+    }
+    private void retrieveArm(SampleMecanumDrive drive){
+
     }
 }
