@@ -9,10 +9,10 @@ public class LauncherMath {
     public static int triggerActuationTime = 500;
 
     // high goal
-    public static double highGoalX = -10;
-    public static double highGoalY = -31;
+    public static double highGoalX = -1.25;
+    public static double highGoalY = -22.25;
     public static double highGoalVelo = 5200; // 1; // roughly at a little over 12 volts
-    public static double highGoalAngle = -15;
+    public static double highGoalAngle = -Math.PI/12;
 
     // // TELE
     // power shot
