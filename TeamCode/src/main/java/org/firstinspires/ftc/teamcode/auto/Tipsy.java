@@ -22,11 +22,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(group = "Alcohol")
 public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
+    private OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, dropA,dropB,dropC,toLineToo;
+    private Trajectory dropA;
+    private Trajectory dropB;
+    private Trajectory dropC;
+    private Trajectory toLineToo;
 
     public static double dropAX = 16;
     public static double dropAY = -32;
@@ -84,14 +87,14 @@ public class Tipsy extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
-        toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+        Trajectory toLine = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY + LauncherMath.ApegDist * 2, Math.toRadians(LauncherMath.ApowerShotAngle + LauncherMath.ArotFix * 2)))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
+                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE){
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE) {
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR){
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR) {
                         drive.followTrajectoryAsync(dropC);
                     }
                 })

@@ -20,11 +20,17 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(group = "Alcohol")
 public class Tequila extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
+    private OpenCvWebcam webCam;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, rightShot, midShot, leftShot, toLine3, dropA,dropB,dropC,toLineToo;
+    Trajectory toLine;
+    Trajectory rightShot;
+    Trajectory midShot;
+    Trajectory leftShot;
+    Trajectory dropA;
+    Trajectory dropB;
+    Trajectory dropC;
+    Trajectory toLineToo;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -54,7 +60,7 @@ public class Tequila extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -150,7 +156,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropAX,AutoConfigs.dropAY,AutoConfigs.dropAH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropAX, AutoConstants.dropAY, AutoConstants.dropAH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("done");
@@ -161,7 +167,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropBX,AutoConfigs.dropBY,AutoConfigs.dropBH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropBX, AutoConstants.dropBY, AutoConstants.dropBH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("done");
@@ -172,7 +178,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropCX,AutoConfigs.dropCY,AutoConfigs.dropCH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropCX, AutoConstants.dropCY, AutoConstants.dropCH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("toLineToo");
@@ -185,9 +191,7 @@ public class Tequila extends LinearOpMode {
 
         toLineToo = drive.trajectoryBuilder(dropC.end())
                 .lineToSplineHeading(new Pose2d(12, dropC.end().getY(),dropC.end().getHeading()))
-                .addDisplacementMarker(() -> {
-                    runningItem.setValue("done");
-                })
+                .addDisplacementMarker(() -> runningItem.setValue("done"))
                 .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);

@@ -43,10 +43,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Disabled
 public class LinePark extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
-
-    Trajectory toLine;
+    private OpenCvWebcam webCam;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -74,7 +71,7 @@ public class LinePark extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -97,7 +94,7 @@ public class LinePark extends LinearOpMode {
 
 
         //toLine moves the robot straight forward to the line
-        toLine = drive.trajectoryBuilder(startPose)
+        Trajectory toLine = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(12, -20.25), Math.toRadians(0))
                 .build();
 
@@ -146,9 +143,9 @@ public class LinePark extends LinearOpMode {
     }
 
     private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){
-        onVal++;
-        telemetryItem.setValue(onVal);
+        int newOnVal = onVal + 1;
+        telemetryItem.setValue(newOnVal);
         telemetry.update();
-        return onVal;
+        return newOnVal;
     }
 }
