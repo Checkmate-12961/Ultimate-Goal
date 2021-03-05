@@ -23,14 +23,14 @@ public class Tequila extends LinearOpMode {
     private OpenCvWebcam webCam;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine;
-    Trajectory rightShot;
-    Trajectory midShot;
-    Trajectory leftShot;
-    Trajectory dropA;
-    Trajectory dropB;
-    Trajectory dropC;
-    Trajectory toLineToo;
+    private Trajectory toLine;
+    private Trajectory rightShot;
+    private Trajectory midShot;
+    private Trajectory leftShot;
+    private Trajectory dropA;
+    private Trajectory dropB;
+    private Trajectory dropC;
+    private Trajectory toLineToo;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -258,8 +258,5 @@ public class Tequila extends LinearOpMode {
         sleep(200);
         drive.setWobblePosPow(1,.75);
         sleep(300);
-    }
-    private void retrieveArm(SampleMecanumDrive drive){
-
     }
 }

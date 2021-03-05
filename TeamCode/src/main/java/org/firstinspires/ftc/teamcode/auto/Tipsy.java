@@ -26,6 +26,7 @@ public class Tipsy extends LinearOpMode {
     Vision.RingDeterminationPipeline pipeline;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
+    private Trajectory toLine;
     private Trajectory dropA;
     private Trajectory dropB;
     private Trajectory dropC;
@@ -87,7 +88,7 @@ public class Tipsy extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
-        Trajectory toLine = drive.trajectoryBuilder(startPose)
+        toLine = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY + LauncherMath.ApegDist * 2, Math.toRadians(LauncherMath.ApowerShotAngle + LauncherMath.ArotFix * 2)))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE) {
