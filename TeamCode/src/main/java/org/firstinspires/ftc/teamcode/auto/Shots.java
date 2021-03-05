@@ -163,9 +163,9 @@ public class Shots extends LinearOpMode {
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
-        onVal++;
-        telemetryItem.setValue(onVal);
+        int newOnVal = onVal +1;
+        telemetryItem.setValue(newOnVal);
         telemetry.update();
-        return onVal;
+        return newOnVal;
     }
 }
