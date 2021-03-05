@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.LauncherMath;
+import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -89,7 +89,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY + LauncherMath.ApegDist * 2, Math.toRadians(LauncherMath.ApowerShotAngle + LauncherMath.ArotFix * 2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist * 2, Math.toRadians(LauncherConstants.ApowerShotAngle + LauncherConstants.ArotFix * 2)))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);

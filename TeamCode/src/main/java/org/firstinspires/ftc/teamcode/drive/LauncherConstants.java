@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 @Config
-public class LauncherMath {
+public class LauncherConstants {
     public static int triggerActuationTime = 500;
 
     // high goal
