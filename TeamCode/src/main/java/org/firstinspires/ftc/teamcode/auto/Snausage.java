@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Disabled
 @Autonomous
-public class snausage extends LinearOpMode {
+public class Snausage extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {

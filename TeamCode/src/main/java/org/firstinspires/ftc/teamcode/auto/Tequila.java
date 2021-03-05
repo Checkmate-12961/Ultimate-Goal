@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.LauncherMath;
+import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -20,11 +20,17 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(group = "Alcohol")
 public class Tequila extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
+    private OpenCvWebcam webCam;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, rightShot, midShot, leftShot, toLine3, dropA,dropB,dropC,toLineToo;
+    private Trajectory toLine;
+    private Trajectory rightShot;
+    private Trajectory midShot;
+    private Trajectory leftShot;
+    private Trajectory dropA;
+    private Trajectory dropB;
+    private Trajectory dropC;
+    private Trajectory toLineToo;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -54,7 +60,7 @@ public class Tequila extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -76,13 +82,13 @@ public class Tequila extends LinearOpMode {
 
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherMath.AgetPowerPose(Math.toRadians(LauncherMath.ApowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.AgetPowerPose(Math.toRadians(LauncherConstants.ApowerShotAngle)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown*2);
+                    sleep(LauncherConstants.shootCoolDown*2);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloCenter);
+                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloCenter);
                 })
                 .addDisplacementMarker(() -> {
                     runningItem.setValue("midShot");
@@ -93,13 +99,13 @@ public class Tequila extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
+                    sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloLeft);
+                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloLeft);
                 })
                 .addDisplacementMarker(() -> {
                     runningItem.setValue("leftShot");
@@ -110,11 +116,11 @@ public class Tequila extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix*2)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
+                    sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(0);
                 })
@@ -129,7 +135,7 @@ public class Tequila extends LinearOpMode {
         //toLine moves the robot straight forward to the line
         nextTelemetry(onTrajBuild,trajBuildItem);
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2+1, 0))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2+1, 0))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
                         runningItem.setValue("dropA");
@@ -150,7 +156,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropAX,AutoConfigs.dropAY,AutoConfigs.dropAH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropAX, AutoConstants.dropAY, AutoConstants.dropAH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("done");
@@ -161,7 +167,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropBX,AutoConfigs.dropBY,AutoConfigs.dropBH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropBX, AutoConstants.dropBY, AutoConstants.dropBH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("done");
@@ -172,7 +178,7 @@ public class Tequila extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConfigs.dropCX,AutoConfigs.dropCY,AutoConfigs.dropCH))
+                .lineToSplineHeading(new Pose2d(AutoConstants.dropCX, AutoConstants.dropCY, AutoConstants.dropCH))
                 .addDisplacementMarker(() -> {
                     depositWobble(drive);
                     runningItem.setValue("toLineToo");
@@ -185,9 +191,7 @@ public class Tequila extends LinearOpMode {
 
         toLineToo = drive.trajectoryBuilder(dropC.end())
                 .lineToSplineHeading(new Pose2d(12, dropC.end().getY(),dropC.end().getHeading()))
-                .addDisplacementMarker(() -> {
-                    runningItem.setValue("done");
-                })
+                .addDisplacementMarker(() -> runningItem.setValue("done"))
                 .build();
 
         nextTelemetry(onTrajBuild,trajBuildItem);
@@ -215,7 +219,7 @@ public class Tequila extends LinearOpMode {
                 ));
         runningItem.setValue("rightShot");
         telemetry.update();
-        drive.revFlywheel(-LauncherMath.ApowerShotVeloRight);
+        drive.revFlywheel(-LauncherConstants.ApowerShotVeloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -254,8 +258,5 @@ public class Tequila extends LinearOpMode {
         sleep(200);
         drive.setWobblePosPow(1,.75);
         sleep(300);
-    }
-    private void retrieveArm(SampleMecanumDrive drive){
-
     }
 }

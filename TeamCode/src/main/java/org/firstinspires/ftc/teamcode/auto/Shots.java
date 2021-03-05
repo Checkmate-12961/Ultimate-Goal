@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.LauncherMath;
+import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -74,37 +74,37 @@ public class Shots extends LinearOpMode {
         telemetry.update();
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherMath.AgetPowerPose(Math.toRadians(LauncherMath.ApowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.AgetPowerPose(Math.toRadians(LauncherConstants.ApowerShotAngle)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown*2);
+                    sleep(LauncherConstants.shootCoolDown*2);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloCenter);
+                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloCenter);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
+                    sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherMath.ApowerShotVeloLeft);
+                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloLeft);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix*2)))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherMath.shootCoolDown);
+                    sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
-                    sleep(LauncherMath.triggerActuationTime);
+                    sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(0);
                 })
@@ -114,7 +114,7 @@ public class Shots extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         //toLine moves the robot straight forward to the line
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .splineTo(new Vector2d(12, LauncherMath.ApowerShotY + 2*LauncherMath.ApegDist), Math.toRadians(0))
+                .splineTo(new Vector2d(12, LauncherConstants.ApowerShotY + 2* LauncherConstants.ApegDist), Math.toRadians(0))
                 .build();
         nextTelemetry(onTrajBuild,trajBuildItem);
 
@@ -140,7 +140,7 @@ public class Shots extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.revFlywheel(-LauncherMath.ApowerShotVeloRight);
+        drive.revFlywheel(-LauncherConstants.ApowerShotVeloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();

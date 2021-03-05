@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Disabled
 public class RingAmountTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
+    private OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
     private static Vision.RingDeterminationPipeline.RingPosition position = Vision.RingDeterminationPipeline.RingPosition.FOUR;
 

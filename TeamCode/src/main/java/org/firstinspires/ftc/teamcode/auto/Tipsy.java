@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.LauncherMath;
+import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -22,11 +22,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(group = "Alcohol")
 public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
+    private OpenCvWebcam webCam;
     Vision.RingDeterminationPipeline pipeline;
     private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    Trajectory toLine, dropA,dropB,dropC,toLineToo;
+    private Trajectory toLine;
+    private Trajectory dropA;
+    private Trajectory dropB;
+    private Trajectory dropC;
+    private Trajectory toLineToo;
 
     public static double dropAX = 16;
     public static double dropAY = -32;
@@ -85,13 +89,13 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherMath.ApowerShotX, LauncherMath.ApowerShotY +LauncherMath.ApegDist *2, Math.toRadians(LauncherMath.ApowerShotAngle+LauncherMath.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist * 2, Math.toRadians(LauncherConstants.ApowerShotAngle + LauncherConstants.ArotFix * 2)))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
+                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE){
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE) {
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR){
+                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR) {
                         drive.followTrajectoryAsync(dropC);
                     }
                 })
