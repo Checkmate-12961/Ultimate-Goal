@@ -46,7 +46,7 @@ public class BaseOP extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             controlRobo(drive, 0,false, runtime);
         }
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseStorage.currentPose = PoseStorage.globalStartPose;
     }
     private void controlRoboBase(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
         // Read pose

@@ -42,7 +42,7 @@ public class Tequila extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        PoseStorage.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
+        PoseStorage.currentPose = PoseStorage.globalStartPose;
         Pose2d startPose = PoseStorage.currentPose;
         drive.setPoseEstimate(startPose);
 
