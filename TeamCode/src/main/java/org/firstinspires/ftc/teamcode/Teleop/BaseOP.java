@@ -28,7 +28,7 @@ public class BaseOP extends LinearOpMode {
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
+        // 2.5, -61.25
         // TODO: REMOVE THIS AND WRITE A PROPER ZERO FUNCTION!!!
         // TODO: RiLey what's wrong with this!!! PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0) );
         // DON'T BE LAZY, RILEY!!!
@@ -108,11 +108,11 @@ public class BaseOP extends LinearOpMode {
         //I'm so sorry for this it's chaos, but it works sort of.
         if (gamepad1.dpad_right) {
             //Changes robot position estimate to a corner of the field, so roadrunner is more consistent
-            robot.setPoseEstimate(new Pose2d(-61, -61, Math.toRadians(0)));
+            robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
             //Revs flywheel in advance.
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
             //One trajectory defined for each of the high goals.
-            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(-61, -61, 0))
+            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
                     //.lineToSplineHeading(new Pose2d(-55,-55,0))
                     //.splineTo(new Vector2d(LauncherMath.rightX-10, LauncherMath.rightY-10), 0)
                     .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
