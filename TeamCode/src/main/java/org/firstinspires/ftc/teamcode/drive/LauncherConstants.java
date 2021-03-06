@@ -10,9 +10,9 @@ public class LauncherConstants {
 
     // high goal
     public static double highGoalX = -1.25;
-    public static double highGoalY = -22.25;
+    public static double highGoalY = -18.25;
     public static double highGoalVelo = 5200; // 1; // roughly at a little over 12 volts
-    public static double highGoalAngle = -Math.PI/12;
+    public static double highGoalAngle = -25;
 
     // // TELE
     // power shot
