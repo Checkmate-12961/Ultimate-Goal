@@ -236,9 +236,9 @@ public class Tequila extends LinearOpMode {
             ringAnal.setValue(pipeline.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
+            PoseStorage.currentPose = tempPose;
             telemetry.update();
         }
-        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
