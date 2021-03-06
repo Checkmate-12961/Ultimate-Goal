@@ -154,7 +154,9 @@ public class BaseOP extends LinearOpMode {
             robot.revFlywheel(0);
         }
 
-
+        if (gamepad1.dpad_left) {
+            robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
+        }
         if (gamepad1.dpad_up) {
             Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
                     .lineToSplineHeading(new Pose2d(LauncherConstants.highGoalX, LauncherConstants.highGoalY, Math.toRadians(LauncherConstants.highGoalAngle)))
