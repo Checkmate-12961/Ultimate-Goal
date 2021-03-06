@@ -229,8 +229,8 @@ public class Tequila extends LinearOpMode {
                             runtime.milliseconds()-initTime
                     ));
             Pose2d tempPose = drive.getPoseEstimate();
-            xItem.setValue(tempPose.getX());
-            yItem.setValue(tempPose.getY());
+            xItem.setValue(PoseStorage.currentPose.getX());
+            yItem.setValue(PoseStorage.currentPose.getY());
 
             ringPosEst.setValue(pipeline.getPosition());
             ringAnal.setValue(pipeline.getAnalysis());

@@ -172,8 +172,8 @@ public class BaseOP extends LinearOpMode {
         controlRoboBase(robot, rotationalOffset, relative);
         Pose2d poseEstimate = robot.getPoseEstimate();
         // Print pose to telemetry
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("x", PoseStorage.currentPose.getX());
+        telemetry.addData("y", PoseStorage.currentPose.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
         telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.addData("runtime",String.format("%fs",runtime.seconds()));
