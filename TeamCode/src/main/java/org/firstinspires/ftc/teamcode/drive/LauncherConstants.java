@@ -16,16 +16,16 @@ public class LauncherConstants {
 
     // // TELE
     // power shot
-    public static double powerShotAngle = 0; // angle the robot turns
+    public static double powerShotAngle = -10; // angle the robot turns
     public static double powerShotVeloRight = 3900; // 0.72; //
     public static double powerShotVeloCenter = 4200; // 0.75; //
-    public static double powerShotVeloLeft = 4060; // 0.72; //
+    public static double powerShotVeloLeft = 4040; // 0.72; //
     public static int shootCoolDown = 1000;
     // coordinates
     public static double rotFix = 2.5 ;
     public static double powerShotX = -20; //X coord for the leftmost powershot
-    public static double powerShotY = 2;   //Y coord for the leftmost powershot
-    public static double pegDist = 6.7; // distance between each shot
+    public static double powerShotY = -27;   //Y coord for the leftmost powershot
+    public static double pegDist = 4.5; // distance between each shot
 
     // // AUTO
     // power shot
