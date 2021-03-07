@@ -10,15 +10,15 @@ public class LauncherConstants {
 
     // high goal
     public static double highGoalX = -1.25;
-    public static double highGoalY = -18.25;
+    public static double highGoalY = -17.5;
     public static double highGoalVelo = 5200; // 1; // roughly at a little over 12 volts
-    public static double highGoalAngle = -25;
+    public static double highGoalAngle = -17;
 
     // // TELE
     // power shot
     public static double powerShotAngle = -10; // angle the robot turns
     public static double powerShotVeloRight = 3900; // 0.72; //
-    public static double powerShotVeloCenter = 4200; // 0.75; //
+    public static double powerShotVeloCenter = 4100; // 0.75; //
     public static double powerShotVeloLeft = 4040; // 0.72; //
     public static int shootCoolDown = 1000;
     // coordinates
