@@ -236,7 +236,9 @@ public class Tequila extends LinearOpMode {
             ringAnal.setValue(pipeline.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
-            PoseStorage.currentPose = tempPose;
+            if (Math.abs(PoseStorage.currentPose.getX() - tempPose.getX()) < 70 && Math.abs(PoseStorage.currentPose.getY() - tempPose.getY()) < 70) {
+                PoseStorage.currentPose = tempPose;
+            }
             telemetry.update();
         }
     }
@@ -256,7 +258,5 @@ public class Tequila extends LinearOpMode {
         sleep(300);
         drive.setWobblePosPow(1,0);
         sleep(200);
-        drive.setWobblePosPow(1,.75);
-        sleep(300);
     }
 }
