@@ -440,7 +440,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         return flywheel.getCurrentPosition()/28.0;
     }
     public double getFlywheelVelo(){
-        return flywheel.getVelocity()/28.0;
+        return -flywheel.getVelocity() * 2.142857143; // *60/28
     }
     public void pressTrigger(boolean enabled){
         if (enabled){
