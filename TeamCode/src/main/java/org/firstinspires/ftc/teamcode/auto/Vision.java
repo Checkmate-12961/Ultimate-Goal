@@ -16,8 +16,8 @@ public class Vision {
     public static int TopLeftY = 170;
     public static int Width = 90;
     public static int Height = 60;
-    public static int FourRingThresh = 150;
-    public static int OneRingThresh = 135;
+    public static int FourRingThresh = 155;
+    public static int OneRingThresh = 130;
 
     public static class RingDeterminationPipeline extends OpenCvPipeline
     {
