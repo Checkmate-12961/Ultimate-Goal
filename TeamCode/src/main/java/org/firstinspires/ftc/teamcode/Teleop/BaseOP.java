@@ -83,7 +83,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.dpad_right) grab += 1;
         if (gamepad2.dpad_left) grab -= 1;
 
-        robot.setWobblePosPow(grab, gamepad2.right_stick_y/3);
+        robot.setWobblePosPow(grab, gamepad2.right_stick_y/2);
 
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherConstants.highGoalVelo);
@@ -97,7 +97,7 @@ public class BaseOP extends LinearOpMode {
         // Positions robot to shoot into the power shots
         //I'm so sorry for this it's chaos, but it works sort of.
         if (gamepad1.dpad_right) {
-            //Changes robot position estimate to a corner of the field, so roadrunner is more consistent
+            //Changes robot position estimate to the side of the field, so roadrunner is more consistent
             robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
             //Revs flywheel in advance.
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
@@ -108,10 +108,10 @@ public class BaseOP extends LinearOpMode {
                     .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
                     .build();
             Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle+ LauncherConstants.rotFix)))
+                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle)))
                     .build();
             Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist *2, Math.toRadians(LauncherConstants.powerShotAngle+ LauncherConstants.rotFix*2)))
+                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist *2, Math.toRadians(LauncherConstants.powerShotAngle)))
                     .build();
 
             //These three blocks are almost identical.

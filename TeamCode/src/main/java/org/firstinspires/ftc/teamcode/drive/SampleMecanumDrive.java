@@ -74,7 +74,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double OMEGA_WEIGHT = 1;
 
     public static int POSE_HISTORY_LIMIT = 100;
-
+    
+    private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0;
+    
     public enum Mode {
         IDLE,
         TURN,
@@ -103,6 +105,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final DcMotorEx transfer;
     private final DcMotorEx wobblePivot;
     private final DcMotorEx flywheel;
+
+    private double flywheelTargetRPM;
 
     private final Servo wobbleGrab;
     private final Servo shooterTrigger;
@@ -181,6 +185,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        flywheelTargetRPM = 0;
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -279,6 +285,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
+        flywheel.setVelocity(flywheelTargetRPM / FLYWHEEL_RMP_MULTIPLIER);
+
         switch (mode) {
             case IDLE:
                 // do nothing
@@ -333,6 +341,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
                 break;
             }
+            default:
+                break;
         }
 
         fieldOverlay.setStroke("#3F51B5");
@@ -434,13 +444,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         wobblePivot.setPower(arm);
     }
     public void revFlywheel(double rpm){
-        flywheel.setVelocity(rpm*0.4667);
+        flywheelTargetRPM = rpm;
     }
     public double getFlywheelPos(){
         return flywheel.getCurrentPosition()/28.0;
     }
     public double getFlywheelVelo(){
-        return -flywheel.getVelocity() * 2.142857143; // *60/28
+        return -flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER;
+    }
+    public double getFlywheelVeloDiff (){
+        return (-flywheel.getVelocity() - flywheelTargetRPM) * FLYWHEEL_RMP_MULTIPLIER;
     }
     public void pressTrigger(boolean enabled){
         if (enabled){
