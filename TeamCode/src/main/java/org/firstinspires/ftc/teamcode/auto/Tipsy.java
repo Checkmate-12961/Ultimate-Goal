@@ -197,10 +197,10 @@ public class Tipsy extends LinearOpMode {
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
-        onVal++;
-        telemetryItem.setValue(onVal);
+        int nextVal = onVal + 1;
+        telemetryItem.setValue(nextVal);
         telemetry.update();
-        return onVal;
+        return nextVal;
     }
 
     private void depositWobble(SampleMecanumDrive drive){

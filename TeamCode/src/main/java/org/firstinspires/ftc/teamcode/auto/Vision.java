@@ -46,10 +46,10 @@ public class Vision {
         private final int FOUR_RING_THRESHOLD = FourRingThresh;
         private final int ONE_RING_THRESHOLD = OneRingThresh;
 
-        Point region1_pointA = new Point(
+        private final Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
+        private final Point region1_pointB = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
