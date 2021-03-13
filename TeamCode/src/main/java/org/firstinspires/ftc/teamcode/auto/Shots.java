@@ -21,10 +21,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(group = "Alcohol")
 public class Shots extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
+    private OpenCvWebcam webCam;
 
-    Trajectory toLine, rightShot, leftShot, midShot;
+    private Trajectory toLine;
+    private Trajectory rightShot;
+    private Trajectory leftShot;
+    private Trajectory midShot;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -53,7 +55,7 @@ public class Shots extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened

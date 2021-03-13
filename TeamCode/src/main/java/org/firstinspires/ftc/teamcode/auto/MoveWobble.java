@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import android.annotation.SuppressLint;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-// Our glorious test auto mode
+import java.util.concurrent.TimeUnit;
+
 @Autonomous
-public class Robert extends LinearOpMode {
-    @SuppressLint("DefaultLocale")
+public class MoveWobble extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -23,19 +21,19 @@ public class Robert extends LinearOpMode {
             drive.update();
         }
     }
-    private void depositWobble(SampleMecanumDrive drive){
+    public static void depositWobble(SampleMecanumDrive drive) throws InterruptedException {
         drive.setWobblePosPow(-1,0);
-        sleep(200);
+        Thread.sleep(200);
         drive.setWobblePosPow(0,-.75); // arm is the power
-        sleep(300); // milliseconds is the wait time
+        Thread.sleep(300); // milliseconds is the wait time
         drive.setWobblePosPow(0,0);
-        sleep(300);
+        Thread.sleep(300);
         drive.setWobblePosPow(1,0);
-        sleep(1000);
+        Thread.sleep(1000);
         drive.setWobblePosPow(-1,0);
         drive.setWobblePosPow(0,.75); // arm is the power
-        sleep(300); // milliseconds is the wait time
+        Thread.sleep(300); // milliseconds is the wait time
         drive.setWobblePosPow(0,0);
-        sleep(300);
+        Thread.sleep(300);
     }
 }

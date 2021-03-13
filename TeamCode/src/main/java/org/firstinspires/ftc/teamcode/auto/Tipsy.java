@@ -105,14 +105,26 @@ public class Tipsy extends LinearOpMode {
 
         dropA = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropAX,dropAY,dropAH))
-                .addDisplacementMarker(() -> depositWobble(drive))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
 
         dropB = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropBX,dropBY,dropBH))
-                .addDisplacementMarker(() -> depositWobble(drive))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                })
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
@@ -120,7 +132,11 @@ public class Tipsy extends LinearOpMode {
         dropC = drive.trajectoryBuilder(toLine.end())
                 .lineToSplineHeading(new Pose2d(dropCX,dropCY,dropCH))
                 .addDisplacementMarker(() -> {
-                    depositWobble(drive);
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     drive.followTrajectoryAsync(toLineToo);
                 })
                 .build();
