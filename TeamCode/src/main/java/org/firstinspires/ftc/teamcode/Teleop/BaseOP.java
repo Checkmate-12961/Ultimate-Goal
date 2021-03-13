@@ -28,12 +28,6 @@ public class BaseOP extends LinearOpMode {
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // 2.5, -61.25
-        // TODO: REMOVE THIS AND WRITE A PROPER ZERO FUNCTION!!!
-        // TODO: RiLey what's wrong with this!!! PoseStorage.currentPose = new Pose2d(-70.5, -20.25 , Math.toRadians(0) );
-        // DON'T BE LAZY, RILEY!!!
-
-
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseUtils.currentPose);
@@ -88,12 +82,8 @@ public class BaseOP extends LinearOpMode {
         int grab = 0;
         if (gamepad2.dpad_right) grab += 1;
         if (gamepad2.dpad_left) grab -= 1;
-        /*
-        double arm = 0;
-        if (gamepad2.dpad_up) arm   += 0.5;
-        if (gamepad2.dpad_down) arm -= 0.5;
-        */
-        robot.setWobblePosPow(grab, gamepad2.right_stick_y);
+
+        robot.setWobblePosPow(grab, gamepad2.right_stick_y/3);
 
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherConstants.highGoalVelo);
