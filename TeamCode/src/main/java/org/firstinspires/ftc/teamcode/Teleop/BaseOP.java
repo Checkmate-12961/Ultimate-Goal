@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "TeleOP")
@@ -36,7 +36,7 @@ public class BaseOP extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        drive.setPoseEstimate(PoseUtils.currentPose);
 
         drive.setWobblePosPow(-1,0);
 
@@ -46,7 +46,7 @@ public class BaseOP extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             controlRobo(drive, 0,false, runtime);
         }
-        PoseStorage.currentPose = PoseStorage.globalStartPose;
+        PoseUtils.currentPose = PoseUtils.globalStartPose;
     }
     private void controlRoboBase(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
         // Read pose
@@ -172,8 +172,8 @@ public class BaseOP extends LinearOpMode {
         controlRoboBase(robot, rotationalOffset, relative);
         Pose2d poseEstimate = robot.getPoseEstimate();
         // Print pose to telemetry
-        telemetry.addData("x", PoseStorage.currentPose.getX());
-        telemetry.addData("y", PoseStorage.currentPose.getY());
+        telemetry.addData("x", PoseUtils.currentPose.getX());
+        telemetry.addData("y", PoseUtils.currentPose.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
         telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.addData("runtime",String.format("%fs",runtime.seconds()));

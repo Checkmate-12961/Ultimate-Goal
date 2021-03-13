@@ -29,15 +29,15 @@ public class LauncherConstants {
 
     // // AUTO
     // power shot
-    public static double ApowerShotAngle = -12.5; // angle the robot turns
-    public static double ApowerShotVeloRight = 3900; // 0.72; //
-    public static double ApowerShotVeloCenter = 4200; // 0.75; //
-    public static double ApowerShotVeloLeft = 4000; // 0.72; //
+    public static double autoPowerShotAngle = -12.5; // angle the robot turns
+    public static double autoPowerShotVeloRight = 3900; // 0.72; //
+    public static double autoPowerShotVeloCenter = 4200; // 0.75; //
+    public static double autoPowerShotVeloLeft = 4000; // 0.72; //
     // coordinates
-    public static double ArotFix = 2.48;
-    public static double ApowerShotX = -9;
-    public static double ApowerShotY = -12;
-    public static double ApegDist = 6.65; // distance between each shot
+    public static double autoRotFix = 2.48;
+    public static double autoPowerShotX = -9;
+    public static double autoPowerShotY = -12;
+    public static double autoPegDist = 6.65; // distance between each shot
 
     public static Vector2d getPowerVector(){
         return new Vector2d(powerShotX,powerShotY);
@@ -45,5 +45,5 @@ public class LauncherConstants {
 
     public static Pose2d getPowerPose(double angle){return new Pose2d(powerShotX,powerShotY,angle);}
 
-    public static Pose2d AgetPowerPose(double angle){return new Pose2d(ApowerShotX,ApowerShotY,angle);}
+    public static Pose2d autoGetPowerPose(double angle){return new Pose2d(autoPowerShotX, autoPowerShotY,angle);}
 }

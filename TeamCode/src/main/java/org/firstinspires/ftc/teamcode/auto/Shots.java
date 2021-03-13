@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -38,8 +38,8 @@ public class Shots extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        PoseStorage.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
-        Pose2d startPose = PoseStorage.currentPose;
+        PoseUtils.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
+        Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 
         Telemetry.Item xItem = telemetry.addData("x",drive.getPoseEstimate().getX());
@@ -55,7 +55,7 @@ public class Shots extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
+        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -76,33 +76,33 @@ public class Shots extends LinearOpMode {
         telemetry.update();
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherConstants.AgetPowerPose(Math.toRadians(LauncherConstants.ApowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(Math.toRadians(LauncherConstants.autoPowerShotAngle)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown*2);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloCenter);
+                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloCenter);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloLeft);
+                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloLeft);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
                 .build();
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist *2, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix *2)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
@@ -116,7 +116,7 @@ public class Shots extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         //toLine moves the robot straight forward to the line
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .splineTo(new Vector2d(12, LauncherConstants.ApowerShotY + 2* LauncherConstants.ApegDist), Math.toRadians(0))
+                .splineTo(new Vector2d(12, LauncherConstants.autoPowerShotY + 2* LauncherConstants.autoPegDist), Math.toRadians(0))
                 .build();
         nextTelemetry(onTrajBuild,trajBuildItem);
 
@@ -142,7 +142,7 @@ public class Shots extends LinearOpMode {
                 ));
         telemetry.update();
 
-        drive.revFlywheel(-LauncherConstants.ApowerShotVeloRight);
+        drive.revFlywheel(-LauncherConstants.autoPowerShotVeloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
@@ -161,7 +161,7 @@ public class Shots extends LinearOpMode {
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();
         }
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseUtils.currentPose = drive.getPoseEstimate();
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){

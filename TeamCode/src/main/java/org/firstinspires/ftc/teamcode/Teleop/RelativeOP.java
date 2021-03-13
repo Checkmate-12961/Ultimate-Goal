@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /**
@@ -32,7 +32,7 @@ public class RelativeOP extends BaseOP {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        drive.setPoseEstimate(PoseUtils.currentPose);
 
         waitForStart();
 
@@ -40,7 +40,7 @@ public class RelativeOP extends BaseOP {
         while (opModeIsActive() && !isStopRequested()) {
             controlRoboRelative(drive, 0,runtime);
         }
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseUtils.currentPose = drive.getPoseEstimate();
     }
     public void controlRoboRelative(SampleMecanumDrive robot, double rotationalOffset){
         controlRobo(robot, rotationalOffset, true);

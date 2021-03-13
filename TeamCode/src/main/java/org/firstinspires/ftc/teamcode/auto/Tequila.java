@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class Tequila extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private OpenCvWebcam webCam;
-    private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
+    private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
 
     private Trajectory toLine;
     private Trajectory rightShot;
@@ -42,8 +42,8 @@ public class Tequila extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        PoseStorage.currentPose = PoseStorage.globalStartPose;
-        Pose2d startPose = PoseStorage.currentPose;
+        PoseUtils.currentPose = PoseUtils.globalStartPose;
+        Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 
         Telemetry.Item runningItem = telemetry.addData("running","nothing");
@@ -60,7 +60,7 @@ public class Tequila extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
+        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -82,13 +82,13 @@ public class Tequila extends LinearOpMode {
 
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherConstants.AgetPowerPose(Math.toRadians(LauncherConstants.ApowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(Math.toRadians(LauncherConstants.autoPowerShotAngle)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown*2);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloCenter);
+                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloCenter);
                 })
                 .addDisplacementMarker(() -> {
                     runningItem.setValue("midShot");
@@ -99,13 +99,13 @@ public class Tequila extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.ApowerShotVeloLeft);
+                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloLeft);
                 })
                 .addDisplacementMarker(() -> {
                     runningItem.setValue("leftShot");
@@ -116,7 +116,7 @@ public class Tequila extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2, Math.toRadians(LauncherConstants.ApowerShotAngle+ LauncherConstants.ArotFix*2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist *2, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix *2)))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
@@ -135,17 +135,17 @@ public class Tequila extends LinearOpMode {
         //toLine moves the robot straight forward to the line
         nextTelemetry(onTrajBuild,trajBuildItem);
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist *2+1, 0))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist *2+1, 0))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE){
+                    if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.NONE){
                         runningItem.setValue("dropA");
                         telemetry.update();
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE){
+                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.ONE){
                         runningItem.setValue("dropB");
                         telemetry.update();
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR){
+                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.FOUR){
                         runningItem.setValue("dropC");
                         telemetry.update();
                         drive.followTrajectoryAsync(dropC);
@@ -231,7 +231,7 @@ public class Tequila extends LinearOpMode {
                 ));
         runningItem.setValue("rightShot");
         telemetry.update();
-        drive.revFlywheel(-LauncherConstants.ApowerShotVeloRight);
+        drive.revFlywheel(-LauncherConstants.autoPowerShotVeloRight);
 
         int ticks = 0;
         Telemetry.Item avgTPS = telemetry.addData("AvgTPS", ticks / (runtime.seconds()-initTime/1000));
@@ -244,8 +244,8 @@ public class Tequila extends LinearOpMode {
                             runtime.milliseconds()-initTime
                     ));
             Pose2d tempPose = drive.getPoseEstimate();
-            xItem.setValue(PoseStorage.currentPose.getX());
-            yItem.setValue(PoseStorage.currentPose.getY());
+            xItem.setValue(PoseUtils.currentPose.getX());
+            yItem.setValue(PoseUtils.currentPose.getY());
 
             ringPosEst.setValue(pipeline.getPosition());
             ringAnal.setValue(pipeline.getAnalysis());
@@ -255,17 +255,17 @@ public class Tequila extends LinearOpMode {
             ticks += 1;
             avgTPS.setValue(ticks / (runtime.seconds()-initTime/1000));
 
-            if (Math.abs(PoseStorage.currentPose.getX() - tempPose.getX()) < 70 && Math.abs(PoseStorage.currentPose.getY() - tempPose.getY()) < 70) {
-                PoseStorage.currentPose = tempPose;
+            if (Math.abs(PoseUtils.currentPose.getX() - tempPose.getX()) < 70 && Math.abs(PoseUtils.currentPose.getY() - tempPose.getY()) < 70) {
+                PoseUtils.currentPose = tempPose;
             }
             telemetry.update();
         }
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
-        onVal++;
-        telemetryItem.setValue(onVal);
+        int newVal = onVal + 1;
+        telemetryItem.setValue(newVal);
         telemetry.update();
-        return onVal;
+        return newVal;
     }
 }

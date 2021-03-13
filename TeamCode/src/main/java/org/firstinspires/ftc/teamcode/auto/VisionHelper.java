@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class Vision {
+public class VisionHelper {
     public static int TopLeftX = 210;
     public static int TopLeftY = 170;
     public static int Width = 90;
@@ -33,8 +33,8 @@ public class Vision {
 
 
         //Some color constants
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
+        private static final Scalar BLUE = new Scalar(0, 0, 255);
+        private static final Scalar GREEN = new Scalar(0, 255, 0);
 
         //The core values which define the location and size of the sample regions
 
@@ -56,7 +56,7 @@ public class Vision {
         /*
          * Working variables
          */
-        Mat region1_Cb;
+        private Mat region1_Cb;
         private final Mat YCrCb = new Mat();
         private final Mat Cb = new Mat();
         private int avg1;
@@ -68,7 +68,7 @@ public class Vision {
          * This function takes the RGB frame, converts to YCrCb,
          * and extracts the Cb channel to the 'Cb' variable
          */
-        void inputToCb(Mat input)
+        private void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 1);

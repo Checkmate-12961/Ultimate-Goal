@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,10 +23,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
-    private Vision.RingDeterminationPipeline.RingPosition ringPosSaved;
+    private VisionHelper.RingDeterminationPipeline pipeline;
+    private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    private Trajectory toLine;
     private Trajectory dropA;
     private Trajectory dropB;
     private Trajectory dropC;
@@ -54,8 +53,8 @@ public class Tipsy extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        PoseStorage.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
-        Pose2d startPose = PoseStorage.currentPose;
+        PoseUtils.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
+        Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 
         Telemetry.Item xItem = telemetry.addData("x",drive.getPoseEstimate().getX());
@@ -71,7 +70,7 @@ public class Tipsy extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -88,14 +87,14 @@ public class Tipsy extends LinearOpMode {
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
-        toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherConstants.ApowerShotX, LauncherConstants.ApowerShotY + LauncherConstants.ApegDist * 2, Math.toRadians(LauncherConstants.ApowerShotAngle + LauncherConstants.ArotFix * 2)))
+        Trajectory toLine = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist * 2, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix * 2)))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.NONE) {
+                    if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.ONE) {
+                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.ONE) {
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == Vision.RingDeterminationPipeline.RingPosition.FOUR) {
+                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.FOUR) {
                         drive.followTrajectoryAsync(dropC);
                     }
                 })
@@ -193,7 +192,7 @@ public class Tipsy extends LinearOpMode {
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();
         }
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseUtils.currentPose = drive.getPoseEstimate();
     }
 
     private int nextTelemetry(int onVal, Telemetry.Item telemetryItem){
@@ -203,14 +202,4 @@ public class Tipsy extends LinearOpMode {
         return nextVal;
     }
 
-    private void depositWobble(SampleMecanumDrive drive){
-        drive.setWobblePosPow(-1,0);
-        sleep(200);
-        drive.setWobblePosPow(0,-.75); // arm is the power
-        sleep(300); // milliseconds is the wait time
-        drive.setWobblePosPow(0,0);
-        sleep(300);
-        drive.setWobblePosPow(1,0);
-        sleep(200);
-    }
 }

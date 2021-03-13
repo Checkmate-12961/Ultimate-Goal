@@ -4,11 +4,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
 @Autonomous(group = "Meet start")
 public class SetPosition extends LinearOpMode {
-    Pose2d pose;
     @Override
     public void runOpMode() {
         waitForStart();
@@ -24,6 +23,7 @@ public class SetPosition extends LinearOpMode {
             x = gamepad1.x;
             y = gamepad1.y;
         }
+        Pose2d pose;
         if (a){
             pose = new Pose2d(-70.5, 44.25 , Math.toRadians(0));
         } else if (b){
@@ -33,6 +33,6 @@ public class SetPosition extends LinearOpMode {
         } else {
             pose = new Pose2d(-70.5, -44.25 , Math.toRadians(0) );
         }
-        PoseStorage.currentPose = pose;
+        PoseUtils.currentPose = pose;
     }
 }

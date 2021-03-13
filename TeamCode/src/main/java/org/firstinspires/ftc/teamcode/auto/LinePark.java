@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -55,7 +55,7 @@ public class LinePark extends LinearOpMode {
 
         // RR stuff
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = PoseStorage.currentPose;
+        Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 
         Telemetry.Item xItem = telemetry.addData("x",drive.getPoseEstimate().getX());
@@ -71,7 +71,7 @@ public class LinePark extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        Vision.RingDeterminationPipeline pipeline = new Vision.RingDeterminationPipeline();
+        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
@@ -139,7 +139,7 @@ public class LinePark extends LinearOpMode {
             telemetry.update();
         }
 
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseUtils.currentPose = drive.getPoseEstimate();
     }
 
     private int nextTelemetry(int onVal,Telemetry.Item telemetryItem){

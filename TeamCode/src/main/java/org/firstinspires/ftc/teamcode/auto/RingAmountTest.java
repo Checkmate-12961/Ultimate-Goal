@@ -39,8 +39,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class RingAmountTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private OpenCvWebcam webCam;
-    Vision.RingDeterminationPipeline pipeline;
-    private static Vision.RingDeterminationPipeline.RingPosition position = Vision.RingDeterminationPipeline.RingPosition.FOUR;
+    private static final VisionHelper.RingDeterminationPipeline.RingPosition position = VisionHelper.RingDeterminationPipeline.RingPosition.FOUR;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -55,7 +54,7 @@ public class RingAmountTest extends LinearOpMode {
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new Vision.RingDeterminationPipeline();
+        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
         //listens for when the camera is opened
