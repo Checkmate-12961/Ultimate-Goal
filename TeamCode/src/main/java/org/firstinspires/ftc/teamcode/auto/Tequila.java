@@ -53,7 +53,7 @@ public class Tequila extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePosPow(1,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();
