@@ -43,7 +43,41 @@ public class LauncherConstants {
         return new Vector2d(powerShotX,powerShotY);
     }
 
-    public static Pose2d getPowerPose(double angle){return new Pose2d(powerShotX,powerShotY,angle);}
+    public enum Position{
+        LEFT, CENTER, RIGHT
+    }
 
-    public static Pose2d autoGetPowerPose(double angle){return new Pose2d(autoPowerShotX, autoPowerShotY,angle);}
+    public static Pose2d getPowerPose(double angle){
+        return new Pose2d(powerShotX,powerShotY,angle);
+    }
+
+    public static Pose2d autoGetPowerPose(Position pos){
+        Pose2d poseToReturn;
+        switch (pos){
+            case RIGHT: poseToReturn = new Pose2d(
+                    autoPowerShotX,
+                    autoPowerShotY,
+                    Math.toRadians(autoPowerShotAngle)
+                );
+                break;
+            case CENTER: poseToReturn = new Pose2d(autoPowerShotX,
+                    autoPowerShotY + autoPegDist,
+                    Math.toRadians(autoPowerShotAngle + autoRotFix)
+                );
+                break;
+            case LEFT: poseToReturn = new Pose2d(
+                    autoPowerShotX,
+                    autoPowerShotY + autoPegDist * 2,
+                    Math.toRadians(autoPowerShotAngle + autoRotFix * 2)
+                );
+                break;
+            default: poseToReturn = null;
+                break;
+        }
+        return poseToReturn;
+    }
+
+    public static Pose2d autoGetPowerPose(double angle){
+        return new Pose2d(autoPowerShotX, autoPowerShotY,angle);
+    }
 }

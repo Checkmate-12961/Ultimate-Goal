@@ -103,42 +103,46 @@ public class BaseOP extends LinearOpMode {
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
             //One trajectory defined for each of the high goals.
             Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
-                    //.lineToSplineHeading(new Pose2d(-55,-55,0))
-                    //.splineTo(new Vector2d(LauncherMath.rightX-10, LauncherMath.rightY-10), 0)
+                    //Move to shooting locations
                     .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .addDisplacementMarker(() -> {
+                        //Wait for the flywheel to get to full speed. This line is unique to this block.
+                        sleep(1000);
+                        //Virtually presses trigger
+                        robot.pressTrigger(true);
+                        //Gives the trigger time to finish shooting.
+                        sleep(LauncherConstants.triggerActuationTime);
+                        //Retracts trigger
+                        robot.pressTrigger(false);
+                        robot.revFlywheel(-LauncherConstants.powerShotVeloCenter);
+                    })
                     .build();
             Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
                     .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .addDisplacementMarker(() -> {
+                        sleep(LauncherConstants.shootCoolDown);
+                        robot.pressTrigger(true);
+                        sleep(LauncherConstants.triggerActuationTime);
+                        robot.pressTrigger(false);
+                        robot.revFlywheel(-LauncherConstants.powerShotVeloLeft);
+                    })
                     .build();
             Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
                     .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist *2, Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .addDisplacementMarker(() -> {
+                        sleep(LauncherConstants.shootCoolDown);
+                        robot.pressTrigger(true);
+                        sleep(LauncherConstants.triggerActuationTime);
+                        robot.pressTrigger(false);
+                    })
                     .build();
 
             //These three blocks are almost identical.
-            //Move to shooting locations
             robot.followTrajectory(rightShot);
-            //Wait for the flywheel to get to full speed. This line is unique to this block.
-            sleep(1000);
-            //Virtually presses trigger
-            robot.pressTrigger(true);
-            //Gives the trigger time to finish shooting.
-            sleep(LauncherConstants.triggerActuationTime);
-            //Retracts trigger
-            robot.pressTrigger(false);
-            robot.revFlywheel(-LauncherConstants.powerShotVeloCenter);
 
             robot.followTrajectory(midShot);
-            sleep(LauncherConstants.shootCoolDown);
-            robot.pressTrigger(true);
-            sleep(LauncherConstants.triggerActuationTime);
-            robot.pressTrigger(false);
 
-            robot.revFlywheel(-LauncherConstants.powerShotVeloLeft);
             robot.followTrajectory(leftShot);
-            sleep(LauncherConstants.shootCoolDown);
-            robot.pressTrigger(true);
-            sleep(LauncherConstants.triggerActuationTime);
-            robot.pressTrigger(false);
 
             //Turns the flywheel off
             robot.revFlywheel(0);
