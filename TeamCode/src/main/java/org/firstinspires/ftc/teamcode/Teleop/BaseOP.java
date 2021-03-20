@@ -42,6 +42,8 @@ public class BaseOP extends LinearOpMode {
         }
         PoseUtils.currentPose = PoseUtils.globalStartPose;
     }
+
+    // I need to make this smaller
     private void controlRoboBase(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
