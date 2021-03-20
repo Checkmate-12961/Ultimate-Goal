@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 import java.util.Objects;
 
@@ -41,22 +41,20 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Pressing A (on the Xbox and Logitech F310 gamepads, X on the PS4 Dualshock gamepad) will cede
  * control back to the tuning process.
  */
+
+
 @Config
 @Disabled
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-
-    private SampleMecanumDrive drive;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     enum Mode {
         DRIVER_MODE,
         TUNING_MODE
     }
-
-    private Mode mode;
 
     private static MotionProfile generateProfile(boolean movingForward) {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
@@ -76,9 +74,9 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
-        mode = Mode.TUNING_MODE;
+        Mode mode = Mode.TUNING_MODE;
 
         NanoClock clock = NanoClock.system();
 
@@ -132,6 +130,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
                     if (gamepad1.a) {
                         mode = Mode.TUNING_MODE;
                         movingForwards = true;
+                        //noinspection ConstantConditions
                         activeProfile = generateProfile(movingForwards);
                         profileStart = clock.seconds();
                     }

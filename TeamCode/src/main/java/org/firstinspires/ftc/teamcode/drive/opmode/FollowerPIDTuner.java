@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * These coefficients can be tuned live in dashboard.
  */
+
+@SuppressWarnings("unused")
 @Config
 @Disabled
 @Autonomous(group = "drive")
@@ -30,7 +32,7 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 

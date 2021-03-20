@@ -52,8 +52,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
+@SuppressWarnings("unused")
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class HungryHippoDrive extends MecanumDrive {
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
@@ -66,7 +67,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static int POSE_HISTORY_LIMIT = 100;
     
-    private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0;
+    private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0; // Should be `<secondsPerMinute> / <ticksPerRevolution>`
     
     public enum Mode {
         IDLE,
@@ -108,7 +109,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public HungryHippoDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -150,16 +151,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         shooterTrigger = hardwareMap.get(Servo.class, "ShooterTrigger");
         wobblePivot = hardwareMap.get(DcMotorEx.class, "WobblePivot");
 
-        // TODO: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
+        // DONE: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
         wobbleGrab.scaleRange( .4 , 1.0);
 
         shooterTrigger.scaleRange(0,.18);
 
-        // Tell WobblePivot it has an encoder
-        wobblePivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        setWobblePosPow(0,0);
+        setWobblePosPow(1,0);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -189,8 +188,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // _TODO: reverse the flywheel by uncommenting this line if needed
         //  flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // use setLocalizer() to change the localization method
 
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
     }
@@ -455,6 +452,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             shooterTrigger.setPosition(-1);
         }
+    }
+    public void cancelTrajectory () {
+        mode = Mode.IDLE;
     }
     @Override
     public double getRawExternalHeading() {

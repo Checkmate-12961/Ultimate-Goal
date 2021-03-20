@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 import java.util.List;
 
@@ -49,22 +49,20 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Pressing A (on the Xbox and Logitech F310 gamepads, X on the PS4 Dualshock gamepad) will cede
  * control back to the tuning process.
  */
+
+@SuppressWarnings("unused")
 @Config
 @Disabled
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-
-    private SampleMecanumDrive drive;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     enum Mode {
         DRIVER_MODE,
         TUNING_MODE
     }
-
-    private Mode mode;
 
     private double lastKp = MOTOR_VELO_PID.p;
     private double lastKi = MOTOR_VELO_PID.i;
@@ -80,6 +78,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 DriveConstants.BASE_CONSTRAINTS.maxJerk);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void runOpMode() {
         if (!RUN_USING_ENCODER) {
@@ -89,9 +88,9 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
-        mode = Mode.TUNING_MODE;
+        Mode mode = Mode.TUNING_MODE;
 
         drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
 

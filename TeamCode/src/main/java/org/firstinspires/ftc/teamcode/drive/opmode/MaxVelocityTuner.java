@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 import java.util.Objects;
 
@@ -22,24 +22,23 @@ import java.util.Objects;
  * <p>
  * Further fine tuning of kF may be desired.
  */
+
+@SuppressWarnings("unused")
 @Config
 @Disabled
 @Autonomous(group = "drive")
 public class MaxVelocityTuner extends LinearOpMode {
     public static double RUNTIME = 2.0;
 
-    private ElapsedTime timer;
     private double maxVelocity = 0.0;
-
-    private VoltageSensor batteryVoltageSensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        VoltageSensor batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         telemetry.addLine("Your bot will go at full speed for " + RUNTIME + " seconds.");
         telemetry.addLine("Please ensure you have enough space cleared.");
@@ -53,7 +52,7 @@ public class MaxVelocityTuner extends LinearOpMode {
         telemetry.update();
 
         drive.setDrivePower(new Pose2d(1, 0, 0));
-        timer = new ElapsedTime();
+        ElapsedTime timer = new ElapsedTime();
 
         while (!isStopRequested() && timer.seconds() < RUNTIME) {
             drive.updatePoseEstimate();

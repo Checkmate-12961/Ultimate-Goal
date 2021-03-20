@@ -21,8 +21,6 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
-import android.annotation.SuppressLint;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -34,6 +32,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.Locale;
+
+@SuppressWarnings("unused")
 @Autonomous
 @Disabled
 public class RingAmountTest extends LinearOpMode {
@@ -41,7 +42,7 @@ public class RingAmountTest extends LinearOpMode {
     private OpenCvWebcam webCam;
     private static final VisionHelper.RingDeterminationPipeline.RingPosition position = VisionHelper.RingDeterminationPipeline.RingPosition.FOUR;
 
-    @SuppressLint("DefaultLocale")
+
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -72,7 +73,7 @@ public class RingAmountTest extends LinearOpMode {
 
 
 
-        initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
+        initItem.setValue(String.format(Locale.ENGLISH, "Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
         waitForStart();
@@ -83,17 +84,11 @@ public class RingAmountTest extends LinearOpMode {
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
-                String.format(
-                        "%fms",
-                        runtime.milliseconds()-initTime
-                ));
+                String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
 
         while (opModeIsActive() && !isStopRequested()) {
             runtimeItem.setValue(
-                    String.format(
-                            "%fms",
-                            runtime.milliseconds()-initTime
-                    ));
+                    String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
             ringPos = pipeline.getAnalysis();
             ringPosItem.setValue(ringPos);
             telemetry.update();

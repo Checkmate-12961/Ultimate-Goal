@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
+@SuppressWarnings("unused")
 @Disabled
 @TeleOp(name="Tele Relative (B)", group="TeleOP")
 public class RelativeOPBlue extends RelativeOP {
@@ -15,7 +16,7 @@ public class RelativeOPBlue extends RelativeOP {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto

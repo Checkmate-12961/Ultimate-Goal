@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 /**
  * This opmode demonstrates how one would implement field centric control using
@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * See lines 42-57.
  */
 
+
 @Disabled
 @TeleOp(group = "TeleOP")
 public class RelativeOP extends BaseOP {
@@ -24,7 +25,7 @@ public class RelativeOP extends BaseOP {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -42,10 +43,10 @@ public class RelativeOP extends BaseOP {
         }
         PoseUtils.currentPose = drive.getPoseEstimate();
     }
-    public void controlRoboRelative(SampleMecanumDrive robot, double rotationalOffset){
+    public void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset){
         controlRobo(robot, rotationalOffset, true);
     }
-    public void controlRoboRelative(SampleMecanumDrive robot, double rotationalOffset, ElapsedTime runtime){
+    public void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset, ElapsedTime runtime){
         controlRobo(robot, rotationalOffset, true, runtime);
     }
 }

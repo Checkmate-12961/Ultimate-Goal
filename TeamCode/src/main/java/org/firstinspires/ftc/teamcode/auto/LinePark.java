@@ -21,8 +21,6 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
-import android.annotation.SuppressLint;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -33,19 +31,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.Locale;
+
+@SuppressWarnings("unused")
 @Autonomous
 @Disabled
 public class LinePark extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private OpenCvWebcam webCam;
 
-    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -54,7 +54,7 @@ public class LinePark extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 
@@ -106,7 +106,7 @@ public class LinePark extends LinearOpMode {
         // add more trajectories here if needed
 
         telemetry.removeItem(trajBuildItem);
-        initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
+        initItem.setValue(String.format(Locale.ENGLISH,"Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
         waitForStart();
@@ -119,19 +119,13 @@ public class LinePark extends LinearOpMode {
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
-                String.format(
-                        "%fms",
-                        runtime.milliseconds()-initTime
-                ));
+                String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
         telemetry.update();
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             runtimeItem.setValue(
-                    String.format(
-                            "%fms",
-                            runtime.milliseconds()-initTime
-                    ));
+                    String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
             Pose2d tempPose = drive.getPoseEstimate();
             xItem.setValue(tempPose.getX());
             yItem.setValue(tempPose.getY());

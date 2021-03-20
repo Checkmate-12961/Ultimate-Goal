@@ -7,11 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 /*
  * This is a simple routine to test translational drive capabilities.
  */
+
+@SuppressWarnings({"unused","EmptyLoopBody"})
 @Config
 @Disabled
 @Autonomous(group = "drive")
@@ -20,7 +22,7 @@ public class StraightTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)
@@ -38,6 +40,7 @@ public class StraightTest extends LinearOpMode {
         telemetry.addData("finalHeading", poseEstimate.getHeading());
         telemetry.update();
 
+        //noinspection StatementWithEmptyBody
         while (!isStopRequested() && opModeIsActive()) ;
     }
 }

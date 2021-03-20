@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 @Autonomous
 public class MoveWobble extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         waitForStart();
 
@@ -20,7 +20,7 @@ public class MoveWobble extends LinearOpMode {
         }
     }
     // Method to slap the wobble goal down that can be easily imported in other OpModes
-    public static void depositWobble(SampleMecanumDrive drive) throws InterruptedException {
+    public static void depositWobble(HungryHippoDrive drive) throws InterruptedException {
         // Close the hand
         drive.setWobblePosPow(1,0);
         Thread.sleep(200);

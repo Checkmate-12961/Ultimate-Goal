@@ -13,11 +13,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@SuppressWarnings("ALL")
 @Config
 @Autonomous(group = "Alcohol")
 public class Tipsy extends LinearOpMode {
@@ -52,7 +53,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
         PoseUtils.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);

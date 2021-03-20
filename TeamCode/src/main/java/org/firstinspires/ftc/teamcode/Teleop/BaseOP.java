@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import android.annotation.SuppressLint;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -13,20 +11,34 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+
+import java.util.Locale;
 
 @TeleOp(group = "TeleOP")
 public class BaseOP extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
+    @SuppressWarnings("FieldCanBeLocal")
+    private Trajectory rightShot;
+    private Trajectory midShot;
+    private Trajectory leftShot;
+    @SuppressWarnings("FieldCanBeLocal")
+    private Trajectory shootPos;
+
+    private enum ControlMode {
+        TELE, AUTO
+    }
+    ControlMode controlMode = ControlMode.TELE;
+
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
@@ -44,7 +56,62 @@ public class BaseOP extends LinearOpMode {
     }
 
     // I need to make this smaller
-    private void controlRoboBase(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
+    private void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
+        // Update everything. Odometry. Etc.
+        robot.update();
+
+        switch (controlMode){
+            case TELE:
+                // Moves the robot based on the GP1 left stick
+                runDrivetrain(robot, rotationalOffset, relative);
+
+                // Control the intake motors
+                runIntake(robot);
+
+                // Control the wobble bits
+                runWobble(robot);
+
+                // Control the shooting mechanism
+                runShooter(robot);
+
+                // Positions robot and shoots into the power shots
+                runSeekPowerShots(robot);
+
+                // Zeroes the robot
+                runZero(robot);
+
+                // Moves the robot to hit the high goal
+                runSeekHighGoal(robot);
+
+            case AUTO:
+                // Replace false here with a check to cancel the trajectory
+                //noinspection ConstantConditions
+                if (false) robot.cancelTrajectory();
+                if (!robot.isBusy()) controlMode = ControlMode.TELE;
+        }
+    }
+    public void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
+        controlRoboBase(robot, rotationalOffset, relative);
+        Pose2d poseEstimate = robot.getPoseEstimate();
+        // Print pose to telemetry
+        telemetry.addData("x", PoseUtils.currentPose.getX());
+        telemetry.addData("y", PoseUtils.currentPose.getY());
+        telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("flyRate", robot.getFlywheelVelo());
+        telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
+        telemetry.update();
+    }
+    public void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
+        controlRoboBase(robot, rotationalOffset, relative);
+        Pose2d poseEstimate = robot.getPoseEstimate();
+        // Print pose to telemetry
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("flyRate", robot.getFlywheelVelo());
+        telemetry.update();
+    }
+    private void runDrivetrain (HungryHippoDrive robot, double rotationalOffset, boolean relative){
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
         double offset;
@@ -59,7 +126,7 @@ public class BaseOP extends LinearOpMode {
         Vector2d input = new Vector2d(
                 -yin,
                 -xin
-        ).rotated(offset);  
+        ).rotated(offset);
 
         // Pass in the rotated input + right stick value for rotation
         // Rotation is not part of the rotated input thus must be passed in separately
@@ -70,8 +137,8 @@ public class BaseOP extends LinearOpMode {
                         -gamepad1.right_stick_x * Range.scale((gamepad1.right_trigger), -1, 1, 0, 1)
                 )
         );
-
-        // Control the intake motors
+    }
+    private void runIntake (HungryHippoDrive robot){
         double intakePower = 0;
         double transferPower = 0;
         if (gamepad2.a) transferPower += 1;
@@ -79,32 +146,32 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.y) intakePower += 1;
         if (gamepad2.x) intakePower -= 1;
         robot.setIntakePowers(-intakePower, transferPower);
-
-        // Control the wobble bits
+    }
+    private void runWobble (HungryHippoDrive robot){
         int grab = 0;
         if (gamepad2.dpad_right) grab += 1;
         if (gamepad2.dpad_left) grab -= 1;
 
         robot.setWobblePosPow(grab, gamepad2.right_stick_y/2);
-
+    }
+    private void runShooter (HungryHippoDrive robot){
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherConstants.highGoalVelo);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
-
         // Shoots circle at target.
-        // _TODO: adjust the trigger sensitivity by changing the decimal number
         robot.pressTrigger(gamepad1.left_trigger > .9);
-
-        // Positions robot to shoot into the power shots
-        //I'm so sorry for this it's chaos, but it works sort of.
+    }
+    private void runSeekPowerShots (HungryHippoDrive robot){
         if (gamepad1.dpad_right) {
+            controlMode = ControlMode.AUTO;
+            //I'm so sorry for this it's chaos, but it works sort of.
             //Changes robot position estimate to the side of the field, so roadrunner is more consistent
             robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
             //Revs flywheel in advance.
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
             //One trajectory defined for each of the high goals.
-            Trajectory rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
+            rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
                     //Move to shooting locations
                     .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
                     .addDisplacementMarker(() -> {
@@ -117,9 +184,10 @@ public class BaseOP extends LinearOpMode {
                         //Retracts trigger
                         robot.pressTrigger(false);
                         robot.revFlywheel(-LauncherConstants.powerShotVeloCenter);
+                        robot.followTrajectoryAsync(midShot);
                     })
                     .build();
-            Trajectory midShot = robot.trajectoryBuilder(rightShot.end())
+            midShot = robot.trajectoryBuilder(rightShot.end())
                     .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle)))
                     .addDisplacementMarker(() -> {
                         sleep(LauncherConstants.shootCoolDown);
@@ -127,62 +195,38 @@ public class BaseOP extends LinearOpMode {
                         sleep(LauncherConstants.triggerActuationTime);
                         robot.pressTrigger(false);
                         robot.revFlywheel(-LauncherConstants.powerShotVeloLeft);
+                        robot.followTrajectoryAsync(leftShot);
                     })
                     .build();
-            Trajectory leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist *2, Math.toRadians(LauncherConstants.powerShotAngle)))
+            leftShot = robot.trajectoryBuilder(midShot.end())
+                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist * 2, Math.toRadians(LauncherConstants.powerShotAngle)))
                     .addDisplacementMarker(() -> {
                         sleep(LauncherConstants.shootCoolDown);
                         robot.pressTrigger(true);
                         sleep(LauncherConstants.triggerActuationTime);
                         robot.pressTrigger(false);
+
+                        //Turns the flywheel off
+                        robot.revFlywheel(0);
                     })
                     .build();
 
             //These three blocks are almost identical.
-            robot.followTrajectory(rightShot);
-
-            robot.followTrajectory(midShot);
-
-            robot.followTrajectory(leftShot);
-
-            //Turns the flywheel off
-            robot.revFlywheel(0);
+            robot.followTrajectoryAsync(rightShot);
         }
-
+    }
+    private void runZero (HungryHippoDrive robot) {
         if (gamepad1.dpad_left) {
             robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
         }
+    }
+    private void runSeekHighGoal (HungryHippoDrive robot){
         if (gamepad1.dpad_up) {
-            Trajectory shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
+            controlMode = ControlMode.AUTO;
+            shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
                     .lineToSplineHeading(new Pose2d(LauncherConstants.highGoalX, LauncherConstants.highGoalY, Math.toRadians(LauncherConstants.highGoalAngle)))
                     .build();
-            robot.followTrajectory(shootPos);
+            robot.followTrajectoryAsync(shootPos);
         }
-
-        // Update everything. Odometry. Etc.
-        robot.update();
-    }
-    @SuppressLint("DefaultLocale")
-    public void controlRobo(SampleMecanumDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
-        controlRoboBase(robot, rotationalOffset, relative);
-        Pose2d poseEstimate = robot.getPoseEstimate();
-        // Print pose to telemetry
-        telemetry.addData("x", PoseUtils.currentPose.getX());
-        telemetry.addData("y", PoseUtils.currentPose.getY());
-        telemetry.addData("heading", poseEstimate.getHeading());
-        telemetry.addData("flyRate", robot.getFlywheelVelo());
-        telemetry.addData("runtime",String.format("%fs",runtime.seconds()));
-        telemetry.update();
-    }
-    public void controlRobo(SampleMecanumDrive robot, double rotationalOffset, boolean relative) {
-        controlRoboBase(robot, rotationalOffset, relative);
-        Pose2d poseEstimate = robot.getPoseEstimate();
-        // Print pose to telemetry
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
-        telemetry.addData("heading", poseEstimate.getHeading());
-        telemetry.addData("flyRate", robot.getFlywheelVelo());
-        telemetry.update();
     }
 }

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -23,7 +23,7 @@ public class Tequila extends LinearOpMode {
     private OpenCvWebcam webCam;
     private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
 
-    private Trajectory toLine;
+    @SuppressWarnings("FieldCanBeLocal")
     private Trajectory rightShot;
     private Trajectory midShot;
     private Trajectory leftShot;
@@ -35,7 +35,7 @@ public class Tequila extends LinearOpMode {
     private Telemetry.Item trajBuildItem;
     private Telemetry.Item runningItem;
 
-    private SampleMecanumDrive drive;
+    private HungryHippoDrive drive;
 
     private int onTrajBuild = 0;
 
@@ -48,7 +48,7 @@ public class Tequila extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new HungryHippoDrive(hardwareMap);
         PoseUtils.currentPose = PoseUtils.globalStartPose;
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
