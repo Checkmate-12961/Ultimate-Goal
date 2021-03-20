@@ -19,18 +19,24 @@ public class MoveWobble extends LinearOpMode {
             drive.update();
         }
     }
+    // Method to slap the wobble goal down that can be easily imported in other OpModes
     public static void depositWobble(SampleMecanumDrive drive) throws InterruptedException {
+        // Close the hand
         drive.setWobblePosPow(1,0);
         Thread.sleep(200);
-        drive.setWobblePosPow(0,-.75); // arm is the power
-        Thread.sleep(300); // milliseconds is the wait time
+        // Move out at -75% power
+        drive.setWobblePosPow(0,-.75);
+        Thread.sleep(300);
+        // Stop moving the arm
         drive.setWobblePosPow(0,0);
         Thread.sleep(300);
+        // Open the servo
         drive.setWobblePosPow(-1,0);
         Thread.sleep(1000);
-        drive.setWobblePosPow(1,0);
-        drive.setWobblePosPow(0,.75); // arm is the power
-        Thread.sleep(300); // milliseconds is the wait time
+        // Start closing the servo and move the arm up and away from the wobble
+        drive.setWobblePosPow(1,.75);
+        Thread.sleep(300);
+        // Stop powering the arm and let it's velocity carry it back
         drive.setWobblePosPow(0,0);
         Thread.sleep(300);
     }
