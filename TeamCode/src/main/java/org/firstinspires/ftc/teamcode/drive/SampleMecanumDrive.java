@@ -49,15 +49,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
-// _TODO: add the following:
-// DONE:
-//  motor 0 expansion hub: Flywheel
-//  motor 1 expansion hub : Transfer
-//  motor 3 expansion hub: WobblePivot
-//  servo 1 control hub : ShooterTrigger
-//  servo 2 control hub : gone
-//  servo 3 control hub : no change
-
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
@@ -443,15 +434,18 @@ public class SampleMecanumDrive extends MecanumDrive {
         //  these are the positions that the pivot arm will travel to
         wobblePivot.setPower(arm);
     }
+
+    // Sets the target velocity of the flywheel
     public void revFlywheel(double rpm){
         flywheelTargetRPM = rpm;
     }
-    public double getFlywheelPos(){
-        return flywheel.getCurrentPosition()/28.0;
-    }
+
+    // Gets the flywheel velocity
     public double getFlywheelVelo(){
         return -flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER;
     }
+
+    // Gets the difference between the target flywheel velocity and the actual flywheel velocity
     public double getFlywheelVeloDiff (){
         return (-flywheel.getVelocity() - flywheelTargetRPM) * FLYWHEEL_RMP_MULTIPLIER;
     }
@@ -467,5 +461,3 @@ public class SampleMecanumDrive extends MecanumDrive {
         return 0;
     }
 }
-
-// 180, -400
