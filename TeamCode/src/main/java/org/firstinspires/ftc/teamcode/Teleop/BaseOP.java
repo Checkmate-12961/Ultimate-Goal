@@ -26,10 +26,10 @@ public class BaseOP extends LinearOpMode {
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory shootPos;
 
-    private enum ControlMode {
+    protected enum ControlMode {
         TELE, AUTO
     }
-    private ControlMode controlMode = ControlMode.TELE;
+    protected ControlMode controlMode = ControlMode.TELE;
 
     @Override
     public void runOpMode() throws InterruptedException{
