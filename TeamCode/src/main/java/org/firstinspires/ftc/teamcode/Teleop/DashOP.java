@@ -33,7 +33,7 @@ public class DashOP  extends  BaseOP{
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
-        drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
