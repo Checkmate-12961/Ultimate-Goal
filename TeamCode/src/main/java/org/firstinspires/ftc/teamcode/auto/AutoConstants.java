@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class AutoConstants {
     //These are the coordinates for the wobble goal placements.
-    public static double dropAX = 16;
-    public static double dropAY = -32;
+    public static double dropAX = 12;
+    public static double dropAY = -36;
     public static double dropAH = Math.PI/2;
 
     public static double dropBX = 18;
