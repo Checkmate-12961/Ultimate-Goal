@@ -29,7 +29,7 @@ public class BaseOP extends LinearOpMode {
     private enum ControlMode {
         TELE, AUTO
     }
-    ControlMode controlMode = ControlMode.TELE;
+    private ControlMode controlMode = ControlMode.TELE;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -82,12 +82,17 @@ public class BaseOP extends LinearOpMode {
 
                 // Moves the robot to hit the high goal
                 runSeekHighGoal(robot);
+                break;
 
             case AUTO:
                 // Replace false here with a check to cancel the trajectory
                 //noinspection ConstantConditions
                 if (false) robot.cancelTrajectory();
                 if (!robot.isBusy()) controlMode = ControlMode.TELE;
+                break;
+
+            default:
+                break;
         }
     }
     public void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
