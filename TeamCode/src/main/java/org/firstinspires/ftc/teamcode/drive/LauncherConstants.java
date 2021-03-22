@@ -8,18 +8,21 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 public class LauncherConstants {
     public static int triggerActuationTime = 500;
 
+    // everything
+    public static double flywheelThreshold = 25; // In RPM
+
     // high goal
-    public static double highGoalX = -5;
-    public static double highGoalY = -21.25;
-    public static double highGoalVelo = 5200; // 1; // roughly at a little over 12 volts
+    public static double highGoalX = -1.5;
+    public static double highGoalY = -22.5;
+    public static double highGoalVelo = 5600; // 1; // roughly at a little over 12 volts
     public static double highGoalAngle = -22;
 
     // // TELE
     // power shot
     public static double powerShotAngle = 0; // angle the robot turns
-    public static double powerShotVeloRight = 4200; // 0.72; //
-    public static double powerShotVeloCenter = 4200; // 0.75; //
-    public static double powerShotVeloLeft = 4200; // 0.72; //
+    public static double powerShotVeloRight = 4000; // 0.72; //
+    public static double powerShotVeloCenter = 4000; // 0.75; //
+    public static double powerShotVeloLeft = 4000; // 0.72; //
     public static int shootCoolDown = 1000;
 
     // coordinates
@@ -29,19 +32,17 @@ public class LauncherConstants {
 
     // // AUTO
     // power shot
-    public static double autoPowerShotAngle = 2.6; // angle the robot turns
-    public static double autoPowerShotVeloRight = 4200; // 0.72; //
-    public static double autoPowerShotVeloCenter = 4100; // 0.75; //
-    public static double autoPowerShotVeloLeft = 4200; // 0.72; //
+    public static double autoPowerShotAngle = 0; // angle the robot turns
+    public static double autoPowerShotVeloRight = 4000; // 0.72; //
+    public static double autoPowerShotVeloCenter = 4000; // 0.75; //
+    public static double autoPowerShotVeloLeft = 4000; // 0.72; //
+    public static double rotFix = 1.2;
+
     // coordinates
     public static double autoRotFix = 1.2;
     public static double autoPowerShotX = -10;
     public static double autoPowerShotY = -38;
     public static double autoPegDist = 7; // distance between each shot
-
-    public static Vector2d getPowerVector(){
-        return new Vector2d(powerShotX,powerShotY);
-    }
 
     public enum Position{
         LEFT, CENTER, RIGHT

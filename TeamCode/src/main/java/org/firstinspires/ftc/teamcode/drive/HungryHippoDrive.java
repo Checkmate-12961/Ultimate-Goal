@@ -439,12 +439,16 @@ public class HungryHippoDrive extends MecanumDrive {
 
     // Gets the flywheel velocity
     public double getFlywheelVelo(){
-        return -flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER;
+        return flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER;
     }
 
     // Gets the difference between the target flywheel velocity and the actual flywheel velocity
     public double getFlywheelVeloDiff (){
-        return (-flywheel.getVelocity() - flywheelTargetRPM) * FLYWHEEL_RMP_MULTIPLIER;
+        return flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER - flywheelTargetRPM;
+    }
+    @SuppressWarnings("StatementWithEmptyBody")
+    public void waitForFlywheel(double threshold){
+        while (Math.abs(getFlywheelVeloDiff()) < threshold);
     }
     public void pressTrigger(boolean enabled){
         if (enabled){

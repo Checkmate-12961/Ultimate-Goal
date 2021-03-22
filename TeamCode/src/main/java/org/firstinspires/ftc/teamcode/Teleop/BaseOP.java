@@ -183,7 +183,7 @@ public class BaseOP extends LinearOpMode {
                     .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
                     .addDisplacementMarker(() -> {
                         //Wait for the flywheel to get to full speed. This line is unique to this block.
-                        sleep(1000);
+                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
                         //Virtually presses trigger
                         robot.pressTrigger(true);
                         //Gives the trigger time to finish shooting.
@@ -195,9 +195,9 @@ public class BaseOP extends LinearOpMode {
                     })
                     .build();
             midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle + LauncherConstants.rotFix)))
                     .addDisplacementMarker(() -> {
-                        sleep(LauncherConstants.shootCoolDown);
+                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
                         robot.pressTrigger(true);
                         sleep(LauncherConstants.triggerActuationTime);
                         robot.pressTrigger(false);
@@ -206,9 +206,9 @@ public class BaseOP extends LinearOpMode {
                     })
                     .build();
             leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist * 2, Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist * 2, Math.toRadians(LauncherConstants.powerShotAngle + LauncherConstants.rotFix * 2)))
                     .addDisplacementMarker(() -> {
-                        sleep(LauncherConstants.shootCoolDown);
+                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
                         robot.pressTrigger(true);
                         sleep(LauncherConstants.triggerActuationTime);
                         robot.pressTrigger(false);

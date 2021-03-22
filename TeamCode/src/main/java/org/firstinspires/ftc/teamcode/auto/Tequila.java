@@ -83,7 +83,7 @@ public class Tequila extends LinearOpMode {
 
         drive.dashboard.startCameraStream(webCam, 10);
 
-        Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
+        trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
 
@@ -141,32 +141,6 @@ public class Tequila extends LinearOpMode {
                     runTrajectory(toFollow);
                 })
                 .build();
-/*
-        onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
-        //toLine moves the robot straight forward to the line
-        nextTelemetry(onTrajBuild,trajBuildItem);
-        toLine = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist *2+1, 0))
-                .addDisplacementMarker(() -> {
-                    Trajectory toFollow;
-                    switch (ringPosSaved){
-                        case NONE:
-                            toFollow = dropA;
-                            break;
-                        case ONE:
-                            toFollow = dropB;
-                            break;
-                        case FOUR:
-                            toFollow = dropC;
-                            break;
-                        default:
-                            toFollow = null;
-                            break;
-                    }
-                    runTrajectory(toFollow);
-                })
-                .build();
-*/
 
         nextTelemetry();
         dropA = drive.trajectoryBuilder(leftShot.end())
