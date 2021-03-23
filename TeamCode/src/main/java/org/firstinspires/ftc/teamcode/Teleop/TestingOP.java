@@ -87,11 +87,8 @@ public class TestingOP extends BaseOP{
                 break;
 
             case AUTO:
-                // Replace false here with a check to cancel the trajectory
                 robot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                //noinspection ConstantConditions
-                if (false) robot.cancelTrajectory();
+                if (gamepad1.dpad_down) robot.cancelTrajectory();
                 if (!robot.isBusy()) controlMode = ControlMode.TELE;
                 break;
 
