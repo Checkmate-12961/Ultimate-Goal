@@ -43,9 +43,6 @@ public class RelativeOP extends BaseOP {
         }
         PoseUtils.currentPose = drive.getPoseEstimate();
     }
-    public void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset){
-        controlRobo(robot, rotationalOffset, true);
-    }
     public void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset, ElapsedTime runtime){
         controlRobo(robot, rotationalOffset, true, runtime);
     }

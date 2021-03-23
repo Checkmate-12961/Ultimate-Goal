@@ -107,6 +107,8 @@ public class HungryHippoDrive extends MecanumDrive {
 
     private final VoltageSensor batteryVoltageSensor;
 
+    private final StandardTrackingWheelLocalizer localizer;
+
     private Pose2d lastPoseOnTurn;
 
     public HungryHippoDrive(HardwareMap hardwareMap) {
@@ -189,7 +191,8 @@ public class HungryHippoDrive extends MecanumDrive {
         // _TODO: reverse the flywheel by uncommenting this line if needed
         //  flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap);
+        setLocalizer(localizer);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -372,7 +375,7 @@ public class HungryHippoDrive extends MecanumDrive {
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
-        Pose2d vel = drivePower;
+        Pose2d velo = drivePower;
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -381,14 +384,14 @@ public class HungryHippoDrive extends MecanumDrive {
                     + VY_WEIGHT * Math.abs(drivePower.getY())
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
-            vel = new Pose2d(
+            velo = new Pose2d(
                     VX_WEIGHT * drivePower.getX(),
                     VY_WEIGHT * drivePower.getY(),
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denominator);
         }
 
-        setDrivePower(vel);
+        setDrivePower(velo);
     }
 
     @NonNull
@@ -410,6 +413,14 @@ public class HungryHippoDrive extends MecanumDrive {
         return wheelVelocities;
     }
 
+    public List<Double> getDeadWheelPositions() {
+        List<Double> wheelVelocities = new ArrayList<>();
+        for (DcMotorEx motor : motors) {
+            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+        }
+        return wheelVelocities;
+    }
+
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         leftFront.setPower(v);
@@ -422,6 +433,7 @@ public class HungryHippoDrive extends MecanumDrive {
         intake.setPower(ir);
         transfer.setPower(t);
     }
+
     public void setWobblePosPow(int grab, double arm){
         if (grab != 0) {
             wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1));
@@ -446,6 +458,7 @@ public class HungryHippoDrive extends MecanumDrive {
     public double getFlywheelVeloDiff (){
         return flywheel.getVelocity() * FLYWHEEL_RMP_MULTIPLIER - flywheelTargetRPM;
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     public void waitForFlywheel(double threshold){
         while (Math.abs(getFlywheelVeloDiff()) < threshold);
@@ -457,11 +470,17 @@ public class HungryHippoDrive extends MecanumDrive {
             shooterTrigger.setPosition(-1);
         }
     }
+
     public void cancelTrajectory () {
         mode = Mode.IDLE;
     }
+
     @Override
     public double getRawExternalHeading() {
         return 0;
+    }
+
+    public List<Double> getDeadPositions(){
+        return localizer.getWheelPositions();
     }
 }

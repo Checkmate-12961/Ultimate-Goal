@@ -17,6 +17,8 @@ import java.util.Locale;
 
 @TeleOp(group = "TeleOP")
 public class BaseOP extends LinearOpMode {
+    // Don't make this anything but private
+    // We don't want this re-used between opmodes.
     private final ElapsedTime runtime = new ElapsedTime();
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -26,9 +28,7 @@ public class BaseOP extends LinearOpMode {
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory shootPos;
 
-    protected enum ControlMode {
-        TELE, AUTO
-    }
+    protected enum ControlMode {TELE, AUTO}
     protected ControlMode controlMode = ControlMode.TELE;
 
     @Override
@@ -55,8 +55,7 @@ public class BaseOP extends LinearOpMode {
         PoseUtils.currentPose = PoseUtils.globalStartPose;
     }
 
-    // I need to make this smaller
-    private void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
+    protected void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
         // Update everything. Odometry. Etc.
         robot.update();
 
@@ -97,7 +96,8 @@ public class BaseOP extends LinearOpMode {
                 break;
         }
     }
-    public void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
+
+    protected void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
         controlRoboBase(robot, rotationalOffset, relative);
         Pose2d poseEstimate = robot.getPoseEstimate();
         // Print pose to telemetry
@@ -108,17 +108,7 @@ public class BaseOP extends LinearOpMode {
         telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
         telemetry.update();
     }
-    public void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
-        controlRoboBase(robot, rotationalOffset, relative);
-        Pose2d poseEstimate = robot.getPoseEstimate();
-        // Print pose to telemetry
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
-        telemetry.addData("heading", poseEstimate.getHeading());
-        telemetry.addData("flyRate", robot.getFlywheelVelo());
-        telemetry.update();
-    }
-    private void runDrivetrain (HungryHippoDrive robot, double rotationalOffset, boolean relative){
+    protected void runDrivetrain (HungryHippoDrive robot, double rotationalOffset, boolean relative){
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
         double offset;
