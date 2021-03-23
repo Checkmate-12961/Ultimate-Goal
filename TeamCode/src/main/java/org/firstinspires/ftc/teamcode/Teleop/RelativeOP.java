@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
  * See lines 42-57.
  */
 
-
+@Deprecated
 @Disabled
 @TeleOp(group = "TeleOP")
 public class RelativeOP extends BaseOP {

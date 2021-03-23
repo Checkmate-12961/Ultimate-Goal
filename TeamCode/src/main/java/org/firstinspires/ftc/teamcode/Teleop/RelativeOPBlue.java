@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
-@SuppressWarnings("unused")
+@Deprecated
 @Disabled
 @TeleOp(name="Tele Relative (B)", group="TeleOP")
 public class RelativeOPBlue extends RelativeOP {

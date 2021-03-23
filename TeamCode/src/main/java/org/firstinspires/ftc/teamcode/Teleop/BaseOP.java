@@ -170,7 +170,7 @@ public class BaseOP extends LinearOpMode {
             //One trajectory defined for each of the high goals.
             rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
                     //Move to shooting locations
-                    .lineToSplineHeading(LauncherConstants.getPowerPose(Math.toRadians(LauncherConstants.powerShotAngle)))
+                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.RIGHT))
                     .addDisplacementMarker(() -> {
                         //Wait for the flywheel to get to full speed. This line is unique to this block.
                         robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
@@ -185,7 +185,7 @@ public class BaseOP extends LinearOpMode {
                     })
                     .build();
             midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist, Math.toRadians(LauncherConstants.powerShotAngle + LauncherConstants.rotFix)))
+                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.CENTER))
                     .addDisplacementMarker(() -> {
                         robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
                         robot.pressTrigger(true);
@@ -196,7 +196,7 @@ public class BaseOP extends LinearOpMode {
                     })
                     .build();
             leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.powerShotX, LauncherConstants.powerShotY + LauncherConstants.pegDist * 2, Math.toRadians(LauncherConstants.powerShotAngle + LauncherConstants.rotFix * 2)))
+                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.LEFT))
                     .addDisplacementMarker(() -> {
                         robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
                         robot.pressTrigger(true);

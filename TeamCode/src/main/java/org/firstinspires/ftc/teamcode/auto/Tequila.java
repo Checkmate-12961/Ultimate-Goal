@@ -73,7 +73,7 @@ public class Tequila extends LinearOpMode {
         //listens for when the camera is opened
         webCam.openCameraDeviceAsync(() -> {
             //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
+            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
         });
 
         initItem.setValue("Checking ring position");
@@ -144,7 +144,7 @@ public class Tequila extends LinearOpMode {
 
         nextTelemetry();
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConstants.dropAX, AutoConstants.dropAY, AutoConstants.dropAH))
+                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -159,7 +159,7 @@ public class Tequila extends LinearOpMode {
         nextTelemetry();
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConstants.dropBX, AutoConstants.dropBY, AutoConstants.dropBH))
+                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.B))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -174,7 +174,7 @@ public class Tequila extends LinearOpMode {
         nextTelemetry();
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(new Pose2d(AutoConstants.dropCX, AutoConstants.dropCY, AutoConstants.dropCH))
+                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);

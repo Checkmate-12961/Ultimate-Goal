@@ -47,8 +47,30 @@ public class LauncherConstants {
         LEFT, CENTER, RIGHT
     }
 
-    public static Pose2d getPowerPose(double angle){
-        return new Pose2d(powerShotX,powerShotY,angle);
+    public static Pose2d getPowerPose(Position pos){
+        Pose2d poseToReturn;
+        switch (pos){
+            case RIGHT: poseToReturn = new Pose2d(
+                    powerShotX,
+                    powerShotY,
+                    Math.toRadians(powerShotAngle)
+            );
+                break;
+            case CENTER: poseToReturn = new Pose2d(powerShotX,
+                    powerShotY + pegDist,
+                    Math.toRadians(powerShotAngle + rotFix)
+            );
+                break;
+            case LEFT: poseToReturn = new Pose2d(
+                    powerShotX,
+                    powerShotY + pegDist * 2,
+                    Math.toRadians(powerShotAngle + rotFix * 2)
+            );
+                break;
+            default: poseToReturn = null;
+                break;
+        }
+        return poseToReturn;
     }
 
     public static Pose2d autoGetPowerPose(Position pos){
