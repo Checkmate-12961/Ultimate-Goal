@@ -247,6 +247,8 @@ public class HungryHippoDrive extends MecanumDrive {
                 return new Pose2d(0, 0, turnController.getLastError());
             case IDLE:
                 return new Pose2d();
+            default:
+                break;
         }
         throw new AssertionError();
     }
