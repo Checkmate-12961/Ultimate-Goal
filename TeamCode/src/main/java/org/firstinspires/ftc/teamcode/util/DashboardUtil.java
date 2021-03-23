@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,6 +46,19 @@ public class DashboardUtil {
     }
 
     public static void drawRobot(Canvas canvas, Pose2d pose) {
+        drawNormalRobot(canvas, pose);
+    }
+
+    @SuppressWarnings("unused")
+    public static void drawRobot(Canvas canvas, Pose2d pose, boolean realistic){
+        if (realistic) {
+            drawRealisticRobot(canvas, pose);
+        } else {
+            drawNormalRobot(canvas, pose);
+        }
+    }
+
+    private static void drawNormalRobot(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);
         Vector2d v = pose.headingVec().times(ROBOT_RADIUS);
         double x1 = pose.getX() + v.getX() / 2;
@@ -61,7 +73,7 @@ public class DashboardUtil {
      *  4--3
      */
     // For the record, I have no idea what is going on or if this will work at all.
-    public static void drawRealisticRobot(Canvas canvas, Pose2d pose) {
+    private static void drawRealisticRobot(Canvas canvas, Pose2d pose) {
         double r = Math.sqrt(2*Math.pow(ROBOT_RADIUS,2));
         double h1 = Math.PI * 0.75 + pose.getHeading();
         double h2 = Math.PI * 0.25 + pose.getHeading();
