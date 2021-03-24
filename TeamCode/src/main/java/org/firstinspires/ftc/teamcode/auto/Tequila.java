@@ -49,7 +49,7 @@ public class Tequila extends LinearOpMode {
 
         // RR stuff
         drive = new HungryHippoDrive(hardwareMap);
-        PoseUtils.currentPose = PoseUtils.globalStartPose;
+        PoseUtils.currentPose = PoseUtils.getStartPose();
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 

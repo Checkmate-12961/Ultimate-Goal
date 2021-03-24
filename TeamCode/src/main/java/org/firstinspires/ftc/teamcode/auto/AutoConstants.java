@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 public class AutoConstants {
     //These are the coordinates for the wobble goal placements.
     public static double dropAX = 6;
-    public static double dropAY = -42;
+    public static double dropAY = -50;
     public static double dropAH = 90;
 
     public static double dropBX = 12;

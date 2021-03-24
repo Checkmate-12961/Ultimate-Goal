@@ -59,6 +59,6 @@ public class DashOP  extends  BaseOP{
             }
             controlRobo(drive, 0,false, runtime);
         }
-        PoseUtils.currentPose = PoseUtils.globalStartPose;
+        PoseUtils.currentPose = PoseUtils.getStartPose();
     }
 }

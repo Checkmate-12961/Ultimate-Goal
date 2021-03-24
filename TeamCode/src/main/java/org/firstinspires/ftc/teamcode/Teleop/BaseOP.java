@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -15,12 +16,17 @@ import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 
 import java.util.Locale;
 
+@Config
 @TeleOp(group = "TeleOP")
 public class BaseOP extends LinearOpMode {
     // Don't make this anything but private
     // We don't want this re-used between opmodes.
     private final ElapsedTime runtime = new ElapsedTime();
 
+    public static double setPointX = 2.5;
+    public static double setPointY = -61.25;
+    public static double setPointHeading = -5.5;
+    
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory rightShot;
     private Trajectory midShot;
@@ -52,7 +58,7 @@ public class BaseOP extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             controlRobo(drive, 0,false, runtime);
         }
-        PoseUtils.currentPose = PoseUtils.globalStartPose;
+        PoseUtils.currentPose = PoseUtils.getStartPose();
     }
 
     protected void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
@@ -103,7 +109,7 @@ public class BaseOP extends LinearOpMode {
         // Print pose to telemetry
         telemetry.addData("x", PoseUtils.currentPose.getX());
         telemetry.addData("y", PoseUtils.currentPose.getY());
-        telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
         telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
         telemetry.update();
@@ -168,7 +174,7 @@ public class BaseOP extends LinearOpMode {
             //Revs flywheel in advance.
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
             //One trajectory defined for each of the high goals.
-            rightShot = robot.trajectoryBuilder(new Pose2d(2.5, -61.25, 0))
+            rightShot = robot.trajectoryBuilder(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)))
                     //Move to shooting locations
                     .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.RIGHT))
                     .addDisplacementMarker(() -> {
@@ -214,7 +220,7 @@ public class BaseOP extends LinearOpMode {
     }
     private void runZero (HungryHippoDrive robot) {
         if (gamepad1.dpad_left) {
-            robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
+            robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
         }
     }
     private void runSeekHighGoal (HungryHippoDrive robot){

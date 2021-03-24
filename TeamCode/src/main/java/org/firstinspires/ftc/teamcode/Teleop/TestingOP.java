@@ -23,6 +23,10 @@ public class TestingOP extends BaseOP{
     public static double moveY = 0;
     public static double rotate = 0;
 
+    private static double leftEncoderOffset = 0;
+    private static double rightEncoderOffset = 0;
+    private static double frontEncoderOffset = 0;
+
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
@@ -62,9 +66,9 @@ public class TestingOP extends BaseOP{
         telemetry.addData("FlyRPM", robot.getFlywheelVelo());
         telemetry.addData("Runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
         List<Double> deadPos = robot.getDeadPositions();
-        telemetry.addData("LeftEncoder",deadPos.get(0));
-        telemetry.addData("RightEncoder",deadPos.get(1));
-        telemetry.addData("FrontEncoder",deadPos.get(2));
+        telemetry.addData("LeftEncoder",deadPos.get(0) - leftEncoderOffset);
+        telemetry.addData("RightEncoder",deadPos.get(1) - rightEncoderOffset);
+        telemetry.addData("FrontEncoder",deadPos.get(2) - frontEncoderOffset);
         telemetry.update();
     }
 
@@ -84,6 +88,10 @@ public class TestingOP extends BaseOP{
                 // Moves the robot based on the GP1 left stick
                 runDrivetrain(robot, rotationalOffset, relative);
 
+
+                // Resets and Zeros
+                zeroPosition(robot);
+                toZero(robot);
                 break;
 
             case AUTO:
@@ -99,7 +107,7 @@ public class TestingOP extends BaseOP{
 
     // Goes to a position
     private void goToPos(HungryHippoDrive robot){
-        if (gamepad1.a){
+        if (gamepad1.a && (moveX != 0 || moveY != 0)){
             controlMode = ControlMode.AUTO;
             Pose2d here = robot.getPoseEstimate();
             Pose2d addPose = new Pose2d(moveX,moveY,Math.toRadians(rotate));
@@ -112,12 +120,35 @@ public class TestingOP extends BaseOP{
 
     // Goes from a position
     private void goFromPos(HungryHippoDrive robot){
-        if (gamepad1.b){
+        if (gamepad1.b && (moveX != 0 || moveY != 0)){
             controlMode = ControlMode.AUTO;
             Pose2d here = robot.getPoseEstimate();
             Pose2d addPose = new Pose2d(moveX,moveY,Math.toRadians(rotate));
             Trajectory goTo = robot.trajectoryBuilder(here)
                     .lineToSplineHeading(here.minus(addPose))
+                    .build();
+            robot.followTrajectoryAsync(goTo);
+        }
+    }
+
+    // Zeros the robot
+    private void zeroPosition(HungryHippoDrive robot){
+        if (gamepad1.dpad_up){
+            robot.setPoseEstimate(new Pose2d(0,0,0));
+            List<Double> deadPos = robot.getDeadPositions();
+            leftEncoderOffset = deadPos.get(0);
+            rightEncoderOffset = deadPos.get(1);
+            frontEncoderOffset = deadPos.get(2);
+        }
+    }
+
+    // Goes to what the robot thinks is zero
+    private void toZero(HungryHippoDrive robot){
+        Pose2d here = robot.getPoseEstimate();
+        if (gamepad1.dpad_right && (here.getX() != 0 || here.getY() != 0)){
+            controlMode = ControlMode.AUTO;
+            Trajectory goTo = robot.trajectoryBuilder(here)
+                    .lineToSplineHeading(new Pose2d(0,0,0))
                     .build();
             robot.followTrajectoryAsync(goTo);
         }

@@ -28,6 +28,7 @@ public class LauncherConstants {
     public static double powerShotX = -10; //X coord for the leftmost powershot
     public static double powerShotY = -40;   //Y coord for the leftmost powershot
     public static double pegDist = 8; // distance between each shot
+    public static double rotFix = 0;
 
     // // AUTO
     // power shot
@@ -35,13 +36,12 @@ public class LauncherConstants {
     public static double autoPowerShotVeloRight = 4000; // 0.72; //
     public static double autoPowerShotVeloCenter = 4000; // 0.75; //
     public static double autoPowerShotVeloLeft = 4000; // 0.72; //
-    public static double rotFix = 1.2;
 
     // coordinates
-    public static double autoRotFix = 1.2;
     public static double autoPowerShotX = -10;
-    public static double autoPowerShotY = -38;
-    public static double autoPegDist = 7; // distance between each shot
+    public static double autoPowerShotY = -48;
+    public static double autoPegDist = 7.5; // distance between each shot
+    public static double autoRotFix = 0;
 
     public enum Position{
         LEFT, CENTER, RIGHT
