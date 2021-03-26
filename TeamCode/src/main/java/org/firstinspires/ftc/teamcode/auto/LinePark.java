@@ -70,7 +70,7 @@ public class LinePark extends LinearOpMode {
         telemetry.update();
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, HungryHippoDrive.WEBCAM_NAME), cameraMonitorViewId);
         VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 

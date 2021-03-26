@@ -22,12 +22,12 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -36,12 +36,9 @@ import java.util.Locale;
 
 @SuppressWarnings("unused")
 @Autonomous
-@Disabled
 public class RingAmountTest extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private OpenCvWebcam webCam;
-    private static final VisionHelper.RingDeterminationPipeline.RingPosition position = VisionHelper.RingDeterminationPipeline.RingPosition.FOUR;
-
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -54,7 +51,7 @@ public class RingAmountTest extends LinearOpMode {
         telemetry.update();
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, HungryHippoDrive.WEBCAM_NAME), cameraMonitorViewId);
         VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
@@ -69,9 +66,12 @@ public class RingAmountTest extends LinearOpMode {
 
         int ringPos = pipeline.getAnalysis();
         Telemetry.Item ringPosItem = telemetry.addData("RingPosGuess",ringPos);
-        telemetry.addData("RingAmountGuess", position);
+        Telemetry.Item ringAmountItem = telemetry.addData("RingAmountGuess", pipeline.getPosition());
 
-
+        // Starts streaming to the dashboard
+        HungryHippoDrive robot = new HungryHippoDrive(hardwareMap);
+        robot.dashboard.startCameraStream(webCam, 10);
+        robot.setWobblePosPow(0,0);
 
         initItem.setValue(String.format(Locale.ENGLISH, "Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
@@ -89,8 +89,8 @@ public class RingAmountTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             runtimeItem.setValue(
                     String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
-            ringPos = pipeline.getAnalysis();
-            ringPosItem.setValue(ringPos);
+            ringPosItem.setValue(pipeline.getAnalysis());
+            ringAmountItem.setValue(pipeline.getPosition());
             telemetry.update();
 
         }

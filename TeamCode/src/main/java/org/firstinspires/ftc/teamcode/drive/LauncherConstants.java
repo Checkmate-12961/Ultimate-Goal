@@ -39,8 +39,8 @@ public class LauncherConstants {
 
     // coordinates
     public static double autoPowerShotX = -8;
-    public static double autoPowerShotY = -39.5;
-    public static double autoPegDist = 8.6; // distance between each shot
+    public static double autoPowerShotY = -41;
+    public static double autoPegDist = 8.2; // distance between each shot
     public static double autoRotFix = 0;
 
     public enum Position{

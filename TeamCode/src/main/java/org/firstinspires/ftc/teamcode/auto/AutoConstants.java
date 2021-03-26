@@ -14,8 +14,8 @@ public class AutoConstants {
     public static double dropBY = -24;
     public static double dropBH = 120;
 
-    public static double dropCX = 40;
-    public static double dropCY = -42;
+    public static double dropCX = 48;
+    public static double dropCY = -54;
     public static double dropCH = 120;
 
     public enum Box {A,B,C}

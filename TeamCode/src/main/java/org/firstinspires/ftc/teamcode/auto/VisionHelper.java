@@ -11,13 +11,13 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class VisionHelper {
+public class VisionHelper{
     public static int TopLeftX = 210;
     public static int TopLeftY = 170;
     public static int Width = 90;
     public static int Height = 60;
-    public static int FourRingThresh = 155;
-    public static int OneRingThresh = 130;
+    public static int FourRingThresh = 140;
+    public static int OneRingThresh = 132;
 
     public static class RingDeterminationPipeline extends OpenCvPipeline
     {

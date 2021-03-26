@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -24,13 +24,14 @@ public class Tequila extends LinearOpMode {
     private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
 
     @SuppressWarnings("FieldCanBeLocal")
+    private Trajectory missRings;
     private Trajectory rightShot;
     private Trajectory midShot;
     private Trajectory leftShot;
     private Trajectory dropA;
     private Trajectory dropB;
     private Trajectory dropC;
-    private Trajectory toLineToo;
+    private Trajectory toLineC;
 
     private Telemetry.Item trajBuildItem;
     private Telemetry.Item runningItem;
@@ -64,9 +65,10 @@ public class Tequila extends LinearOpMode {
 
         initItem.setValue("Starting camera feed");
         telemetry.update();
+
         // Camera stuff
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, HungryHippoDrive.WEBCAM_NAME), cameraMonitorViewId);
         VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
         webCam.setPipeline(pipeline);
 
@@ -79,15 +81,25 @@ public class Tequila extends LinearOpMode {
         initItem.setValue("Checking ring position");
         telemetry.update();
 
+        ringPosSaved = pipeline.getPosition();
+        telemetry.addData("RingPos", ringPosSaved);
+        Telemetry.Item ringAnal = telemetry.addData("RingAnalNow", pipeline.getAnalysis());
+
         initItem.setValue("Building trajectories");
 
-        drive.dashboard.startCameraStream(webCam, 10);
+        // You can uncomment this for troubleshooting the camera
+        // Streams the camera to the dash
+        // drive.dashboard.startCameraStream(webCam, 10);
 
         trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
 
+        missRings = drive.trajectoryBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(0, startPose.getY(), 0))
+                .addDisplacementMarker(() -> runTrajectory(rightShot))
+                .build();
 
-        rightShot = drive.trajectoryBuilder(startPose)
+        rightShot = drive.trajectoryBuilder(missRings.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown*2);
@@ -181,13 +193,13 @@ public class Tequila extends LinearOpMode {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    runTrajectory(toLineToo);
+                    runTrajectory(toLineC);
                 })
                 .build();
 
         nextTelemetry();
 
-        toLineToo = drive.trajectoryBuilder(dropC.end())
+        toLineC = drive.trajectoryBuilder(dropC.end())
                 .lineToSplineHeading(new Pose2d(12, dropC.end().getY(),dropC.end().getHeading()))
                 .addDisplacementMarker(() -> runningItem.setValue("done"))
                 .build();
@@ -195,8 +207,6 @@ public class Tequila extends LinearOpMode {
         nextTelemetry();
 
         telemetry.removeItem(trajBuildItem);
-        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", pipeline.getPosition());
-        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
@@ -207,7 +217,7 @@ public class Tequila extends LinearOpMode {
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
 
-        drive.followTrajectoryAsync(rightShot);
+        drive.followTrajectoryAsync(missRings);
 
         Telemetry.Item runtimeItem = telemetry.addData(
                 "Runtime",
@@ -233,7 +243,6 @@ public class Tequila extends LinearOpMode {
             xItem.setValue(PoseUtils.currentPose.getX());
             yItem.setValue(PoseUtils.currentPose.getY());
 
-            ringPosEst.setValue(pipeline.getPosition());
             ringAnal.setValue(pipeline.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());

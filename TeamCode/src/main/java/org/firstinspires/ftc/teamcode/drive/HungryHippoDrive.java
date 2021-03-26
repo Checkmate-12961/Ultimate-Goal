@@ -55,6 +55,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @SuppressWarnings("unused")
 @Config
 public class HungryHippoDrive extends MecanumDrive {
+    public static final String WEBCAM_NAME = "camra";
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
