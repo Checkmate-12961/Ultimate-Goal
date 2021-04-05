@@ -63,20 +63,17 @@ public class TestingOP extends BaseOP{
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Reset the position of the wobble grabber so it can grip a goal
-        drive.setWobblePosPow(1,0);
-
         waitForStart();
 
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
-            controlRobo(drive, 0,false, runtime);
+            controlRobo(drive, runtime);
         }
     }
 
     @Override
-    protected void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
-        controlRoboBase(robot, rotationalOffset, relative);
+    protected void controlRobo(HungryHippoDrive robot, ElapsedTime runtime) {
+        controlRoboBase(robot, 0, false);
         Pose2d poseEstimate = robot.getPoseEstimate();
         // Print pose to telemetry
         telemetry.addData("POS",String.format(Locale.ENGLISH, "(%5f, %5f) @ %5f°",

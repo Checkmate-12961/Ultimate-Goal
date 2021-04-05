@@ -71,7 +71,6 @@ public class RingAmountTest extends LinearOpMode {
         // Starts streaming to the dashboard
         HungryHippoDrive robot = new HungryHippoDrive(hardwareMap);
         robot.dashboard.startCameraStream(webCam, 10);
-        robot.setWobblePosPow(0,0);
 
         initItem.setValue(String.format(Locale.ENGLISH, "Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();

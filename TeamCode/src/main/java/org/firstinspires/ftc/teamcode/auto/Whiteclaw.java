@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@SuppressWarnings("unused")
 @Autonomous(group = "Alcohol")
 public class Whiteclaw extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
@@ -73,7 +74,6 @@ public class Whiteclaw extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(1,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();

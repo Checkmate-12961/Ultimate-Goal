@@ -51,7 +51,6 @@ public class Shots extends LinearOpMode {
 
         initItem.setValue("Resetting servos");
         telemetry.update();
-        drive.setWobblePosPow(0,0);
 
         initItem.setValue("Starting camera feed");
         telemetry.update();

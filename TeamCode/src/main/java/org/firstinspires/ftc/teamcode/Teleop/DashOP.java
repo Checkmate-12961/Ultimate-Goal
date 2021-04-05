@@ -41,8 +41,6 @@ public class DashOP  extends  BaseOP{
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseUtils.currentPose);
 
-        drive.setWobblePosPow(-1,0);
-
         waitForStart();
 
         if (isStopRequested()) return;
@@ -57,7 +55,7 @@ public class DashOP  extends  BaseOP{
                         .build();
                 drive.followTrajectoryAsync(dashControl);
             }
-            controlRobo(drive, 0,false, runtime);
+            controlRobo(drive, runtime);
         }
         PoseUtils.currentPose = PoseUtils.getStartPose();
     }

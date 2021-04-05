@@ -30,7 +30,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -69,12 +68,8 @@ public class HungryHippoDrive extends MecanumDrive {
     public static int POSE_HISTORY_LIMIT = 100;
     
     private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0; // Should be `<secondsPerMinute> / <ticksPerRevolution>`
-    
-    public enum Mode {
-        IDLE,
-        TURN,
-        FOLLOW_TRAJECTORY
-    }
+
+    public enum Mode {IDLE, TURN, FOLLOW_TRAJECTORY}
 
     public final FtcDashboard dashboard;
     private final NanoClock clock;
@@ -103,6 +98,30 @@ public class HungryHippoDrive extends MecanumDrive {
 
     private final Servo wobbleGrab;
     private final Servo shooterTrigger;
+    private final Servo ringStop;
+
+    // Servo position enumerations
+    public enum RingStopPos {
+        INIT (0.25),
+        START (0.5),
+        END (0.85);
+        private final double value;
+        RingStopPos(double value){this.value = value;}
+    }
+    public enum TriggerPos {
+        INIT (0),
+        START (0),
+        END (0.18);
+        private final double value;
+        TriggerPos(double value){this.value = value;}
+    }
+    public enum WobbleGrabPos {
+        INIT (1),
+        START (1),
+        END (0.5);
+        private final double value;
+        WobbleGrabPos(double value){this.value = value;}
+    }
 
     private final List<DcMotorEx> motors;
 
@@ -148,20 +167,19 @@ public class HungryHippoDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class, "IntakeRoller");
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         flywheel = hardwareMap.get(DcMotorEx.class, "Flywheel");
+        ringStop = hardwareMap.get(Servo.class, "RingStop");
 
         // Wobble grabber motors
         wobbleGrab = hardwareMap.get(Servo.class, "WobbleGrab");
         shooterTrigger = hardwareMap.get(Servo.class, "ShooterTrigger");
         wobblePivot = hardwareMap.get(DcMotorEx.class, "WobblePivot");
 
-        // DONE: Properly set the lower and upper scale range for the shooter servo and the wobble grabber
-        wobbleGrab.scaleRange( .4 , 1.0);
-
-        shooterTrigger.scaleRange(0,.18);
-
         wobblePivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        setWobblePosPow(1,0);
+        setWobblePivot(0);
+        setWobbleGrab(WobbleGrabPos.INIT);
+        dropStop(RingStopPos.INIT);
+        pressTrigger(false);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -432,19 +450,18 @@ public class HungryHippoDrive extends MecanumDrive {
         rightFront.setPower(v3);
     }
 
-    public void setIntakePowers(double ir, double t){
-        intake.setPower(ir);
+    // TODO: make this only one variable
+    public void setIntakePowers(double t){
+        intake.setPower(t);
         transfer.setPower(t);
     }
 
-    public void setWobblePosPow(int grab, double arm){
-        if (grab != 0) {
-            wobbleGrab.setPosition(Range.scale(grab, -1,1,0,1));
-        }
+    public void setWobbleGrab(WobbleGrabPos pos){
+        wobbleGrab.setPosition(pos.value);
+    }
 
-        // TODO: Mess with these numbers until they work properly
-        //  these are the positions that the pivot arm will travel to
-        wobblePivot.setPower(arm);
+    public void setWobblePivot(double power){
+        wobblePivot.setPower(power);
     }
 
     // Sets the target velocity of the flywheel
@@ -468,10 +485,14 @@ public class HungryHippoDrive extends MecanumDrive {
     }
     public void pressTrigger(boolean enabled){
         if (enabled){
-            shooterTrigger.setPosition(1);
+            shooterTrigger.setPosition(TriggerPos.END.value);
         } else {
-            shooterTrigger.setPosition(-1);
+            shooterTrigger.setPosition(TriggerPos.START.value);
         }
+    }
+
+    public void dropStop(RingStopPos pos){
+        ringStop.setPosition(pos.value);
     }
 
     public void cancelTrajectory () {

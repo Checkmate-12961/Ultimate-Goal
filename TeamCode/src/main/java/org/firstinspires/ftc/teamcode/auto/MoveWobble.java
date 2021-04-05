@@ -26,42 +26,44 @@ public class MoveWobble extends LinearOpMode {
     // Method to slap the wobble goal down that can be easily imported in other OpModes
     public static void depositWobble(HungryHippoDrive drive) throws InterruptedException {
         // Close the hand
-        drive.setWobblePosPow(1,0);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
         Thread.sleep(200);
         // Move out at -75% power
-        drive.setWobblePosPow(0,-.75);
+        drive.setWobblePivot(-.75);
         Thread.sleep(300);
         // Stop moving the arm
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePivot(0);
         Thread.sleep(300);
         // Open the servo
-        drive.setWobblePosPow(-1,0);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.END);
         Thread.sleep(1000);
         // Start closing the servo and move the arm up and away from the wobble
-        drive.setWobblePosPow(1,.75);
+        drive.setWobblePivot(.75);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
         Thread.sleep(300);
         // Stop powering the arm and let its velocity carry it back
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePivot(0);
         Thread.sleep(300);
     }
     public static void collectWobble(HungryHippoDrive drive) throws InterruptedException {
         // Close hand
-        drive.setWobblePosPow(1,0);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
         Thread.sleep(200);
         // Move down and open hand
-        drive.setWobblePosPow(-1, -.75);
+        drive.setWobblePivot(-.75);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.END);
         Thread.sleep(300);
         // Stop the arm
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePivot(0);
         Thread.sleep(200);
         // Close the servo
-        drive.setWobblePosPow(1,0);
+        drive.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
         Thread.sleep(1000);
         // Bring it in
-        drive.setWobblePosPow(0,.6);
+        drive.setWobblePivot(.6);
         Thread.sleep(600);
         // Stop powering the arm and let its velocity carry it back
-        drive.setWobblePosPow(0,0);
+        drive.setWobblePivot(0);
         Thread.sleep(300);
     }
 }

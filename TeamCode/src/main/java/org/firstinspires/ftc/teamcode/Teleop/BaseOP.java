@@ -23,6 +23,8 @@ public class BaseOP extends LinearOpMode {
     // We don't want this re-used between opmodes.
     private final ElapsedTime runtime = new ElapsedTime();
 
+    // These numbers tell the robot where it is when the
+    //  endgame powershots get triggered.
     public static double setPointX = 2.5;
     public static double setPointY = -61.25;
     public static double setPointHeading = -4.1;
@@ -50,13 +52,13 @@ public class BaseOP extends LinearOpMode {
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseUtils.currentPose);
 
-        drive.setWobblePosPow(1,0);
-
         waitForStart();
+
+        drive.dropStop(HungryHippoDrive.RingStopPos.START);
 
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
-            controlRobo(drive, 0,false, runtime);
+            controlRobo(drive, runtime);
         }
         PoseUtils.currentPose = PoseUtils.getStartPose();
     }
@@ -88,23 +90,43 @@ public class BaseOP extends LinearOpMode {
 
                 // Moves the robot to hit the high goal
                 runSeekHighGoal(robot);
+
+                // Moved the ring stopper to the correct position
+                runDropStop(robot);
                 break;
 
             case AUTO:
-                // Replace false here with a check to cancel the trajectory
                 robot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                // Replace false here with a check to cancel the trajectory
                 //noinspection ConstantConditions
                 if (false) robot.cancelTrajectory();
                 if (!robot.isBusy()) controlMode = ControlMode.TELE;
                 break;
-
             default:
+                // If we end up here, something went horribly wrong.
+                // Generally, the best plan of action is to ignore
+                //  it and move on.
+                controlMode = ControlMode.TELE;
+                // Mission accomplished.
                 break;
         }
     }
 
-    protected void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
-        controlRoboBase(robot, rotationalOffset, relative);
+    protected void controlRobo(HungryHippoDrive robot, ElapsedTime runtime) {
+        controlRoboBase(robot, 0, false);
+        PoseUtils.currentPose = robot.getPoseEstimate();
+        // Print pose to telemetry
+        telemetry.addData("x", PoseUtils.currentPose.getX());
+        telemetry.addData("y", PoseUtils.currentPose.getY());
+        telemetry.addData("heading", Math.toDegrees(PoseUtils.currentPose.getHeading()));
+        telemetry.addData("flyRate", robot.getFlywheelVelo());
+        telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
+        telemetry.update();
+    }
+
+    @SuppressWarnings("unused")
+    protected void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset, ElapsedTime runtime) {
+        controlRoboBase(robot, rotationalOffset, true);
         PoseUtils.currentPose = robot.getPoseEstimate();
         // Print pose to telemetry
         telemetry.addData("x", PoseUtils.currentPose.getX());
@@ -150,21 +172,22 @@ public class BaseOP extends LinearOpMode {
     // BIND: gamepad2.a, gamepad2.b, gamepad2.x, gamepad2.y
     private void runIntake (HungryHippoDrive robot){
         double intakePower = 0;
-        double transferPower = 0;
-        if (gamepad2.a) transferPower += 1;
-        if (gamepad2.b) transferPower -= 1;
-        if (gamepad2.y) intakePower += 1;
-        if (gamepad2.x) intakePower -= 1;
-        robot.setIntakePowers(-intakePower, transferPower);
+        if (gamepad2.a) intakePower += 1;
+        if (gamepad2.b) intakePower -= 1;
+        robot.setIntakePowers(intakePower);
     }
 
     // BIND: gamepad2.dpad_right, gamepad2.dpad_left, gamepad2.right_stick_y
     private void runWobble (HungryHippoDrive robot){
-        int grab = 0;
-        if (gamepad2.dpad_right) grab += 1;
-        if (gamepad2.dpad_left) grab -= 1;
+        if (gamepad2.dpad_left){
+            if (!gamepad2.dpad_right){
+                robot.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.END);
+            }
+        } else if (gamepad2.dpad_right){
+            robot.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
+        }
 
-        robot.setWobblePosPow(grab, gamepad2.right_stick_y/2);
+        robot.setWobblePivot(gamepad2.right_stick_y/2);
     }
 
     // BIND: gamepad2.left_trigger, gamepad2.left_bumper, gamepad1.left_trigger
@@ -246,6 +269,17 @@ public class BaseOP extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(LauncherConstants.highGoalX, LauncherConstants.highGoalY, Math.toRadians(LauncherConstants.highGoalAngle)))
                     .build();
             robot.followTrajectoryAsync(shootPos);
+        }
+    }
+
+    // BIND: gamepad1.left_bumper, gamepad1.right_bumper
+    private void runDropStop (HungryHippoDrive robot){
+        if (gamepad1.left_bumper){
+            if (!gamepad1.right_bumper){
+                robot.dropStop(HungryHippoDrive.RingStopPos.END);
+            }
+        } else if (gamepad1.right_bumper){
+            robot.dropStop(HungryHippoDrive.RingStopPos.START);
         }
     }
 }

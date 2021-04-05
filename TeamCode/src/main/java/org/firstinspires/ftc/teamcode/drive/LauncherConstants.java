@@ -33,14 +33,14 @@ public class LauncherConstants {
     // // AUTO
     // power shot
     public static double autoPowerShotAngle = 0; // angle the robot turns
-    public static double autoPowerShotVeloRight = 4200; // 0.72; //
-    public static double autoPowerShotVeloCenter = 4200; // 0.75; //
-    public static double autoPowerShotVeloLeft = 4200; // 0.72; //
+    public static double autoPowerShotVeloRight = 3700; // 0.72; //
+    public static double autoPowerShotVeloCenter = 3700; // 0.75; //
+    public static double autoPowerShotVeloLeft = 3700; // 0.72; //
 
     // coordinates
-    public static double autoPowerShotX = -8;
-    public static double autoPowerShotY = -41;
-    public static double autoPegDist = 8.2; // distance between each shot
+    public static double autoPowerShotX = -10;
+    public static double autoPowerShotY = -20;
+    public static double autoPegDist = 7.7; // distance between each shot
     //public static double autoRotFix = 0;
 
     public enum Position{LEFT, CENTER, RIGHT}
