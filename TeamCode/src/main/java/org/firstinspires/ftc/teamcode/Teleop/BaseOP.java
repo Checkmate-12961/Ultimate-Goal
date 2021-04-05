@@ -25,7 +25,7 @@ public class BaseOP extends LinearOpMode {
 
     public static double setPointX = 2.5;
     public static double setPointY = -61.25;
-    public static double setPointHeading = -1.8;
+    public static double setPointHeading = -4.1;
     
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory rightShot;
@@ -114,6 +114,11 @@ public class BaseOP extends LinearOpMode {
         telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
         telemetry.update();
     }
+
+    // BIND:
+    //  gamepad1.left_stick_x, gamepad1.left_stick_y
+    //  gamepad1.right_stick_x, gamepad1.right_stick_y
+    //  gamepad1.right_trigger
     protected void runDrivetrain (HungryHippoDrive robot, double rotationalOffset, boolean relative){
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
@@ -141,6 +146,8 @@ public class BaseOP extends LinearOpMode {
                 )
         );
     }
+
+    // BIND: gamepad2.a, gamepad2.b, gamepad2.x, gamepad2.y
     private void runIntake (HungryHippoDrive robot){
         double intakePower = 0;
         double transferPower = 0;
@@ -150,6 +157,8 @@ public class BaseOP extends LinearOpMode {
         if (gamepad2.x) intakePower -= 1;
         robot.setIntakePowers(-intakePower, transferPower);
     }
+
+    // BIND: gamepad2.dpad_right, gamepad2.dpad_left, gamepad2.right_stick_y
     private void runWobble (HungryHippoDrive robot){
         int grab = 0;
         if (gamepad2.dpad_right) grab += 1;
@@ -157,6 +166,8 @@ public class BaseOP extends LinearOpMode {
 
         robot.setWobblePosPow(grab, gamepad2.right_stick_y/2);
     }
+
+    // BIND: gamepad2.left_trigger, gamepad2.left_bumper, gamepad1.left_trigger
     private void runShooter (HungryHippoDrive robot){
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherConstants.highGoalVelo);
@@ -165,12 +176,13 @@ public class BaseOP extends LinearOpMode {
         // Shoots circle at target.
         robot.pressTrigger(gamepad1.left_trigger > .9);
     }
+
+    // BIND: gamepad1.dpad_right
     private void runSeekPowerShots (HungryHippoDrive robot){
         if (gamepad1.dpad_right) {
             controlMode = ControlMode.AUTO;
-            //I'm so sorry for this it's chaos, but it works sort of.
             //Changes robot position estimate to the side of the field, so roadrunner is more consistent
-            robot.setPoseEstimate(new Pose2d(2.5, -61.25, Math.toRadians(0)));
+            robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
             //Revs flywheel in advance.
             robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
             //One trajectory defined for each of the high goals.
@@ -218,11 +230,15 @@ public class BaseOP extends LinearOpMode {
             robot.followTrajectoryAsync(rightShot);
         }
     }
+
+    // BIND: gamepad1.dpad_left
     private void runZero (HungryHippoDrive robot) {
         if (gamepad1.dpad_left) {
             robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
         }
     }
+
+    // BIND: gamepad1.dpad_up
     private void runSeekHighGoal (HungryHippoDrive robot){
         if (gamepad1.dpad_up) {
             controlMode = ControlMode.AUTO;

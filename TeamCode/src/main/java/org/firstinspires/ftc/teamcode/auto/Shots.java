@@ -79,7 +79,7 @@ public class Shots extends LinearOpMode {
         telemetry.update();
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(Math.toRadians(LauncherConstants.autoPowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown*2);
                     drive.pressTrigger(true);
@@ -92,7 +92,7 @@ public class Shots extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.CENTER))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);
@@ -105,7 +105,7 @@ public class Shots extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist *2, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix *2)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
                 .addDisplacementMarker(() -> {
                     sleep(LauncherConstants.shootCoolDown);
                     drive.pressTrigger(true);

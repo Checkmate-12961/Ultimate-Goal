@@ -90,7 +90,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         Trajectory toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist * 2, Math.toRadians(LauncherConstants.autoPowerShotAngle + LauncherConstants.autoRotFix * 2)))
+                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist * 2, Math.toRadians(LauncherConstants.autoPowerShotAngle)))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
