@@ -25,7 +25,7 @@ public class BaseOP extends LinearOpMode {
 
     public static double setPointX = 2.5;
     public static double setPointY = -61.25;
-    public static double setPointHeading = -5.5;
+    public static double setPointHeading = -1.8;
     
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory rightShot;
@@ -105,11 +105,11 @@ public class BaseOP extends LinearOpMode {
 
     protected void controlRobo(HungryHippoDrive robot, double rotationalOffset, boolean relative, ElapsedTime runtime) {
         controlRoboBase(robot, rotationalOffset, relative);
-        Pose2d poseEstimate = robot.getPoseEstimate();
+        PoseUtils.currentPose = robot.getPoseEstimate();
         // Print pose to telemetry
         telemetry.addData("x", PoseUtils.currentPose.getX());
         telemetry.addData("y", PoseUtils.currentPose.getY());
-        telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.addData("heading", Math.toDegrees(PoseUtils.currentPose.getHeading()));
         telemetry.addData("flyRate", robot.getFlywheelVelo());
         telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",runtime.seconds()));
         telemetry.update();

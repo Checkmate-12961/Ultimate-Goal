@@ -39,6 +39,12 @@ public class Whiteclaw extends LinearOpMode {
     private Trajectory toLineB;
     private Trajectory toLineC;
 
+    @SuppressWarnings("FieldCanBeLocal")
+    private Trajectory grabWobble;
+    private Trajectory missRings2;
+    private Trajectory toLine;
+
+
     private Telemetry.Item trajBuildItem;
     private Telemetry.Item runningItem;
 
@@ -159,8 +165,8 @@ public class Whiteclaw extends LinearOpMode {
                     runTrajectory(toFollow);
                 })
                 .build();
-
         nextTelemetry();
+
         dropA = drive.trajectoryBuilder(leftShot.end())
                 .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
@@ -172,7 +178,6 @@ public class Whiteclaw extends LinearOpMode {
                     runTrajectory(toLineA);
                 })
                 .build();
-
         nextTelemetry();
 
         dropB = drive.trajectoryBuilder(leftShot.end())
@@ -186,7 +191,6 @@ public class Whiteclaw extends LinearOpMode {
                     runTrajectory(toLineB);
                 })
                 .build();
-
         nextTelemetry();
 
         dropC = drive.trajectoryBuilder(leftShot.end())
@@ -200,29 +204,56 @@ public class Whiteclaw extends LinearOpMode {
                     runTrajectory(toLineC);
                 })
                 .build();
-
         nextTelemetry();
 
         toLineA = drive.trajectoryBuilder(dropA.end())
-                .splineTo(new Vector2d(-12, -48), -Math.PI/2)
-                .splineTo(new Vector2d(-24, -60), 0)
+                //.splineTo(new Vector2d(-12, -48), -Math.PI/2)
+                .splineTo(new Vector2d(-24, -54), 0)
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
+        nextTelemetry();
 
         toLineB = drive.trajectoryBuilder(dropB.end())
-                .splineTo(new Vector2d(-12, -36), -Math.PI/2)
-                .splineTo(new Vector2d(-12, -48), -Math.PI/2)
-                .splineTo(new Vector2d(-24, -60), 0)
+                //.splineTo(new Vector2d(-12, -36), -Math.PI/2)
+                //.splineTo(new Vector2d(-12, -48), -Math.PI/2)
+                .splineTo(new Vector2d(-24, -54), 0)
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
+        nextTelemetry();
 
         toLineC = drive.trajectoryBuilder(dropC.end())
-                .splineTo(new Vector2d(36,-36), Math.PI)
-                .splineTo(new Vector2d(0, -48), Math.PI)
-                .splineTo(new Vector2d(-24, -60), 0)
+                //.splineTo(new Vector2d(36,-36), Math.PI)
+                //.splineTo(new Vector2d(0, -48), Math.PI)
+                .splineTo(new Vector2d(-24, -54), 0)
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
+        nextTelemetry();
 
+        grabWobble = drive.trajectoryBuilder(new Pose2d(-24, -54,0))
+                .lineToSplineHeading(new Pose2d(-20, -45.5, 0))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.collectWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runTrajectory(missRings2);
+                })
+                .build();
+        nextTelemetry();
+
+        missRings2 = drive.trajectoryBuilder(grabWobble.end())
+                .lineToSplineHeading(new Pose2d(-12, -54, 0))
+                .addDisplacementMarker(() -> runTrajectory(toLine))
+                .build();
+        nextTelemetry();
+
+        toLine = drive.trajectoryBuilder(missRings2.end())
+                .splineTo(new Vector2d(-12, -48), 0)
+                .splineTo(new Vector2d(0, -36), 0)
+                .splineTo(new Vector2d(12,-36),0)
+                .addDisplacementMarker(() -> currentMode = RunMode.DONE)
+                .build();
         nextTelemetry();
 
         telemetry.removeItem(trajBuildItem);
@@ -253,11 +284,11 @@ public class Whiteclaw extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentMode){
                 case FIRST:
-                    drive.followTrajectoryAsync(missRings);
+                    runTrajectory(missRings);
                     currentMode = RunMode.RUNNING;
                     break;
                 case SECOND:
-                    // build the trajectories here
+                    runTrajectory(grabWobble);
                     currentMode = RunMode.RUNNING;
                     break;
                 default:

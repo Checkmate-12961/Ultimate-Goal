@@ -15,6 +15,10 @@ public class MoveWobble extends LinearOpMode {
 
         depositWobble(drive);
 
+        sleep(1500);
+
+        collectWobble(drive);
+
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
         }
@@ -36,7 +40,27 @@ public class MoveWobble extends LinearOpMode {
         // Start closing the servo and move the arm up and away from the wobble
         drive.setWobblePosPow(1,.75);
         Thread.sleep(300);
-        // Stop powering the arm and let it's velocity carry it back
+        // Stop powering the arm and let its velocity carry it back
+        drive.setWobblePosPow(0,0);
+        Thread.sleep(300);
+    }
+    public static void collectWobble(HungryHippoDrive drive) throws InterruptedException {
+        // Close hand
+        drive.setWobblePosPow(1,0);
+        Thread.sleep(200);
+        // Move down and open hand
+        drive.setWobblePosPow(-1, -.75);
+        Thread.sleep(300);
+        // Stop the arm
+        drive.setWobblePosPow(0,0);
+        Thread.sleep(200);
+        // Close the servo
+        drive.setWobblePosPow(1,0);
+        Thread.sleep(1000);
+        // Bring it in
+        drive.setWobblePosPow(0,.6);
+        Thread.sleep(600);
+        // Stop powering the arm and let its velocity carry it back
         drive.setWobblePosPow(0,0);
         Thread.sleep(300);
     }

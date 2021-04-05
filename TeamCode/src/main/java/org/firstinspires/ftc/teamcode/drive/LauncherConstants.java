@@ -27,7 +27,7 @@ public class LauncherConstants {
     // coordinates
     public static double powerShotX = -10; //X coord for the leftmost powershot
     public static double powerShotY = -40;   //Y coord for the leftmost powershot
-    public static double pegDist = 8; // distance between each shot
+    public static double pegDist = 8.2; // distance between each shot
     public static double rotFix = 0;
 
     // // AUTO
