@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -39,6 +38,7 @@ public class Whiteclaw extends LinearOpMode {
     private Trajectory toLineA;
     private Trajectory toLineB;
     private Trajectory toLineC;
+    private Trajectory retrieveWobble;
 
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory grabWobble;
@@ -207,30 +207,30 @@ public class Whiteclaw extends LinearOpMode {
         nextTelemetry();
 
         toLineA = drive.trajectoryBuilder(dropA.end())
-                //.splineTo(new Vector2d(-12, -48), -Math.PI/2)
-                .splineTo(new Vector2d(-24, -54), 0)
+                //.lineToSplineHeading(new Vector2d(-12, -48), -Math.PI/2)
+                .lineToSplineHeading(new Pose2d(-24, -54, 0))
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
         nextTelemetry();
 
         toLineB = drive.trajectoryBuilder(dropB.end())
-                //.splineTo(new Vector2d(-12, -36), -Math.PI/2)
-                //.splineTo(new Vector2d(-12, -48), -Math.PI/2)
-                .splineTo(new Vector2d(-24, -54), 0)
+                //.lineToSplineHeading(new Vector2d(-12, -36), -Math.PI/2)
+                //.lineToSplineHeading(new Vector2d(-12, -48), -Math.PI/2)
+                .lineToSplineHeading(new Pose2d(-24, -54, Math.toRadians(0)))
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
         nextTelemetry();
 
         toLineC = drive.trajectoryBuilder(dropC.end())
-                //.splineTo(new Vector2d(36,-36), Math.PI)
-                //.splineTo(new Vector2d(0, -48), Math.PI)
-                .splineTo(new Vector2d(-24, -54), 0)
+                //.lineToSplineHeading(new Vector2d(36,-36), Math.PI)
+                //.lineToSplineHeading(new Vector2d(0, -48), Math.PI)
+                .lineToSplineHeading(new Pose2d(-24, -54, Math.toRadians(0)))
                 .addDisplacementMarker(() -> currentMode = RunMode.SECOND)
                 .build();
         nextTelemetry();
 
         grabWobble = drive.trajectoryBuilder(new Pose2d(-24, -54,0))
-                .lineToSplineHeading(new Pose2d(-20, -45.5, 0))
+                .lineToSplineHeading(new Pose2d(-37, -38.5, 0))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.collectWobble(drive);
@@ -249,9 +249,7 @@ public class Whiteclaw extends LinearOpMode {
         nextTelemetry();
 
         toLine = drive.trajectoryBuilder(missRings2.end())
-                .splineTo(new Vector2d(-12, -48), 0)
-                .splineTo(new Vector2d(0, -36), 0)
-                .splineTo(new Vector2d(12,-36),0)
+                .lineToSplineHeading(new Pose2d(12,-36,0))
                 .addDisplacementMarker(() -> currentMode = RunMode.DONE)
                 .build();
         nextTelemetry();
