@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 
 import java.util.Objects;
 
@@ -74,7 +74,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         Mode mode = Mode.TUNING_MODE;
 

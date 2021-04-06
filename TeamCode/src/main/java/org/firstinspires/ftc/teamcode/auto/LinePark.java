@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
 import java.util.Locale;
@@ -49,7 +49,7 @@ public class LinePark extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
 

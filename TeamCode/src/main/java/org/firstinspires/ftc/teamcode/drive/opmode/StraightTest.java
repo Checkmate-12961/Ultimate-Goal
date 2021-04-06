@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 
 /*
  * This is a simple routine to test translational drive capabilities.
@@ -22,7 +22,7 @@ public class StraightTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)

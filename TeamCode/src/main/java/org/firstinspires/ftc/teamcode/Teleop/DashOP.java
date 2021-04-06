@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
 @Disabled
@@ -26,7 +26,7 @@ public class DashOP  extends  BaseOP{
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         moveX = 0;
         moveY = 0;

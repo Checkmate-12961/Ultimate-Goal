@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.auto.constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants
 @Autonomous(group = "Alcohol")
 public class Tequila extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private HungryHippoDrive.RingPosition ringPosSaved;
+    private DrunkenHippoDrive.RingPosition ringPosSaved;
 
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory missRings;
@@ -32,7 +33,7 @@ public class Tequila extends LinearOpMode {
     private Telemetry.Item trajBuildItem;
     private Telemetry.Item runningItem;
 
-    private HungryHippoDrive drive;
+    private DrunkenHippoDrive drive;
 
     private int onTrajBuild = 0;
 
@@ -45,7 +46,7 @@ public class Tequila extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        drive = new HungryHippoDrive(hardwareMap);
+        drive = new DrunkenHippoDrive(hardwareMap);
         PoseUtils.currentPose = PoseUtils.getStartPose();
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
@@ -133,7 +134,7 @@ public class Tequila extends LinearOpMode {
 
         nextTelemetry();
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.A))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -148,7 +149,7 @@ public class Tequila extends LinearOpMode {
         nextTelemetry();
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.B))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.B))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -163,7 +164,7 @@ public class Tequila extends LinearOpMode {
         nextTelemetry();
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.C))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);

@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 
 import java.util.Locale;
 
@@ -42,7 +42,7 @@ public class RingAmountTest extends LinearOpMode {
         Telemetry.Item initItem = telemetry.addData("Initializing...","Setting up hardware");
         telemetry.update();
 
-        HungryHippoDrive robot = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive robot = new DrunkenHippoDrive(hardwareMap);
 
         initItem.setValue("Checking ring position");
         telemetry.update();

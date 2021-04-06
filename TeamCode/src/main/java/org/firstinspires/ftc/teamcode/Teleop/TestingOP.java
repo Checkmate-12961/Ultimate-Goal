@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +28,7 @@ public class TestingOP extends BaseOP{
 
     @Override
     public void runOpMode() throws InterruptedException{// Initialize SampleMecanumDrive
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         // Reset the pose so we can virtually start at 0,0,0
         drive.setPoseEstimate(new Pose2d(0,0,0));
@@ -46,7 +46,7 @@ public class TestingOP extends BaseOP{
     }
 
     @Override
-    protected void controlRobo(HungryHippoDrive robot, ElapsedTime runtime) {
+    protected void controlRobo(DrunkenHippoDrive robot, ElapsedTime runtime) {
         controlRoboBase(robot, 0, false);
         Pose2d poseEstimate = robot.getPoseEstimate();
         // Print pose to telemetry
@@ -66,7 +66,7 @@ public class TestingOP extends BaseOP{
     }
 
     @Override
-    protected void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
+    protected void controlRoboBase(DrunkenHippoDrive robot, double rotationalOffset, boolean relative) {
         // Update everything. Odometry. Etc.
         robot.update();
 
@@ -99,7 +99,7 @@ public class TestingOP extends BaseOP{
     }
 
     // Goes to a position
-    private void goToPos(HungryHippoDrive robot){
+    private void goToPos(DrunkenHippoDrive robot){
         if (gamepad1.a && (moveX != 0 || moveY != 0)){
             controlMode = ControlMode.AUTO;
             Pose2d here = robot.getPoseEstimate();
@@ -112,7 +112,7 @@ public class TestingOP extends BaseOP{
     }
 
     // Goes from a position
-    private void goFromPos(HungryHippoDrive robot){
+    private void goFromPos(DrunkenHippoDrive robot){
         if (gamepad1.b && (moveX != 0 || moveY != 0)){
             controlMode = ControlMode.AUTO;
             Pose2d here = robot.getPoseEstimate();
@@ -125,7 +125,7 @@ public class TestingOP extends BaseOP{
     }
 
     // Zeros the robot
-    private void zeroPosition(HungryHippoDrive robot){
+    private void zeroPosition(DrunkenHippoDrive robot){
         if (gamepad1.dpad_up){
             robot.setPoseEstimate(new Pose2d(0,0,0));
             List<Double> deadPos = robot.getDeadPositions();
@@ -136,7 +136,7 @@ public class TestingOP extends BaseOP{
     }
 
     // Goes to what the robot thinks is zero
-    private void toZero(HungryHippoDrive robot){
+    private void toZero(DrunkenHippoDrive robot){
         Pose2d here = robot.getPoseEstimate();
         if (gamepad1.dpad_right && (here.getX() != 0 || here.getY() != 0)){
             controlMode = ControlMode.AUTO;

@@ -5,22 +5,21 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.auto.constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
-@Disabled
 @SuppressWarnings("unused")
 @Autonomous(group = "Alcohol")
 public class SpikedSeltzer extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private HungryHippoDrive.RingPosition ringPosSaved;
+    private DrunkenHippoDrive.RingPosition ringPosSaved;
 
     private enum RunMode {FIRST, RUNNING, SECOND, DONE}
     private RunMode currentMode = RunMode.FIRST;
@@ -39,14 +38,16 @@ public class SpikedSeltzer extends LinearOpMode {
 
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory grabWobble;
-    private Trajectory missRings2;
-    private Trajectory toLine;
+    private Trajectory dropA2;
+    private Trajectory dropB2;
+    private Trajectory dropC2;
+    private Trajectory toLineC2;
 
 
     private Telemetry.Item trajBuildItem;
     private Telemetry.Item runningItem;
 
-    private HungryHippoDrive drive;
+    private DrunkenHippoDrive drive;
 
     private int onTrajBuild = 0;
 
@@ -59,7 +60,7 @@ public class SpikedSeltzer extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        drive = new HungryHippoDrive(hardwareMap);
+        drive = new DrunkenHippoDrive(hardwareMap);
         PoseUtils.currentPose = PoseUtils.getStartPose();
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
@@ -143,7 +144,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.A))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -156,7 +157,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.B))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.B))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -169,7 +170,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.getBoxPose(AutoConstants.Box.C))
+                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -212,22 +213,69 @@ public class SpikedSeltzer extends LinearOpMode {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    runTrajectory(missRings2);
+                    Trajectory toFollow;
+                    switch (ringPosSaved){
+                        case NONE:
+                            toFollow = dropA2;
+                            break;
+                        case ONE:
+                            toFollow = dropB2;
+                            break;
+                        case FOUR:
+                            toFollow = dropC2;
+                            break;
+                        default:
+                            toFollow = null;
+                            break;
+                    }
+                    runTrajectory(toFollow);
                 })
                 .build();
         nextTelemetry();
 
-        missRings2 = drive.trajectoryBuilder(grabWobble.end())
-                .lineToSplineHeading(new Pose2d(-12, -54, 0))
-                .addDisplacementMarker(() -> runTrajectory(toLine))
+        dropA2 = drive.trajectoryBuilder(grabWobble.end())
+                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.A))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    currentMode = RunMode.DONE;
+                })
                 .build();
         nextTelemetry();
 
-        toLine = drive.trajectoryBuilder(missRings2.end())
-                .lineToSplineHeading(new Pose2d(12,-36,0))
-                .addDisplacementMarker(() -> currentMode = RunMode.DONE)
+        dropB2 = drive.trajectoryBuilder(grabWobble.end())
+                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.B))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    currentMode = RunMode.DONE;
+                })
                 .build();
         nextTelemetry();
+
+        dropC2 = drive.trajectoryBuilder(grabWobble.end())
+                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.C))
+                .addDisplacementMarker(() -> {
+                    try {
+                        MoveWobble.depositWobble(drive);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runTrajectory(toLineC2);
+                })
+                .build();
+        nextTelemetry();
+
+        toLineC2 = drive.trajectoryBuilder(dropC2.end())
+                .lineToSplineHeading(new Pose2d(12, dropC2.end().getY(),Math.toRadians(180)))
+                .addDisplacementMarker(() -> currentMode = RunMode.DONE)
+                .build();
 
         telemetry.removeItem(trajBuildItem);
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));

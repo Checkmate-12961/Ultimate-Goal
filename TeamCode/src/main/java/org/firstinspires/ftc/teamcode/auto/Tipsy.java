@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 @SuppressWarnings("unused")
 public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private HungryHippoDrive.RingPosition ringPosSaved;
+    private DrunkenHippoDrive.RingPosition ringPosSaved;
 
     private Trajectory dropA;
     private Trajectory dropB;
@@ -49,7 +49,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         // RR stuff
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
         PoseUtils.currentPose = new Pose2d(-62, -19.5 , Math.toRadians(0) );
         Pose2d startPose = PoseUtils.currentPose;
         drive.setPoseEstimate(startPose);
@@ -67,11 +67,11 @@ public class Tipsy extends LinearOpMode {
         Trajectory toLine = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == HungryHippoDrive.RingPosition.NONE) {
+                    if (ringPosSaved == DrunkenHippoDrive.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == HungryHippoDrive.RingPosition.ONE) {
+                    } else if (ringPosSaved == DrunkenHippoDrive.RingPosition.ONE) {
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == HungryHippoDrive.RingPosition.FOUR) {
+                    } else if (ringPosSaved == DrunkenHippoDrive.RingPosition.FOUR) {
                         drive.followTrajectoryAsync(dropC);
                     }
                 })

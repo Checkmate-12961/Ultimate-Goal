@@ -62,17 +62,17 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
+
 @SuppressWarnings("unused")
 @Config
-public class HungryHippoDrive extends MecanumDrive {
+public class DrunkenHippoDrive extends MecanumDrive {
     // VISION STUFF
-    public static final String WEBCAM_NAME = "camra";
     public static int TopLeftX = 210;
     public static int TopLeftY = 170;
     public static int Width = 90;
     public static int Height = 60;
     public static int FourRingThresh = 140;
-    public static int OneRingThresh = 132;
+    public static int OneRingThresh = 130;
 
     public enum RingPosition {FOUR, ONE, NONE}
 
@@ -179,7 +179,7 @@ public class HungryHippoDrive extends MecanumDrive {
         private int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile HungryHippoDrive.RingPosition position = HungryHippoDrive.RingPosition.FOUR;
+        private volatile DrunkenHippoDrive.RingPosition position = DrunkenHippoDrive.RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -210,13 +210,13 @@ public class HungryHippoDrive extends MecanumDrive {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = HungryHippoDrive.RingPosition.FOUR; // Record our analysis
+            position = DrunkenHippoDrive.RingPosition.FOUR; // Record our analysis
             if (avg1 > FourRingThresh) {
-                position = HungryHippoDrive.RingPosition.FOUR;
+                position = DrunkenHippoDrive.RingPosition.FOUR;
             } else if (avg1 > OneRingThresh) {
-                position = HungryHippoDrive.RingPosition.ONE;
+                position = DrunkenHippoDrive.RingPosition.ONE;
             } else {
-                position = HungryHippoDrive.RingPosition.NONE;
+                position = DrunkenHippoDrive.RingPosition.NONE;
             }
 
             Imgproc.rectangle(
@@ -233,12 +233,12 @@ public class HungryHippoDrive extends MecanumDrive {
         {
             return avg1;
         }
-        public HungryHippoDrive.RingPosition getPosition(){
+        public DrunkenHippoDrive.RingPosition getPosition(){
             return position;
         }
     }
 
-    public HungryHippoDrive(HardwareMap hardwareMap) {
+    public DrunkenHippoDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -622,10 +622,6 @@ public class HungryHippoDrive extends MecanumDrive {
         mode = Mode.IDLE;
     }
 
-    public void startCameraStream(OpenCvWebcam webCam, double maxFps){
-        dashboard.startCameraStream(webCam, maxFps);
-    }
-
     @Override
     public double getRawExternalHeading() {
         return 0;
@@ -639,7 +635,7 @@ public class HungryHippoDrive extends MecanumDrive {
     {
         return pipeline.getAnalysis();
     }
-    public HungryHippoDrive.RingPosition getPosition(){
+    public DrunkenHippoDrive.RingPosition getPosition(){
         return pipeline.getPosition();
     }
 }

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.EndgamePowerConstants;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.HighGoalConstants;
 
@@ -44,7 +44,7 @@ public class BaseOP extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialize SampleMecanumDrive
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -56,7 +56,7 @@ public class BaseOP extends LinearOpMode {
 
         waitForStart();
 
-        drive.dropStop(HungryHippoDrive.RingStopPos.START);
+        drive.dropStop(DrunkenHippoDrive.RingStopPos.START);
 
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
@@ -65,7 +65,7 @@ public class BaseOP extends LinearOpMode {
         PoseUtils.currentPose = PoseUtils.getStartPose();
     }
 
-    protected void controlRoboBase(HungryHippoDrive robot, double rotationalOffset, boolean relative) {
+    protected void controlRoboBase(DrunkenHippoDrive robot, double rotationalOffset, boolean relative) {
         // Update everything. Odometry. Etc.
         robot.update();
 
@@ -114,7 +114,7 @@ public class BaseOP extends LinearOpMode {
         }
     }
 
-    protected void controlRobo(HungryHippoDrive robot, ElapsedTime runtime) {
+    protected void controlRobo(DrunkenHippoDrive robot, ElapsedTime runtime) {
         controlRoboBase(robot, 0, false);
         PoseUtils.currentPose = robot.getPoseEstimate();
         // Print pose to telemetry
@@ -127,7 +127,7 @@ public class BaseOP extends LinearOpMode {
     }
 
     @SuppressWarnings("unused")
-    protected void controlRoboRelative(HungryHippoDrive robot, double rotationalOffset, ElapsedTime runtime) {
+    protected void controlRoboRelative(DrunkenHippoDrive robot, double rotationalOffset, ElapsedTime runtime) {
         controlRoboBase(robot, rotationalOffset, true);
         PoseUtils.currentPose = robot.getPoseEstimate();
         // Print pose to telemetry
@@ -143,7 +143,7 @@ public class BaseOP extends LinearOpMode {
     //  gamepad1.left_stick_x, gamepad1.left_stick_y
     //  gamepad1.right_stick_x, gamepad1.right_stick_y
     //  gamepad1.right_trigger
-    protected void runDrivetrain (HungryHippoDrive robot, double rotationalOffset, boolean relative){
+    protected void runDrivetrain (DrunkenHippoDrive robot, double rotationalOffset, boolean relative){
         // Read pose
         Pose2d poseEstimate = robot.getPoseEstimate();
         double offset;
@@ -172,7 +172,7 @@ public class BaseOP extends LinearOpMode {
     }
 
     // BIND: gamepad2.a, gamepad2.b, gamepad2.x, gamepad2.y
-    private void runIntake (HungryHippoDrive robot){
+    private void runIntake (DrunkenHippoDrive robot){
         double intakePower = 0;
         if (gamepad2.a) intakePower += 1;
         if (gamepad2.b) intakePower -= 1;
@@ -180,20 +180,20 @@ public class BaseOP extends LinearOpMode {
     }
 
     // BIND: gamepad2.dpad_right, gamepad2.dpad_left, gamepad2.right_stick_y
-    private void runWobble (HungryHippoDrive robot){
+    private void runWobble (DrunkenHippoDrive robot){
         if (gamepad2.dpad_left){
             if (!gamepad2.dpad_right){
-                robot.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.END);
+                robot.setWobbleGrab(DrunkenHippoDrive.WobbleGrabPos.END);
             }
         } else if (gamepad2.dpad_right){
-            robot.setWobbleGrab(HungryHippoDrive.WobbleGrabPos.START);
+            robot.setWobbleGrab(DrunkenHippoDrive.WobbleGrabPos.START);
         }
 
         robot.setWobblePivot(gamepad2.right_stick_y/2);
     }
 
     // BIND: gamepad2.left_trigger, gamepad2.left_bumper, gamepad1.left_trigger
-    private void runShooter (HungryHippoDrive robot){
+    private void runShooter (DrunkenHippoDrive robot){
         // rev flywheel
         if (gamepad2.left_trigger > .9) robot.revFlywheel(-HighGoalConstants.velo);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
@@ -203,7 +203,7 @@ public class BaseOP extends LinearOpMode {
     }
 
     // BIND: gamepad1.dpad_right
-    private void runSeekPowerShots (HungryHippoDrive robot){
+    private void runSeekPowerShots (DrunkenHippoDrive robot){
         if (gamepad1.dpad_right) {
             controlMode = ControlMode.AUTO;
             //Changes robot position estimate to the side of the field, so roadrunner is more consistent
@@ -257,14 +257,14 @@ public class BaseOP extends LinearOpMode {
     }
 
     // BIND: gamepad1.dpad_left
-    private void runZero (HungryHippoDrive robot) {
+    private void runZero (DrunkenHippoDrive robot) {
         if (gamepad1.dpad_left) {
             robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
         }
     }
 
     // BIND: gamepad1.dpad_up
-    private void runSeekHighGoal (HungryHippoDrive robot){
+    private void runSeekHighGoal (DrunkenHippoDrive robot){
         if (gamepad1.dpad_up) {
             controlMode = ControlMode.AUTO;
             shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
@@ -275,13 +275,13 @@ public class BaseOP extends LinearOpMode {
     }
 
     // BIND: gamepad1.left_bumper, gamepad1.right_bumper
-    private void runDropStop (HungryHippoDrive robot){
+    private void runDropStop (DrunkenHippoDrive robot){
         if (gamepad1.left_bumper){
             if (!gamepad1.right_bumper){
-                robot.dropStop(HungryHippoDrive.RingStopPos.END);
+                robot.dropStop(DrunkenHippoDrive.RingStopPos.END);
             }
         } else if (gamepad1.right_bumper){
-            robot.dropStop(HungryHippoDrive.RingStopPos.START);
+            robot.dropStop(DrunkenHippoDrive.RingStopPos.START);
         }
     }
 }

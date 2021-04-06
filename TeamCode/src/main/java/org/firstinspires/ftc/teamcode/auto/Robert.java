@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 
 // Our glorious test auto mode
 @Disabled
@@ -16,7 +16,7 @@ public class Robert extends LinearOpMode {
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
-        HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
+        DrunkenHippoDrive drive = new DrunkenHippoDrive(hardwareMap);
 
         waitForStart();
 
@@ -26,7 +26,7 @@ public class Robert extends LinearOpMode {
             drive.update();
         }
     }
-    private void depositWobble(HungryHippoDrive drive){
+    private void depositWobble(DrunkenHippoDrive drive){
 
     }
 }
