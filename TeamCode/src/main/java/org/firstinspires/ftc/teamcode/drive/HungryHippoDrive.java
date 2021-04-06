@@ -76,6 +76,85 @@ public class HungryHippoDrive extends MecanumDrive {
 
     public enum RingPosition {FOUR, ONE, NONE}
 
+    private final RingDeterminationPipeline pipeline = new RingDeterminationPipeline();
+
+    // NOT VISION STUFF
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+
+    public static double LATERAL_MULTIPLIER = 1;
+
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+
+    public static int POSE_HISTORY_LIMIT = 100;
+    
+    private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0; // Should be `<secondsPerMinute> / <ticksPerRevolution>`
+
+    public enum Mode {IDLE, TURN, FOLLOW_TRAJECTORY}
+
+    private final FtcDashboard dashboard;
+    private final NanoClock clock;
+
+    private Mode mode;
+
+    private final PIDFController turnController;
+    private MotionProfile turnProfile;
+    private double turnStart;
+
+    private final DriveConstraints constraints;
+    private final TrajectoryFollower follower;
+
+    private final LinkedList<Pose2d> poseHistory;
+
+    private final DcMotorEx leftFront;
+    private final DcMotorEx leftRear;
+    private final DcMotorEx rightRear;
+    private final DcMotorEx rightFront;
+    private final DcMotorEx intake;
+    private final DcMotorEx transfer;
+    private final DcMotorEx wobblePivot;
+    private final DcMotorEx flywheel;
+
+    private double flywheelTargetRPM;
+
+    private final Servo wobbleGrab;
+    private final Servo shooterTrigger;
+    private final Servo ringStop;
+
+    // Servo position enumerations
+    public enum RingStopPos {
+        INIT (0.25),
+        START (0.5),
+        END (0.85);
+        private final double value;
+        RingStopPos(double value){this.value = value;}
+    }
+    public enum TriggerPos {
+        INIT (0),
+        START (0),
+        END (0.18);
+        private final double value;
+        TriggerPos(double value){this.value = value;}
+    }
+    public enum WobbleGrabPos {
+        INIT (1),
+        START (1),
+        END (0.5);
+        private final double value;
+        WobbleGrabPos(double value){this.value = value;}
+    }
+
+    private final List<DcMotorEx> motors;
+
+    private final VoltageSensor batteryVoltageSensor;
+
+    private final StandardTrackingWheelLocalizer localizer;
+
+    private Pose2d lastPoseOnTurn;
+
+
     private static class RingDeterminationPipeline extends OpenCvPipeline {
         //Some color constants
         private static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -158,83 +237,6 @@ public class HungryHippoDrive extends MecanumDrive {
             return position;
         }
     }
-    private final RingDeterminationPipeline pipeline = new RingDeterminationPipeline();
-
-    // NOT VISION STUFF
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
-
-    public static double LATERAL_MULTIPLIER = 1;
-
-    public static double VX_WEIGHT = 1;
-    public static double VY_WEIGHT = 1;
-    public static double OMEGA_WEIGHT = 1;
-
-    public static int POSE_HISTORY_LIMIT = 100;
-    
-    private final double FLYWHEEL_RMP_MULTIPLIER = 60.0/28.0; // Should be `<secondsPerMinute> / <ticksPerRevolution>`
-
-    public enum Mode {IDLE, TURN, FOLLOW_TRAJECTORY}
-
-    private final FtcDashboard dashboard;
-    private final NanoClock clock;
-
-    private Mode mode;
-
-    private final PIDFController turnController;
-    private MotionProfile turnProfile;
-    private double turnStart;
-
-    private final DriveConstraints constraints;
-    private final TrajectoryFollower follower;
-
-    private final LinkedList<Pose2d> poseHistory;
-
-    private final DcMotorEx leftFront;
-    private final DcMotorEx leftRear;
-    private final DcMotorEx rightRear;
-    private final DcMotorEx rightFront;
-    private final DcMotorEx intake;
-    private final DcMotorEx transfer;
-    private final DcMotorEx wobblePivot;
-    private final DcMotorEx flywheel;
-
-    private double flywheelTargetRPM;
-
-    private final Servo wobbleGrab;
-    private final Servo shooterTrigger;
-    private final Servo ringStop;
-
-    // Servo position enumerations
-    public enum RingStopPos {
-        INIT (0.25),
-        START (0.5),
-        END (0.85);
-        private final double value;
-        RingStopPos(double value){this.value = value;}
-    }
-    public enum TriggerPos {
-        INIT (0),
-        START (0),
-        END (0.18);
-        private final double value;
-        TriggerPos(double value){this.value = value;}
-    }
-    public enum WobbleGrabPos {
-        INIT (1),
-        START (1),
-        END (0.5);
-        private final double value;
-        WobbleGrabPos(double value){this.value = value;}
-    }
-
-    private final List<DcMotorEx> motors;
-
-    private final VoltageSensor batteryVoltageSensor;
-
-    private final StandardTrackingWheelLocalizer localizer;
-
-    private Pose2d lastPoseOnTurn;
 
     public HungryHippoDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
