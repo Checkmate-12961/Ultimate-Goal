@@ -1,17 +1,9 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
-
 @Config
-public class VisionHelper{
+public class VisionHelper{/*
     public static int TopLeftX = 210;
     public static int TopLeftY = 170;
     public static int Width = 90;
@@ -19,55 +11,44 @@ public class VisionHelper{
     public static int FourRingThresh = 140;
     public static int OneRingThresh = 132;
 
+    public enum RingPosition
+    {
+        FOUR,
+        ONE,
+        NONE
+    }
+
     public static class RingDeterminationPipeline extends OpenCvPipeline
     {
-        /*
-         * An enum to define the Ring position
-         */
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
-        }
-
-
         //Some color constants
         private static final Scalar BLUE = new Scalar(0, 0, 255);
         private static final Scalar GREEN = new Scalar(0, 255, 0);
 
         //The core values which define the location and size of the sample regions
-
         private final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(TopLeftX,TopLeftY);
-
-        private final int REGION_WIDTH = Width;
-        private final int REGION_HEIGHT = Height;
-
-        private final int FOUR_RING_THRESHOLD = FourRingThresh;
-        private final int ONE_RING_THRESHOLD = OneRingThresh;
 
         private final Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
         private final Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION1_TOPLEFT_ANCHOR_POINT.x + Width,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + Height);
 
         /*
          * Working variables
-         */
+         *//*
         private Mat region1_Cb;
         private final Mat YCrCb = new Mat();
         private final Mat Cb = new Mat();
         private int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingDeterminationPipeline.RingPosition position = RingDeterminationPipeline.RingPosition.FOUR;
+        private volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
          * and extracts the Cb channel to the 'Cb' variable
-         */
+         *//*
         private void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
@@ -96,13 +77,13 @@ public class VisionHelper{
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingDeterminationPipeline.RingPosition.FOUR; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD){
-                position = RingDeterminationPipeline.RingPosition.FOUR;
-            }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingDeterminationPipeline.RingPosition.ONE;
+            position = RingPosition.FOUR; // Record our analysis
+            if(avg1 > FourRingThresh){
+                position = RingPosition.FOUR;
+            }else if (avg1 > OneRingThresh){
+                position = RingPosition.ONE;
             }else{
-                position = RingDeterminationPipeline.RingPosition.NONE;
+                position = RingPosition.NONE;
             }
 
             Imgproc.rectangle(
@@ -119,8 +100,8 @@ public class VisionHelper{
         {
             return avg1;
         }
-        public RingDeterminationPipeline.RingPosition getPosition(){
+        public RingPosition getPosition(){
             return position;
         }
-    }
+    }*/
 }

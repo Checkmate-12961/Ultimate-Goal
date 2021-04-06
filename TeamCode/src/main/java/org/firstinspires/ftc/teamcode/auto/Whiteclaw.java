@@ -10,20 +10,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 @SuppressWarnings("unused")
 @Autonomous(group = "Alcohol")
 public class Whiteclaw extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private OpenCvWebcam webCam;
-    private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
+    private HungryHippoDrive.RingPosition ringPosSaved;
 
     private enum RunMode {FIRST, RUNNING, SECOND, DONE}
     private RunMode currentMode = RunMode.FIRST;
@@ -72,36 +67,14 @@ public class Whiteclaw extends LinearOpMode {
         Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
         Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
 
-        initItem.setValue("Resetting servos");
-        telemetry.update();
-
-        initItem.setValue("Starting camera feed");
-        telemetry.update();
-
-        // Camera stuff
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, HungryHippoDrive.WEBCAM_NAME), cameraMonitorViewId);
-        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
-        webCam.setPipeline(pipeline);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
-        });
-
         initItem.setValue("Checking ring position");
         telemetry.update();
 
-        ringPosSaved = pipeline.getPosition();
+        ringPosSaved = drive.getPosition();
         telemetry.addData("RingPos", ringPosSaved);
-        Telemetry.Item ringAnal = telemetry.addData("RingAnalNow", pipeline.getAnalysis());
+        Telemetry.Item ringAnal = telemetry.addData("RingAnalNow", drive.getAnalysis());
 
         initItem.setValue("Building trajectories");
-
-        // You can uncomment this for troubleshooting the camera
-        // Streams the camera to the dash
-        // drive.dashboard.startCameraStream(webCam, 10);
 
         trajBuildItem = telemetry.addData("Built", onTrajBuild);
         telemetry.update();
@@ -262,7 +235,7 @@ public class Whiteclaw extends LinearOpMode {
 
         waitForStart();
 
-        ringPosSaved = pipeline.getPosition();
+        ringPosSaved = drive.getPosition();
         if(isStopRequested()) return;
         telemetry.removeItem(initItem);
         double initTime = runtime.milliseconds();
@@ -305,7 +278,7 @@ public class Whiteclaw extends LinearOpMode {
             xItem.setValue(PoseUtils.currentPose.getX());
             yItem.setValue(PoseUtils.currentPose.getY());
 
-            ringAnal.setValue(pipeline.getAnalysis());
+            ringAnal.setValue(drive.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
 
