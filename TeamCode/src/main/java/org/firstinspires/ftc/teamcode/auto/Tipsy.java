@@ -11,13 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 @Disabled
 @Config
@@ -25,8 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @SuppressWarnings("unused")
 public class Tipsy extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private OpenCvWebcam webCam;
-    private VisionHelper.RingDeterminationPipeline.RingPosition ringPosSaved;
+    private HungryHippoDrive.RingPosition ringPosSaved;
 
     private Trajectory dropA;
     private Trajectory dropB;
@@ -63,26 +58,7 @@ public class Tipsy extends LinearOpMode {
         Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
         Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
 
-        initItem.setValue("Resetting servos");
-        telemetry.update();
-
-        initItem.setValue("Starting camera feed");
-        telemetry.update();
-        // Camera stuff
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
-        webCam.setPipeline(pipeline);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
-        });
-
         initItem.setValue("Building trajectories");
-
-        drive.dashboard.startCameraStream(webCam, 10);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
@@ -91,11 +67,11 @@ public class Tipsy extends LinearOpMode {
         Trajectory toLine = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist * 2, Math.toRadians(LauncherConstants.autoPowerShotAngle)))
                 .addDisplacementMarker(() -> {
-                    if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.NONE) {
+                    if (ringPosSaved == HungryHippoDrive.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);
-                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.ONE) {
+                    } else if (ringPosSaved == HungryHippoDrive.RingPosition.ONE) {
                         drive.followTrajectoryAsync(dropB);
-                    } else if (ringPosSaved == VisionHelper.RingDeterminationPipeline.RingPosition.FOUR) {
+                    } else if (ringPosSaved == HungryHippoDrive.RingPosition.FOUR) {
                         drive.followTrajectoryAsync(dropC);
                     }
                 })
@@ -155,9 +131,9 @@ public class Tipsy extends LinearOpMode {
 
         waitForStart();
 
-        ringPosSaved = pipeline.getPosition();
+        ringPosSaved = drive.getPosition();
         Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", ringPosSaved);
-        Telemetry.Item ringAnal = telemetry.addData("RingAnal", pipeline.getAnalysis());
+        Telemetry.Item ringAnal = telemetry.addData("RingAnal", drive.getAnalysis());
         telemetry.update();
 
         if(isStopRequested()) return;
@@ -188,7 +164,7 @@ public class Tipsy extends LinearOpMode {
             yItem.setValue(tempPose.getY());
 
             ringPosEst.setValue(ringPosSaved);
-            ringAnal.setValue(pipeline.getAnalysis());
+            ringAnal.setValue(drive.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();

@@ -7,13 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.auto.VisionHelper;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,26 +27,9 @@ public class TestingOP extends BaseOP{
     private static double rightEncoderOffset = 0;
     private static double frontEncoderOffset = 0;
 
-    private OpenCvWebcam webCam;
-    private VisionHelper.RingDeterminationPipeline pipeline;
-
     @Override
-    public void runOpMode() throws InterruptedException{
-        // Camera stuff
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        pipeline = new VisionHelper.RingDeterminationPipeline();
-        webCam.setPipeline(pipeline);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
-        });
-
-        // Initialize SampleMecanumDrive
+    public void runOpMode() throws InterruptedException{// Initialize SampleMecanumDrive
         HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
-        drive.dashboard.startCameraStream(webCam, 10);
 
         // Reset the pose so we can virtually start at 0,0,0
         PoseUtils.currentPose = new Pose2d(0,0,0);
@@ -87,7 +65,7 @@ public class TestingOP extends BaseOP{
         telemetry.addData("LeftEncoder",deadPos.get(0) - leftEncoderOffset);
         telemetry.addData("RightEncoder",deadPos.get(1) - rightEncoderOffset);
         telemetry.addData("FrontEncoder",deadPos.get(2) - frontEncoderOffset);
-        telemetry.addData("RingAmount", pipeline.getPosition());
+        telemetry.addData("RingAmount", robot.getPosition());
         telemetry.update();
     }
 

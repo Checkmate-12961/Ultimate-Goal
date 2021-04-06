@@ -9,13 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.Locale;
 
@@ -24,7 +20,6 @@ import java.util.Locale;
 @Autonomous(group = "Alcohol")
 public class Shots extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private OpenCvWebcam webCam;
 
     private Trajectory toLine;
     @SuppressWarnings("FieldCanBeLocal")
@@ -49,29 +44,7 @@ public class Shots extends LinearOpMode {
         Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
         Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
 
-        initItem.setValue("Resetting servos");
-        telemetry.update();
-
-        initItem.setValue("Starting camera feed");
-        telemetry.update();
-        // Camera stuff
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camra"), cameraMonitorViewId);
-        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
-        webCam.setPipeline(pipeline);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
-        });
-
-        initItem.setValue("Checking ring position");
-        telemetry.update();
-
         initItem.setValue("Building trajectories");
-
-        drive.dashboard.startCameraStream(webCam, 10);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);
@@ -80,7 +53,7 @@ public class Shots extends LinearOpMode {
         rightShot = drive.trajectoryBuilder(startPose)
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown*2);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
@@ -93,7 +66,7 @@ public class Shots extends LinearOpMode {
         midShot = drive.trajectoryBuilder(rightShot.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.CENTER))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
@@ -106,7 +79,7 @@ public class Shots extends LinearOpMode {
         leftShot = drive.trajectoryBuilder(midShot.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
@@ -123,8 +96,8 @@ public class Shots extends LinearOpMode {
         nextTelemetry(onTrajBuild,trajBuildItem);
 
         telemetry.removeItem(trajBuildItem);
-        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", pipeline.getPosition());
-        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", pipeline.getAnalysis());
+        Telemetry.Item ringPosEst = telemetry.addData("RingPosEst", drive.getPosition());
+        Telemetry.Item ringAnal = telemetry.addData("RingAnalysis", drive.getAnalysis());
         initItem.setValue(String.format(Locale.ENGLISH, "Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
@@ -151,8 +124,8 @@ public class Shots extends LinearOpMode {
             xItem.setValue(tempPose.getX());
             yItem.setValue(tempPose.getY());
 
-            ringPosEst.setValue(pipeline.getPosition());
-            ringAnal.setValue(pipeline.getAnalysis());
+            ringPosEst.setValue(drive.getPosition());
+            ringAnal.setValue(drive.getAnalysis());
 
             headingItem.setValue(tempPose.getHeading());
             telemetry.update();

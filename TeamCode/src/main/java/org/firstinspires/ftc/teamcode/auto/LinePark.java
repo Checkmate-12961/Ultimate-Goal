@@ -30,12 +30,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.Locale;
 
@@ -44,7 +40,6 @@ import java.util.Locale;
 @Disabled
 public class LinePark extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private OpenCvWebcam webCam;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -62,30 +57,7 @@ public class LinePark extends LinearOpMode {
         Telemetry.Item yItem = telemetry.addData("y",drive.getPoseEstimate().getY());
         Telemetry.Item headingItem = telemetry.addData("θ",drive.getPoseEstimate().getHeading());
 
-        initItem.setValue("Resetting servos");
-        telemetry.update();
-
-        initItem.setValue("Starting camera feed");
-        telemetry.update();
-        // Camera stuff
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, HungryHippoDrive.WEBCAM_NAME), cameraMonitorViewId);
-        VisionHelper.RingDeterminationPipeline pipeline = new VisionHelper.RingDeterminationPipeline();
-        webCam.setPipeline(pipeline);
-
-        //listens for when the camera is opened
-        webCam.openCameraDeviceAsync(() -> {
-            //if the camera is open start steaming
-            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
-        });
-
-        initItem.setValue("Checking ring position");
-        telemetry.update();
-
-        // DONE: add in multiple paths for each of the different camera outputs
-        int ringPos = pipeline.getAnalysis();
         initItem.setValue("Building trajectories");
-        telemetry.addData("RingPosGuess",ringPos);
 
         int onTrajBuild = 0;
         Telemetry.Item trajBuildItem = telemetry.addData("Built", onTrajBuild);

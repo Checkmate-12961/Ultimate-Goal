@@ -31,8 +31,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,8 +65,20 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @SuppressWarnings("unused")
 @Config
 public class HungryHippoDrive extends MecanumDrive {
+    // VISION STUFF
     public static final String WEBCAM_NAME = "camra";
+    public static int TopLeftX = 210;
+    public static int TopLeftY = 170;
+    public static int Width = 90;
+    public static int Height = 60;
+    public static int FourRingThresh = 140;
+    public static int OneRingThresh = 132;
 
+    public enum RingPosition {FOUR, ONE, NONE}
+
+    private final RingDeterminationPipeline pipeline = new RingDeterminationPipeline();
+
+    // NOT VISION STUFF
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
@@ -71,7 +94,7 @@ public class HungryHippoDrive extends MecanumDrive {
 
     public enum Mode {IDLE, TURN, FOLLOW_TRAJECTORY}
 
-    public final FtcDashboard dashboard;
+    private final FtcDashboard dashboard;
     private final NanoClock clock;
 
     private Mode mode;
@@ -130,6 +153,90 @@ public class HungryHippoDrive extends MecanumDrive {
     private final StandardTrackingWheelLocalizer localizer;
 
     private Pose2d lastPoseOnTurn;
+
+
+    private static class RingDeterminationPipeline extends OpenCvPipeline {
+        //Some color constants
+        private static final Scalar BLUE = new Scalar(0, 0, 255);
+        private static final Scalar GREEN = new Scalar(0, 255, 0);
+
+        //The core values which define the location and size of the sample regions
+        private final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(TopLeftX,TopLeftY);
+
+        private final Point region1_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        private final Point region1_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + Width,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + Height);
+
+        /*
+         * Working variables
+         */
+        private Mat region1_Cb;
+        private final Mat YCrCb = new Mat();
+        private final Mat Cb = new Mat();
+        private int avg1;
+
+        // Volatile since accessed by OpMode thread w/o synchronization
+        private volatile HungryHippoDrive.RingPosition position = HungryHippoDrive.RingPosition.FOUR;
+
+        /*
+         * This function takes the RGB frame, converts to YCrCb,
+         * and extracts the Cb channel to the 'Cb' variable
+         */
+        private void inputToCb(Mat input) {
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+            Core.extractChannel(YCrCb, Cb, 1);
+        }
+
+        @Override
+        public void init(Mat firstFrame) {
+            inputToCb(firstFrame);
+
+            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+        }
+
+        @Override
+        public Mat processFrame(Mat input) {
+            inputToCb(input);
+
+            avg1 = (int) Core.mean(region1_Cb).val[0];
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
+
+            position = HungryHippoDrive.RingPosition.FOUR; // Record our analysis
+            if (avg1 > FourRingThresh) {
+                position = HungryHippoDrive.RingPosition.FOUR;
+            } else if (avg1 > OneRingThresh) {
+                position = HungryHippoDrive.RingPosition.ONE;
+            } else {
+                position = HungryHippoDrive.RingPosition.NONE;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
+
+            return input;
+        }
+
+        public int getAnalysis()
+        {
+            return avg1;
+        }
+        public HungryHippoDrive.RingPosition getPosition(){
+            return position;
+        }
+    }
 
     public HungryHippoDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -212,6 +319,23 @@ public class HungryHippoDrive extends MecanumDrive {
 
         localizer = new StandardTrackingWheelLocalizer(hardwareMap);
         setLocalizer(localizer);
+
+        // Camera stuff
+        OpenCvWebcam webCam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName.class, "camra"),
+                hardwareMap.appContext.getResources().getIdentifier(
+                        "cameraMonitorViewId",
+                        "id",
+                        hardwareMap.appContext.getPackageName()));
+        webCam.setPipeline(pipeline);
+
+        //listens for when the camera is opened
+        webCam.openCameraDeviceAsync(() -> {
+            //if the camera is open start steaming
+            webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT  );
+        });
+
+        dashboard.startCameraStream(webCam, 10);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -450,7 +574,6 @@ public class HungryHippoDrive extends MecanumDrive {
         rightFront.setPower(v3);
     }
 
-    // TODO: make this only one variable
     public void setIntakePowers(double t){
         intake.setPower(t);
         transfer.setPower(t);
@@ -499,6 +622,10 @@ public class HungryHippoDrive extends MecanumDrive {
         mode = Mode.IDLE;
     }
 
+    public void startCameraStream(OpenCvWebcam webCam, double maxFps){
+        dashboard.startCameraStream(webCam, maxFps);
+    }
+
     @Override
     public double getRawExternalHeading() {
         return 0;
@@ -506,5 +633,13 @@ public class HungryHippoDrive extends MecanumDrive {
 
     public List<Double> getDeadPositions(){
         return localizer.getWheelPositions();
+    }
+
+    public int getAnalysis()
+    {
+        return pipeline.getAnalysis();
+    }
+    public HungryHippoDrive.RingPosition getPosition(){
+        return pipeline.getPosition();
     }
 }
