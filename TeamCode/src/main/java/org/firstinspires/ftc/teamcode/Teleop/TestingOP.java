@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
-import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,10 +31,7 @@ public class TestingOP extends BaseOP{
         HungryHippoDrive drive = new HungryHippoDrive(hardwareMap);
 
         // Reset the pose so we can virtually start at 0,0,0
-        PoseUtils.currentPose = new Pose2d(0,0,0);
-        // Retrieve our pose from the PoseStorage.currentPose static field
-        // We set this literally less than 1 ms ago, so it's probably 0,0,0
-        drive.setPoseEstimate(PoseUtils.currentPose);
+        drive.setPoseEstimate(new Pose2d(0,0,0));
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,9 +15,10 @@ import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
+@Disabled
 @SuppressWarnings("unused")
 @Autonomous(group = "Alcohol")
-public class Whiteclaw extends LinearOpMode {
+public class SpikedSeltzer extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private HungryHippoDrive.RingPosition ringPosSaved;
 
@@ -37,6 +39,7 @@ public class Whiteclaw extends LinearOpMode {
 
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory grabWobble;
+    private Trajectory missRings2;
     private Trajectory toLine;
 
 
@@ -209,12 +212,18 @@ public class Whiteclaw extends LinearOpMode {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    runTrajectory(toLine);
+                    runTrajectory(missRings2);
                 })
                 .build();
         nextTelemetry();
 
-        toLine = drive.trajectoryBuilder(grabWobble.end())
+        missRings2 = drive.trajectoryBuilder(grabWobble.end())
+                .lineToSplineHeading(new Pose2d(-12, -54, 0))
+                .addDisplacementMarker(() -> runTrajectory(toLine))
+                .build();
+        nextTelemetry();
+
+        toLine = drive.trajectoryBuilder(missRings2.end())
                 .lineToSplineHeading(new Pose2d(12,-36,0))
                 .addDisplacementMarker(() -> currentMode = RunMode.DONE)
                 .build();
