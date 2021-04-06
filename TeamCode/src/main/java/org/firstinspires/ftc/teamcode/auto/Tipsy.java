@@ -65,7 +65,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         Trajectory toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(LauncherConstants.autoPowerShotX, LauncherConstants.autoPowerShotY + LauncherConstants.autoPegDist * 2, Math.toRadians(LauncherConstants.autoPowerShotAngle)))
+                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == HungryHippoDrive.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);

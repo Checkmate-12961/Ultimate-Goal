@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
+import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
 import java.util.Locale;
 
@@ -57,7 +58,7 @@ public class Shots extends LinearOpMode {
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloCenter);
+                    drive.revFlywheel(-AutoPowerConstants.veloCenter);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(midShot))
                 .build();
@@ -70,7 +71,7 @@ public class Shots extends LinearOpMode {
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloLeft);
+                    drive.revFlywheel(-AutoPowerConstants.veloLeft);
                 })
                 .addDisplacementMarker(() -> drive.followTrajectoryAsync(leftShot))
                 .build();
@@ -91,7 +92,7 @@ public class Shots extends LinearOpMode {
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         //toLine moves the robot straight forward to the line
         toLine = drive.trajectoryBuilder(leftShot.end())
-                .splineTo(new Vector2d(12, LauncherConstants.autoPowerShotY + 2* LauncherConstants.autoPegDist), Math.toRadians(0))
+                .splineTo(new Vector2d(12, leftShot.end().getY()), Math.toRadians(0))
                 .build();
         nextTelemetry(onTrajBuild,trajBuildItem);
 
@@ -114,7 +115,7 @@ public class Shots extends LinearOpMode {
                 String.format(Locale.ENGLISH, "%fms", runtime.milliseconds() - initTime));
         telemetry.update();
 
-        drive.revFlywheel(-LauncherConstants.autoPowerShotVeloRight);
+        drive.revFlywheel(-AutoPowerConstants.veloRight);
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();

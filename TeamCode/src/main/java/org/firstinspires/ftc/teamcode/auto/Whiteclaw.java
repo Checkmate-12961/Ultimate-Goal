@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
+import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
 @SuppressWarnings("unused")
 @Autonomous(group = "Alcohol")
@@ -87,11 +88,11 @@ public class Whiteclaw extends LinearOpMode {
         rightShot = drive.trajectoryBuilder(missRings.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown*2);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloCenter);
+                    drive.revFlywheel(-AutoPowerConstants.veloCenter);
                 })
                 .addDisplacementMarker(() -> runTrajectory(midShot))
                 .build();
@@ -100,11 +101,11 @@ public class Whiteclaw extends LinearOpMode {
         midShot = drive.trajectoryBuilder(rightShot.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.CENTER))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloLeft);
+                    drive.revFlywheel(-AutoPowerConstants.veloLeft);
                 })
                 .addDisplacementMarker(() -> runTrajectory(leftShot))
                 .build();
@@ -113,7 +114,7 @@ public class Whiteclaw extends LinearOpMode {
         leftShot = drive.trajectoryBuilder(midShot.end())
                 .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
                 .addDisplacementMarker(() -> {
-                    sleep(LauncherConstants.shootCoolDown);
+                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
@@ -247,7 +248,7 @@ public class Whiteclaw extends LinearOpMode {
                 ));
         runningItem.setValue("rightShot");
         telemetry.update();
-        drive.revFlywheel(-LauncherConstants.autoPowerShotVeloRight);
+        drive.revFlywheel(-AutoPowerConstants.veloRight);
 
         int ticks = 0;
         Telemetry.Item avgTPS = telemetry.addData("AvgTPS", ticks / (runtime.seconds()-initTime/1000));

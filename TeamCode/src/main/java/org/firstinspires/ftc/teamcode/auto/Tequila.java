@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
+import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
 @Autonomous(group = "Alcohol")
 public class Tequila extends LinearOpMode {
@@ -82,7 +83,7 @@ public class Tequila extends LinearOpMode {
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloCenter);
+                    drive.revFlywheel(-AutoPowerConstants.veloCenter);
                 })
                 .addDisplacementMarker(() -> runTrajectory(midShot))
                 .build();
@@ -95,7 +96,7 @@ public class Tequila extends LinearOpMode {
                     drive.pressTrigger(true);
                     sleep(LauncherConstants.triggerActuationTime);
                     drive.pressTrigger(false);
-                    drive.revFlywheel(-LauncherConstants.autoPowerShotVeloLeft);
+                    drive.revFlywheel(-AutoPowerConstants.veloLeft);
                 })
                 .addDisplacementMarker(() -> runTrajectory(leftShot))
                 .build();
@@ -203,7 +204,7 @@ public class Tequila extends LinearOpMode {
                 ));
         runningItem.setValue("rightShot");
         telemetry.update();
-        drive.revFlywheel(-LauncherConstants.autoPowerShotVeloRight);
+        drive.revFlywheel(-AutoPowerConstants.veloRight);
 
         int ticks = 0;
         Telemetry.Item avgTPS = telemetry.addData("AvgTPS", ticks / (runtime.seconds()-initTime/1000));

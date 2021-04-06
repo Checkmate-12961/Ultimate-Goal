@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.HungryHippoDrive;
+import org.firstinspires.ftc.teamcode.drive.launcherConstants.EndgamePowerConstants;
+import org.firstinspires.ftc.teamcode.drive.launcherConstants.HighGoalConstants;
 
 import java.util.Locale;
 
@@ -193,7 +195,7 @@ public class BaseOP extends LinearOpMode {
     // BIND: gamepad2.left_trigger, gamepad2.left_bumper, gamepad1.left_trigger
     private void runShooter (HungryHippoDrive robot){
         // rev flywheel
-        if (gamepad2.left_trigger > .9) robot.revFlywheel(-LauncherConstants.highGoalVelo);
+        if (gamepad2.left_trigger > .9) robot.revFlywheel(-HighGoalConstants.velo);
         else if (gamepad2.left_bumper) robot.revFlywheel(0);
 
         // Shoots circle at target.
@@ -207,7 +209,7 @@ public class BaseOP extends LinearOpMode {
             //Changes robot position estimate to the side of the field, so roadrunner is more consistent
             robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
             //Revs flywheel in advance.
-            robot.revFlywheel(-LauncherConstants.powerShotVeloRight);
+            robot.revFlywheel(-EndgamePowerConstants.veloRight);
             //One trajectory defined for each of the high goals.
             rightShot = robot.trajectoryBuilder(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)))
                     //Move to shooting locations
@@ -221,7 +223,7 @@ public class BaseOP extends LinearOpMode {
                         sleep(LauncherConstants.triggerActuationTime);
                         //Retracts trigger
                         robot.pressTrigger(false);
-                        robot.revFlywheel(-LauncherConstants.powerShotVeloCenter);
+                        robot.revFlywheel(-EndgamePowerConstants.veloCenter);
                         robot.followTrajectoryAsync(midShot);
                     })
                     .build();
@@ -232,7 +234,7 @@ public class BaseOP extends LinearOpMode {
                         robot.pressTrigger(true);
                         sleep(LauncherConstants.triggerActuationTime);
                         robot.pressTrigger(false);
-                        robot.revFlywheel(-LauncherConstants.powerShotVeloLeft);
+                        robot.revFlywheel(-EndgamePowerConstants.veloLeft);
                         robot.followTrajectoryAsync(leftShot);
                     })
                     .build();
@@ -266,7 +268,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad1.dpad_up) {
             controlMode = ControlMode.AUTO;
             shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(LauncherConstants.highGoalX, LauncherConstants.highGoalY, Math.toRadians(LauncherConstants.highGoalAngle)))
+                    .lineToSplineHeading(LauncherConstants.getHighGoalPose())
                     .build();
             robot.followTrajectoryAsync(shootPos);
         }

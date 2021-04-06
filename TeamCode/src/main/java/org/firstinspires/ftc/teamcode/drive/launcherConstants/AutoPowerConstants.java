@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.launcherConstants;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class AutoPowerConstants {
     // power shot
     public static double angle = 0; // angle the robot turns
