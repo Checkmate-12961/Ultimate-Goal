@@ -52,7 +52,7 @@ public class AutoConstants {
     public static class SecondBox {
         //These are the coordinates for the secondary wobble goal placements.
         public static double dropAX = 6;
-        public static double dropAY = -38;
+        public static double dropAY = -42;
         public static double dropAH = 90;
 
         public static double dropBX = 22;

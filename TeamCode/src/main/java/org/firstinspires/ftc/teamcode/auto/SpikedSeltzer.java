@@ -206,7 +206,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         grabWobble = drive.trajectoryBuilder(new Pose2d(-24, -54,0))
-                .lineToSplineHeading(new Pose2d(-37, -38.5, 0))
+                .lineToSplineHeading(new Pose2d(-37, -39, 0))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.collectWobble(drive);

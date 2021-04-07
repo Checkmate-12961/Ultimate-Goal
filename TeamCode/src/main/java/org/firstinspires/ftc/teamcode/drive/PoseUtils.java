@@ -10,7 +10,8 @@ public class PoseUtils {
 
     public static double startX = -62;
     public static double startY = -19.5;
-    public static double startHeading = -1.9;
+    public static double startHeading = .054110
+            ;
 
     public static Pose2d getStartPose () {
         return new Pose2d(startX, startY, Math.toRadians(startHeading));
