@@ -67,13 +67,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class DrunkenHippoDrive extends MecanumDrive {
     // VISION STUFF
-    public static int TopLeftX = 210;
-    public static int TopLeftY = 170;
-    public static int Width = 90;
-    public static int Height = 60;
-    public static int FourRingThresh = 140;
-    public static int OneRingThresh = 130;
-
     public enum RingPosition {FOUR, ONE, NONE}
 
     private final RingDeterminationPipeline pipeline = new RingDeterminationPipeline();
@@ -161,14 +154,14 @@ public class DrunkenHippoDrive extends MecanumDrive {
         private static final Scalar GREEN = new Scalar(0, 255, 0);
 
         //The core values which define the location and size of the sample regions
-        private final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(TopLeftX,TopLeftY);
+        private final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(VisionHelper.TopLeftX,VisionHelper.TopLeftY);
 
         private final Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
         private final Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + Width,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + Height);
+                REGION1_TOPLEFT_ANCHOR_POINT.x + VisionHelper.Width,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + VisionHelper.Height);
 
         /*
          * Working variables
@@ -211,9 +204,9 @@ public class DrunkenHippoDrive extends MecanumDrive {
                     2); // Thickness of the rectangle lines
 
             position = DrunkenHippoDrive.RingPosition.FOUR; // Record our analysis
-            if (avg1 > FourRingThresh) {
+            if (avg1 > VisionHelper.FourRingThresh) {
                 position = DrunkenHippoDrive.RingPosition.FOUR;
-            } else if (avg1 > OneRingThresh) {
+            } else if (avg1 > VisionHelper.OneRingThresh) {
                 position = DrunkenHippoDrive.RingPosition.ONE;
             } else {
                 position = DrunkenHippoDrive.RingPosition.NONE;

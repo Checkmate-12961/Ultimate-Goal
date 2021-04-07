@@ -74,7 +74,7 @@ public class SpikedSeltzer extends LinearOpMode {
         telemetry.update();
 
         ringPosSaved = drive.getPosition();
-        telemetry.addData("RingPos", ringPosSaved);
+        Telemetry.Item ringPosItem = telemetry.addData("RingPos", ringPosSaved);
         Telemetry.Item ringAnal = telemetry.addData("RingAnalNow", drive.getAnalysis());
 
         initItem.setValue("Building trajectories");
@@ -281,7 +281,11 @@ public class SpikedSeltzer extends LinearOpMode {
         initItem.setValue(String.format("Done. Took %f milliseconds",runtime.milliseconds()));
         telemetry.update();
 
-        waitForStart();
+        while (!isStarted()){
+            ringPosSaved = drive.getPosition();
+            ringPosItem.setValue(ringPosSaved);
+        }
+
 
         ringPosSaved = drive.getPosition();
         if(isStopRequested()) return;
