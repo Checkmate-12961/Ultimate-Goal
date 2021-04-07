@@ -284,6 +284,8 @@ public class SpikedSeltzer extends LinearOpMode {
         while (!isStarted()){
             ringPosSaved = drive.getPosition();
             ringPosItem.setValue(ringPosSaved);
+            ringAnal.setValue(drive.getAnalysis());
+            telemetry.update();
         }
 
 
