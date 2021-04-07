@@ -63,6 +63,9 @@ public class AutoConstants {
         public static double dropCY = -54;
         public static double dropCH = 120;
 
+        public static double lineCX = 48;
+        public static double lineCY = -44;
+        public static double lineCH = 90;
 
         public static Pose2d getBoxPose(Box box) {
             Pose2d poseToReturn;
@@ -89,6 +92,9 @@ public class AutoConstants {
                     break;
             }
             return poseToReturn;
+        }
+        public static Pose2d getLinePose(){
+            return new Pose2d(lineCX,lineCY,Math.toRadians(lineCH));
         }
     }
 }

@@ -273,8 +273,11 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         toLineC2 = drive.trajectoryBuilder(dropC2.end())
-                .lineToSplineHeading(new Pose2d(12, dropC2.end().getY(),Math.toRadians(180)))
-                .addDisplacementMarker(() -> currentMode = RunMode.DONE)
+                .lineToSplineHeading(AutoConstants.SecondBox.getLinePose())
+                .addDisplacementMarker(() -> {
+                    drive.dropStop(DrunkenHippoDrive.RingStopPos.END);
+                    currentMode = RunMode.DONE;
+                })
                 .build();
 
         telemetry.removeItem(trajBuildItem);
