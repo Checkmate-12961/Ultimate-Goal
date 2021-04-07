@@ -13,5 +13,5 @@ public class AutoPowerConstants {
     // coordinates
     public static double X = -10;
     public static double Y = -18;
-    public static double pegDist = 11; // distance between each shot
+    public static double pegDist = 10; // distance between each shot
 }

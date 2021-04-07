@@ -13,7 +13,7 @@ public class AutoConstants {
         public static double dropAH = 90;
 
         public static double dropBX = 25;
-        public static double dropBY = -24;
+        public static double dropBY = -27;
         public static double dropBH = 120;
 
         public static double dropCX = 48;
@@ -55,8 +55,8 @@ public class AutoConstants {
         public static double dropAY = -38;
         public static double dropAH = 90;
 
-        public static double dropBX = 25;
-        public static double dropBY = -24;
+        public static double dropBX = 22;
+        public static double dropBY = -20;
         public static double dropBH = 120;
 
         public static double dropCX = 48;
