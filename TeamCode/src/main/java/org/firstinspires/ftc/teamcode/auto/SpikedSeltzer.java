@@ -206,7 +206,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         grabWobble = drive.trajectoryBuilder(new Pose2d(-24, -54,0))
-                .lineToSplineHeading(new Pose2d(-37, -38.5, 0))
+                .lineToSplineHeading(new Pose2d(-37, -39, 0))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.collectWobble(drive);
@@ -273,8 +273,11 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         toLineC2 = drive.trajectoryBuilder(dropC2.end())
-                .lineToSplineHeading(new Pose2d(12, dropC2.end().getY(),Math.toRadians(180)))
-                .addDisplacementMarker(() -> currentMode = RunMode.DONE)
+                .lineToSplineHeading(AutoConstants.SecondBox.getLinePose())
+                .addDisplacementMarker(() -> {
+                    drive.dropStop(DrunkenHippoDrive.RingStopPos.END);
+                    currentMode = RunMode.DONE;
+                })
                 .build();
 
         telemetry.removeItem(trajBuildItem);
@@ -284,6 +287,8 @@ public class SpikedSeltzer extends LinearOpMode {
         while (!isStarted()){
             ringPosSaved = drive.getPosition();
             ringPosItem.setValue(ringPosSaved);
+            ringAnal.setValue(drive.getAnalysis());
+            telemetry.update();
         }
 
 

@@ -60,7 +60,7 @@ public class MoveWobble extends LinearOpMode {
         drive.setWobbleGrab(DrunkenHippoDrive.WobbleGrabPos.START);
         Thread.sleep(1000);
         // Bring it in
-        drive.setWobblePivot(.6);
+        drive.setWobblePivot(.5);
         Thread.sleep(600);
         // Stop powering the arm and let its velocity carry it back
         drive.setWobblePivot(0);

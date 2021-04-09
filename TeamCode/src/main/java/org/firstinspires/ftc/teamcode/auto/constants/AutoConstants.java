@@ -13,7 +13,7 @@ public class AutoConstants {
         public static double dropAH = 90;
 
         public static double dropBX = 25;
-        public static double dropBY = -24;
+        public static double dropBY = -27;
         public static double dropBH = 120;
 
         public static double dropCX = 48;
@@ -52,17 +52,20 @@ public class AutoConstants {
     public static class SecondBox {
         //These are the coordinates for the secondary wobble goal placements.
         public static double dropAX = 6;
-        public static double dropAY = -38;
+        public static double dropAY = -42;
         public static double dropAH = 90;
 
-        public static double dropBX = 25;
-        public static double dropBY = -24;
+        public static double dropBX = 22;
+        public static double dropBY = -20;
         public static double dropBH = 120;
 
         public static double dropCX = 48;
         public static double dropCY = -54;
         public static double dropCH = 120;
 
+        public static double lineCX = 48;
+        public static double lineCY = -44;
+        public static double lineCH = 90;
 
         public static Pose2d getBoxPose(Box box) {
             Pose2d poseToReturn;
@@ -89,6 +92,9 @@ public class AutoConstants {
                     break;
             }
             return poseToReturn;
+        }
+        public static Pose2d getLinePose(){
+            return new Pose2d(lineCX,lineCY,Math.toRadians(lineCH));
         }
     }
 }
