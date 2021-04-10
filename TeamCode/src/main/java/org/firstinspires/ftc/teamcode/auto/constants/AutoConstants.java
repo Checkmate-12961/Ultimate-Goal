@@ -60,7 +60,7 @@ public class AutoConstants {
         public static double dropBH = 120;
 
         public static double dropCX = 46;
-        public static double dropCY = -54;
+        public static double dropCY = -52;
         public static double dropCH = 120;
 
         public static double lineCX = 35;
