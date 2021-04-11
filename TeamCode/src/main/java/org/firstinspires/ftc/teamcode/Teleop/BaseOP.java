@@ -206,6 +206,11 @@ public class BaseOP extends LinearOpMode {
     private void runSeekPowerShots (DrunkenHippoDrive robot){
         if (gamepad1.dpad_right) {
             controlMode = ControlMode.AUTO;
+            while (setPointHeading > 360){
+                setPointHeading -= 360;
+            } while (setPointHeading < 0){
+                setPointHeading += 360;
+            }
             //Changes robot position estimate to the side of the field, so roadrunner is more consistent
             robot.setPoseEstimate(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)));
             //Revs flywheel in advance.

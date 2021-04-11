@@ -14,5 +14,5 @@ public class EndgamePowerConstants {
     public static double X = -10; //X coordinate for the rightmost powershot
     public static double YRight = -20;   //Y coordinate for the rightmost powershot
     public static double YCenter = -12.3;   //Y coordinate for the rightmost powershot
-    public static double YLeft = -4.6;   //Y coordinate for the rightmost powershot
+    public static double YLeft = -5.6;   //Y coordinate for the rightmost powershot
 }

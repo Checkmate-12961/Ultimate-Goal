@@ -14,5 +14,5 @@ public class AutoPowerConstants {
     public static double X = -10;
     public static double YRight = -21.5;   //Y coordinate for the rightmost powershot
     public static double YCenter = -13.3;   //Y coordinate for the rightmost powershot
-    public static double YLeft = -5.1;   //Y coordinate for the rightmost powershot
+    public static double YLeft = -6.1;   //Y coordinate for the rightmost powershot
 }
