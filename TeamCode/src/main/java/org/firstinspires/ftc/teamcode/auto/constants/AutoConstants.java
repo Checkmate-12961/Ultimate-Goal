@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 public class AutoConstants {
     public enum Box {A,B,C}
     @Config
-    public static class FirstBox {
+    public static class FirstBoxConstants {
         //These are the coordinates for the wobble goal placements.
         public static double dropAX = 6;
         public static double dropAY = -50;
@@ -49,7 +49,7 @@ public class AutoConstants {
         }
     }
     @Config
-    public static class SecondBox {
+    public static class SecondBoxConstants {
         //These are the coordinates for the secondary wobble goal placements.
         public static double dropAX = 6;
         public static double dropAY = -42;

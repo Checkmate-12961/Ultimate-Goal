@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auto.constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
-import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
+import org.firstinspires.ftc.teamcode.drive.LauncherUtils;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
@@ -88,11 +88,11 @@ public class SpikedSeltzer extends LinearOpMode {
                 .build();
 
         rightShot = drive.trajectoryBuilder(missRings.end())
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.RIGHT))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(-AutoPowerConstants.veloCenter);
                 })
@@ -101,11 +101,11 @@ public class SpikedSeltzer extends LinearOpMode {
 
         nextTelemetry();
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.CENTER))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.CENTER))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(-AutoPowerConstants.veloLeft);
                 })
@@ -114,11 +114,11 @@ public class SpikedSeltzer extends LinearOpMode {
 
         nextTelemetry();
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.LEFT))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(0);
                 })
@@ -144,7 +144,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropA = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.A))
+                .lineToSplineHeading(AutoConstants.FirstBoxConstants.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -157,7 +157,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropB = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.B))
+                .lineToSplineHeading(AutoConstants.FirstBoxConstants.getBoxPose(AutoConstants.Box.B))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -170,7 +170,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropC = drive.trajectoryBuilder(leftShot.end())
-                .lineToSplineHeading(AutoConstants.FirstBox.getBoxPose(AutoConstants.Box.C))
+                .lineToSplineHeading(AutoConstants.FirstBoxConstants.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -234,7 +234,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropA2 = drive.trajectoryBuilder(grabWobble.end())
-                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.A))
+                .lineToSplineHeading(AutoConstants.SecondBoxConstants.getBoxPose(AutoConstants.Box.A))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -247,7 +247,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropB2 = drive.trajectoryBuilder(grabWobble.end())
-                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.B))
+                .lineToSplineHeading(AutoConstants.SecondBoxConstants.getBoxPose(AutoConstants.Box.B))
                 .addDisplacementMarker(() -> {
                     try {
                         MoveWobble.depositWobble(drive);
@@ -260,7 +260,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         dropC2 = drive.trajectoryBuilder(grabWobble.end())
-                .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.C))
+                .lineToSplineHeading(AutoConstants.SecondBoxConstants.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
                     drive.dropStop(DrunkenHippoDrive.RingStopPos.END);
                     try {
@@ -274,7 +274,7 @@ public class SpikedSeltzer extends LinearOpMode {
         nextTelemetry();
 
         toLineC2 = drive.trajectoryBuilder(dropC2.end())
-                .lineToSplineHeading(AutoConstants.SecondBox.getLinePose())
+                .lineToSplineHeading(AutoConstants.SecondBoxConstants.getLinePose())
                 .addDisplacementMarker(() -> {
                     drive.dropStop(DrunkenHippoDrive.RingStopPos.END);
                     currentMode = RunMode.DONE;

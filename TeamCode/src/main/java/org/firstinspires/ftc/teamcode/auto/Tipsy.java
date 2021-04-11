@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
-import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
+import org.firstinspires.ftc.teamcode.drive.LauncherUtils;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 
 @Disabled
@@ -65,7 +65,7 @@ public class Tipsy extends LinearOpMode {
         telemetry.update();
 
         Trajectory toLine = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.LEFT))
                 .addDisplacementMarker(() -> {
                     if (ringPosSaved == DrunkenHippoDrive.RingPosition.NONE) {
                         drive.followTrajectoryAsync(dropA);

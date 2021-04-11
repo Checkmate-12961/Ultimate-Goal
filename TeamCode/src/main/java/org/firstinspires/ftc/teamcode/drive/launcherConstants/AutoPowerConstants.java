@@ -12,6 +12,7 @@ public class AutoPowerConstants {
 
     // coordinates
     public static double X = -10;
-    public static double Y = -21.5;
-    public static double pegDist = 8.2; // distance between each shot
+    public static double YRight = -21.5;   //Y coordinate for the rightmost powershot
+    public static double YCenter = -13.3;   //Y coordinate for the rightmost powershot
+    public static double YLeft = -5.1;   //Y coordinate for the rightmost powershot
 }

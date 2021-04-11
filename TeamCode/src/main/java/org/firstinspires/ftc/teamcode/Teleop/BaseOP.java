@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
+import org.firstinspires.ftc.teamcode.drive.LauncherUtils;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.EndgamePowerConstants;
@@ -213,14 +213,14 @@ public class BaseOP extends LinearOpMode {
             //One trajectory defined for each of the high goals.
             rightShot = robot.trajectoryBuilder(new Pose2d(setPointX, setPointY, Math.toRadians(setPointHeading)))
                     //Move to shooting locations
-                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.RIGHT))
+                    .lineToSplineHeading(LauncherUtils.getPowerPose(LauncherUtils.Position.RIGHT))
                     .addDisplacementMarker(() -> {
                         //Wait for the flywheel to get to full speed. This line is unique to this block.
-                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                        robot.waitForFlywheel(LauncherUtils.flywheelThreshold);
                         //Virtually presses trigger
                         robot.pressTrigger(true);
                         //Gives the trigger time to finish shooting.
-                        sleep(LauncherConstants.triggerActuationTime);
+                        sleep(LauncherUtils.triggerActuationTime);
                         //Retracts trigger
                         robot.pressTrigger(false);
                         robot.revFlywheel(-EndgamePowerConstants.veloCenter);
@@ -228,22 +228,22 @@ public class BaseOP extends LinearOpMode {
                     })
                     .build();
             midShot = robot.trajectoryBuilder(rightShot.end())
-                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.CENTER))
+                    .lineToSplineHeading(LauncherUtils.getPowerPose(LauncherUtils.Position.CENTER))
                     .addDisplacementMarker(() -> {
-                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                        robot.waitForFlywheel(LauncherUtils.flywheelThreshold);
                         robot.pressTrigger(true);
-                        sleep(LauncherConstants.triggerActuationTime);
+                        sleep(LauncherUtils.triggerActuationTime);
                         robot.pressTrigger(false);
                         robot.revFlywheel(-EndgamePowerConstants.veloLeft);
                         robot.followTrajectoryAsync(leftShot);
                     })
                     .build();
             leftShot = robot.trajectoryBuilder(midShot.end())
-                    .lineToSplineHeading(LauncherConstants.getPowerPose(LauncherConstants.Position.LEFT))
+                    .lineToSplineHeading(LauncherUtils.getPowerPose(LauncherUtils.Position.LEFT))
                     .addDisplacementMarker(() -> {
-                        robot.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                        robot.waitForFlywheel(LauncherUtils.flywheelThreshold);
                         robot.pressTrigger(true);
-                        sleep(LauncherConstants.triggerActuationTime);
+                        sleep(LauncherUtils.triggerActuationTime);
                         robot.pressTrigger(false);
 
                         //Turns the flywheel off
@@ -268,7 +268,7 @@ public class BaseOP extends LinearOpMode {
         if (gamepad1.dpad_up) {
             controlMode = ControlMode.AUTO;
             shootPos = robot.trajectoryBuilder(robot.getPoseEstimate())
-                    .lineToSplineHeading(LauncherConstants.getHighGoalPose())
+                    .lineToSplineHeading(LauncherUtils.getHighGoalPose())
                     .build();
             robot.followTrajectoryAsync(shootPos);
         }

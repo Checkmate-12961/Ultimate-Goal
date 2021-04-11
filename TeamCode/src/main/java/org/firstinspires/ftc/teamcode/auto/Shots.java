@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DrunkenHippoDrive;
-import org.firstinspires.ftc.teamcode.drive.LauncherConstants;
+import org.firstinspires.ftc.teamcode.drive.LauncherUtils;
 import org.firstinspires.ftc.teamcode.drive.PoseUtils;
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.AutoPowerConstants;
 
@@ -52,11 +52,11 @@ public class Shots extends LinearOpMode {
         telemetry.update();
 
         rightShot = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.RIGHT))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.RIGHT))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(-AutoPowerConstants.veloCenter);
                 })
@@ -65,11 +65,11 @@ public class Shots extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         midShot = drive.trajectoryBuilder(rightShot.end())
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.CENTER))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.CENTER))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(-AutoPowerConstants.veloLeft);
                 })
@@ -78,11 +78,11 @@ public class Shots extends LinearOpMode {
 
         onTrajBuild = nextTelemetry(onTrajBuild,trajBuildItem);
         leftShot = drive.trajectoryBuilder(midShot.end())
-                .lineToSplineHeading(LauncherConstants.autoGetPowerPose(LauncherConstants.Position.LEFT))
+                .lineToSplineHeading(LauncherUtils.autoGetPowerPose(LauncherUtils.Position.LEFT))
                 .addDisplacementMarker(() -> {
-                    drive.waitForFlywheel(LauncherConstants.flywheelThreshold);
+                    drive.waitForFlywheel(LauncherUtils.flywheelThreshold);
                     drive.pressTrigger(true);
-                    sleep(LauncherConstants.triggerActuationTime);
+                    sleep(LauncherUtils.triggerActuationTime);
                     drive.pressTrigger(false);
                     drive.revFlywheel(0);
                 })
