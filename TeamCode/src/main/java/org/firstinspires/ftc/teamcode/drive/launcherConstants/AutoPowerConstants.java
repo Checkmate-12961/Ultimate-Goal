@@ -8,7 +8,7 @@ public class AutoPowerConstants {
     public static double angle = 0; // angle the robot turns
     public static double veloRight = 3700; // 0.72; //
     public static double veloCenter = 3700; // 0.75; //
-    public static double veloLeft = 3700; // 0.72; //
+    public static double veloLeft = 3800; // 0.72; //
 
     // coordinates
     public static double X = -10;

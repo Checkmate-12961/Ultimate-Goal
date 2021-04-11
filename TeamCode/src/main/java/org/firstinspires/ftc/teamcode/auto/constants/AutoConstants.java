@@ -56,15 +56,15 @@ public class AutoConstants {
         public static double dropAH = 90;
 
         public static double dropBX = 22;
-        public static double dropBY = -20;
+        public static double dropBY = -18;
         public static double dropBH = 120;
 
-        public static double dropCX = 48;
-        public static double dropCY = -54;
+        public static double dropCX = 46;
+        public static double dropCY = -52;
         public static double dropCH = 120;
 
-        public static double lineCX = 30;
-        public static double lineCY = -50;
+        public static double lineCX = 35;
+        public static double lineCY = -44;
         public static double lineCH = 90;
 
         public static Pose2d getBoxPose(Box box) {
