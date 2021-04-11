@@ -29,7 +29,7 @@ public class BaseOP extends LinearOpMode {
     //  endgame powershots get triggered.
     public static double setPointX = 2.5;
     public static double setPointY = -61.25;
-    public static double setPointHeading = -4.1;
+    public static double setPointHeading = -2.6;
     
     @SuppressWarnings("FieldCanBeLocal")
     private Trajectory rightShot;
