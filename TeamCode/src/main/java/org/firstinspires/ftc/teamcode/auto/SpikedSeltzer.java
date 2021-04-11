@@ -262,6 +262,7 @@ public class SpikedSeltzer extends LinearOpMode {
         dropC2 = drive.trajectoryBuilder(grabWobble.end())
                 .lineToSplineHeading(AutoConstants.SecondBox.getBoxPose(AutoConstants.Box.C))
                 .addDisplacementMarker(() -> {
+                    drive.dropStop(DrunkenHippoDrive.RingStopPos.END);
                     try {
                         MoveWobble.depositWobble(drive);
                     } catch (InterruptedException e) {
