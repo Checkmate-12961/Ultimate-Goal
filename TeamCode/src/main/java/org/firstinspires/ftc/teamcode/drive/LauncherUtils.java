@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.drive.launcherConstants.EndgamePowerConsta
 import org.firstinspires.ftc.teamcode.drive.launcherConstants.HighGoalConstants;
 
 @Config
-public class LauncherConstants {
+public class LauncherUtils {
     public static int triggerActuationTime = 500;
 
     // everything
@@ -21,18 +21,19 @@ public class LauncherConstants {
         switch (pos){
             case RIGHT: poseToReturn = new Pose2d(
                     EndgamePowerConstants.X,
-                    EndgamePowerConstants.Y,
+                    EndgamePowerConstants.YRight,
                     Math.toRadians(EndgamePowerConstants.angle)
             );
                 break;
-            case CENTER: poseToReturn = new Pose2d(EndgamePowerConstants.X,
-                    EndgamePowerConstants.Y + EndgamePowerConstants.pegDist,
+            case CENTER: poseToReturn = new Pose2d(
+                    EndgamePowerConstants.X,
+                    EndgamePowerConstants.YCenter,
                     Math.toRadians(EndgamePowerConstants.angle)
             );
                 break;
             case LEFT: poseToReturn = new Pose2d(
                     EndgamePowerConstants.X,
-                    EndgamePowerConstants.Y + EndgamePowerConstants.pegDist * 2,
+                    EndgamePowerConstants.YLeft,
                     Math.toRadians(EndgamePowerConstants.angle)
             );
                 break;
@@ -47,19 +48,20 @@ public class LauncherConstants {
         switch (pos){
             case RIGHT: poseToReturn = new Pose2d(
                     AutoPowerConstants.X,
-                    AutoPowerConstants.Y,
+                    AutoPowerConstants.YRight,
                     Math.toRadians(AutoPowerConstants.angle)
                 );
                 break;
-            case CENTER: poseToReturn = new Pose2d(AutoPowerConstants.X,
-                    AutoPowerConstants.Y + AutoPowerConstants.pegDist,
-                    Math.toRadians(AutoPowerConstants.angle /*+ autoRotFix*/)
+            case CENTER: poseToReturn = new Pose2d(
+                    AutoPowerConstants.X,
+                    AutoPowerConstants.YCenter,
+                    Math.toRadians(AutoPowerConstants.angle)
                 );
                 break;
             case LEFT: poseToReturn = new Pose2d(
                     AutoPowerConstants.X,
-                    AutoPowerConstants.Y + AutoPowerConstants.pegDist * 2,
-                    Math.toRadians(AutoPowerConstants.angle /*+ autoRotFix * 2*/)
+                    AutoPowerConstants.YLeft,
+                    Math.toRadians(AutoPowerConstants.angle)
                 );
                 break;
             default: poseToReturn = null;

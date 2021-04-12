@@ -7,11 +7,12 @@ public class AutoPowerConstants {
     // power shot
     public static double angle = 0; // angle the robot turns
     public static double veloRight = 3700; // 0.72; //
-    public static double veloCenter = 3700; // 0.75; //
-    public static double veloLeft = 3800; // 0.72; //
+    public static double veloCenter = 3900; // 0.75; //
+    public static double veloLeft = 3700; // 0.72; //
 
     // coordinates
     public static double X = -10;
-    public static double Y = -21.5;
-    public static double pegDist = 7.7; // distance between each shot
+    public static double YRight = -21.5;   //Y coordinate for the rightmost powershot
+    public static double YCenter = -13.3;   //Y coordinate for the rightmost powershot
+    public static double YLeft = -6.1;   //Y coordinate for the rightmost powershot
 }
